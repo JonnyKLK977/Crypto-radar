@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="/phase16.css">
   <link rel="stylesheet" href="/phase17.css">
   <link rel="stylesheet" href="/phase18.css">
+  <link rel="stylesheet" href="/phase19.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -42,6 +43,7 @@
         <button class="nav" data-target="operations">Centro operativo</button>
         <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
         <button class="nav advanced-only" data-target="intelligence">Intelligence Hub</button>
+        <button class="nav" data-target="community">Piazza Radar</button>
         <button class="nav" data-target="news">News & trend</button>
         <button class="nav" data-target="tax">730 & fiscalità crypto</button>
         <button class="nav" data-target="method">Metodo & rischio</button>
@@ -678,6 +680,83 @@
           </div>
           <div class="section-title"><div><p class="eyebrow">PROSSIMI 90 GIORNI</p><h2>Eventi e promemoria</h2></div><span id="calendarCount" class="muted"></span></div>
           <div id="calendarEvents" class="calendar-events"></div>
+        </div>
+      </section>
+
+      <section id="community" class="page community-page">
+        <div class="community-heading">
+          <div><p class="eyebrow">CONFRONTO, NON RUMORE</p><h2>Idee con metodo</h2><p>Idee crypto comprensibili, fonti visibili e strategie che dichiarano anche quando smettono di essere valide.</p></div>
+          <div class="community-presence"><span class="community-live-dot" aria-hidden="true"></span><b id="communityActive">0 attivi ora</b><small id="communityPersistence">Spazio condiviso</small></div>
+        </div>
+
+        <div class="community-tabs" role="tablist" aria-label="Sezioni Piazza Radar">
+          <button class="chip active" data-community-tab="live" role="tab" aria-selected="true">Live</button>
+          <button class="chip" data-community-tab="board" role="tab" aria-selected="false">Bacheca</button>
+        </div>
+
+        <div class="community-layout">
+          <div class="community-main">
+            <section id="community-live" class="community-panel active" aria-labelledby="communityLiveTitle">
+              <div class="community-panel-head"><div><h3 id="communityLiveTitle">Live Desk</h3><p>Domande, fonti e osservazioni brevi. Nessun segnale automatico di acquisto o vendita.</p></div><button id="refreshCommunity" class="secondary community-refresh" type="button">Aggiorna</button></div>
+              <div id="communityMessages" class="community-messages" aria-live="polite"><div class="community-empty">La conversazione è ancora vuota. Apri con una domanda verificabile.</div></div>
+              <form id="communityMessageForm" class="community-message-form">
+                <label>Tipo<select id="communityMessageCategory"><option value="idea">Idea</option><option value="question">Domanda</option><option value="source">Fonte</option><option value="risk">Rischio</option></select></label>
+                <label>Asset<input id="communityMessageAsset" maxlength="12" placeholder="BTC"></label>
+                <label class="community-message-body">Messaggio<textarea id="communityMessageBody" maxlength="400" rows="2" placeholder="Cosa hai osservato, su quali dati e che cosa resta da verificare?"></textarea><small><span id="communityMessageCount">0</span>/400</small></label>
+                <button id="sendCommunityMessage" class="primary" type="submit">Invia</button>
+              </form>
+            </section>
+
+            <section id="community-board" class="community-panel" aria-labelledby="communityBoardTitle">
+              <div class="community-panel-head"><div><h3 id="communityBoardTitle">Bacheca delle tesi</h3><p>Analisi, strategie, domande e lezioni che restano consultabili.</p></div></div>
+              <div class="community-board-tools">
+                <label>Cerca<input id="communitySearch" type="search" placeholder="Asset, autore o argomento"></label>
+                <label>Contenuto<select id="communityKindFilter"><option value="all">Tutti</option><option value="strategy">Strategie</option><option value="analysis">Analisi</option><option value="question">Domande</option><option value="lesson">Lezioni</option><option value="following">Seguiti</option></select></label>
+              </div>
+              <details id="communityComposer" class="community-composer">
+                <summary>Pubblica un contributo</summary>
+                <form id="communityPostForm">
+                  <div class="community-form-grid">
+                    <label>Formato<select id="communityPostKind"><option value="analysis">Analisi</option><option value="strategy">Carta Strategia</option><option value="question">Domanda</option><option value="lesson">Lezione appresa</option></select></label>
+                    <label>Asset o tema<input id="communityPostAsset" maxlength="18" placeholder="ETH / DeFi"></label>
+                    <label>Orizzonte<select id="communityPostTimeframe"><option value="not-set">Da definire</option><option value="intraday">Intraday</option><option value="week">1-4 settimane</option><option value="month">1-6 mesi</option><option value="long-term">Oltre 6 mesi</option></select></label>
+                    <label>Rischio dichiarato<select id="communityPostRisk"><option value="not-assessed">Da valutare</option><option value="low">Basso relativo</option><option value="medium">Medio</option><option value="high">Alto</option></select></label>
+                  </div>
+                  <label>Titolo<input id="communityPostTitle" maxlength="100" placeholder="Una tesi chiara, non una promessa"></label>
+                  <label>Analisi<textarea id="communityPostBody" maxlength="2200" rows="5" placeholder="Contesto, dati osservati, dubbi e cosa controlleresti dopo."></textarea></label>
+                  <div class="community-strategy-fields">
+                    <label>Tesi verificabile<textarea id="communityPostThesis" maxlength="1200" rows="3" placeholder="Quali fatti sostengono l'idea?"></textarea></label>
+                    <label>Condizione di invalidazione<textarea id="communityPostInvalidation" maxlength="800" rows="3" placeholder="Quale evento o dato ti farebbe cambiare idea?"></textarea></label>
+                  </div>
+                  <label>Fonte principale HTTPS<input id="communityPostSource" type="url" maxlength="500" placeholder="https://documentazione-ufficiale..."></label>
+                  <div class="community-compose-footer"><p id="communityQualityHint">Completezza metodologica: aggiungi tesi, invalidazione, rischio e fonte.</p><button class="primary" type="submit">Pubblica</button></div>
+                </form>
+              </details>
+              <div id="communityPosts" class="community-posts"><div class="community-empty">Nessun contributo pubblicato.</div></div>
+            </section>
+          </div>
+
+          <aside class="community-side">
+            <article class="community-profile-box">
+              <div class="community-profile-head"><div id="communityAvatar" class="community-avatar">CR</div><div><b id="communityProfileLabel">Il tuo profilo</b><span id="communityProfileHandle">Non pubblicato</span></div></div>
+              <form id="communityProfileForm">
+                <label>Nome pubblico<input id="communityDisplayName" maxlength="40" placeholder="Come vuoi apparire"></label>
+                <label>Handle<input id="communityHandle" maxlength="24" placeholder="nome_utente"></label>
+                <label>Esperienza<select id="communityExperience"><option value="beginner">Sto imparando</option><option value="intermediate">Intermedia</option><option value="advanced">Avanzata</option></select></label>
+                <label>Focus<input id="communityFocus" maxlength="90" placeholder="BTC, DeFi, sicurezza"></label>
+                <label>Bio<textarea id="communityBio" maxlength="180" rows="3" placeholder="Metodo, interessi e limiti"></textarea></label>
+                <button class="secondary" type="submit">Salva profilo</button>
+              </form>
+              <small class="community-privacy">Profilo e contenuti sono pubblici. Non condividere importi, seed phrase, indirizzi o dati fiscali.</small>
+            </article>
+
+            <article class="community-follow-box">
+              <div class="community-side-title"><b>Il tuo radar sociale</b><span id="communityFollowCount">0 seguiti</span></div>
+              <div id="communityFollowing" class="community-following"><p>Nessun profilo o strategia seguita.</p></div>
+            </article>
+
+            <div class="community-principle"><b>Regola della Piazza</b><p>Spiega il perché, mostra la fonte, dichiara il rischio. Popolarità e follower non misurano affidabilità.</p></div>
+          </aside>
         </div>
       </section>
 
