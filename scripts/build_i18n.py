@@ -25,12 +25,16 @@ MANUAL_OVERRIDES = {
         "Apri Criptovaluta.it ↗": "Open Criptovaluta.it ↗",
         "La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.": "The Home page shows the latest headlines from Criptovaluta.it. Always open the source and keep information separate from the quantitative score.",
         "Trending misura attenzione, non qualità. Criptovaluta.it offre titoli italiani; le altre notizie sono tradotte mostrando anche l’originale. Usa i filtri Portafoglio/POL/ALGO/ADA e apri sempre la fonte.": "Trending measures attention, not quality. Criptovaluta.it provides Italian-language headlines; other news is translated while keeping the original visible. Use the Portfolio/POL/ALGO/ADA filters and always open the source.",
+        "posizioni": "positions", "eventi": "events", "futuri": "upcoming", "official": "official", "secondary": "confirmed", "unverified": "unverified", "high": "high", "medium": "medium", "low": "low", "impatto": "impact", "punti": "points", "posizione maggiore": "largest position",
+        "Layer 1": "Layer 1", "Layer 2": "Layer 2", "Altro / da verificare": "Other / to verify",
     },
     "es": {
         "Ultime da Criptovaluta.it": "Lo último de Criptovaluta.it",
         "Apri Criptovaluta.it ↗": "Abrir Criptovaluta.it ↗",
         "La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.": "La página de inicio muestra los últimos titulares de Criptovaluta.it. Abra siempre la fuente y mantenga la información separada de la puntuación cuantitativa.",
         "Trending misura attenzione, non qualità. Criptovaluta.it offre titoli italiani; le altre notizie sono tradotte mostrando anche l’originale. Usa i filtri Portafoglio/POL/ALGO/ADA e apri sempre la fonte.": "Las tendencias miden la atención, no la calidad. Criptovaluta.it ofrece titulares en italiano; las demás noticias se traducen manteniendo visible el original. Use los filtros Cartera/POL/ALGO/ADA y abra siempre la fuente.",
+        "posizioni": "posiciones", "eventi": "eventos", "futuri": "próximos", "official": "oficial", "secondary": "confirmada", "unverified": "sin verificar", "high": "alto", "medium": "medio", "low": "bajo", "impatto": "impacto", "punti": "puntos", "posizione maggiore": "posición mayor",
+        "Layer 1": "Capa 1", "Layer 2": "Capa 2", "Altro / da verificare": "Otro / por verificar",
     },
 }
 

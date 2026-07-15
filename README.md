@@ -98,7 +98,7 @@ Il **Decision Lab** aggiunge:
 
 Il diario viene salvato in `data/decision_journal.json`.
 
-La pagina **Guide & Manuali** contiene un percorso educativo in quindici moduli:
+La pagina **Guide & Manuali** contiene un percorso educativo in sedici moduli:
 
 - basi di crypto, token, exchange e wallet;
 - budget, rischio e piano personale;
@@ -113,6 +113,7 @@ La pagina **Guide & Manuali** contiene un percorso educativo in quindici moduli:
 - flusso di News, Metodo e guida fiscale.
 - manuale completo del Copilota 360, della condivisione e del Centro privacy.
 - manuale di Execution Lab, Risk Engine e verifica degli operatori nel registro MiCA.
+- manuale completo dell'Intelligence Hub: temperatura, eventi, esposizioni, stress, integrità fiscale e brief.
 
 Include un glossario ricercabile e una checklist pre-acquisto. L'avanzamento viene memorizzato nel browser e non viene inviato al server.
 
@@ -125,6 +126,19 @@ La modalità Avanzata include tre strumenti con fonti e limiti dichiarati:
 - **Verifica MiCA** cerca nome, dominio o LEI nei CSV ufficiali ESMA dei CASP autorizzati e delle entità non conformi.
 
 Sono strumenti informativi: non eseguono ordini, non certificano operatori e non stimano la perdita massima futura.
+
+## Intelligence Hub personale
+
+La modalità Avanzata include un centro di controllo costruito con funzioni che spesso sono distribuite tra servizi a pagamento:
+
+- **Temperatura di mercato** combina Fear & Greed, Altcoin Season, dominanza BTC/ETH, metriche globali e benchmark CMC100, con storico a 30 giorni;
+- **Radar eventi verificabile** salva eventi personali con data, impatto, categoria, fonte e livello di verifica. Un evento dichiarato ufficiale o confermato richiede un URL HTTPS;
+- **Esposizioni nascoste** raggruppa il portafoglio per ecosistema e settore usando metadati CoinMarketCap e segnala concentrazioni qualitative;
+- **Stress Studio** applica scenari separati a BTC, ETH, altcoin e stablecoin, mostra il contributo di ogni posizione e confronta la perdita col Piano personale;
+- **Integrità fiscale** controlla tipi sconosciuti, campi mancanti, costi non documentati e possibili trasferimenti non abbinati negli import CSV;
+- **Brief quotidiano** raccoglie mercato, posizioni, eventi, notizie collegate, anomalie documentali e limiti personali in un testo copiabile o esportabile.
+
+Gli indici aggregati arrivano dalla Keyless Public API di CoinMarketCap e vengono memorizzati dal server per cinque minuti per rispettare i limiti condivisi. Gli endpoint senza chiave sono adatti a prototipi e uso leggero: una futura versione commerciale dovrà usare un piano/API key adeguato. Eventi, classificazioni e stress restano strumenti di ricerca e non raccomandazioni.
 
 ## Lingue
 
@@ -161,6 +175,7 @@ Il contenuto è educativo e non sostituisce le istruzioni annuali, un CAF o un p
 
 - La API pubblica CoinGecko può applicare limiti temporanei.
 - Il rischio è una stima quantitativa basata su volatilità, dimensione e classifica, non un'analisi completa del progetto.
-- Attività degli sviluppatori, token unlock e concentrazione dei wallet non sono ancora inclusi.
+- Gli unlock non vengono importati automaticamente: il Radar eventi privilegia fonti registrate e provenienza visibile rispetto a dati non verificabili.
+- La classificazione delle esposizioni copre i metadati disponibili nelle prime 100 crypto CoinMarketCap; gli asset non mappati richiedono verifica manuale.
 - Le notizie forniscono contesto, ma non vengono analizzate automaticamente come positive o negative.
 - Le simulazioni DCA non includono commissioni, spread, staking o fiscalità.

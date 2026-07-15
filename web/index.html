@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="/phase15.css">
   <link rel="stylesheet" href="/phase16.css">
   <link rel="stylesheet" href="/phase17.css">
+  <link rel="stylesheet" href="/phase18.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -40,6 +41,7 @@
         <button class="nav" data-target="decision">Decision Lab</button>
         <button class="nav" data-target="operations">Centro operativo</button>
         <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
+        <button class="nav advanced-only" data-target="intelligence">Intelligence Hub</button>
         <button class="nav" data-target="news">News & trend</button>
         <button class="nav" data-target="tax">730 & fiscalità crypto</button>
         <button class="nav" data-target="method">Metodo & rischio</button>
@@ -89,6 +91,17 @@
           <article class="card metric"><span>ETH 24h</span><strong id="eth24">—</strong><small id="ethPrice">—</small></article>
           <article class="card metric"><span>Ampiezza 7g</span><strong id="breadth">—</strong><small>Top 50 in rialzo</small></article>
         </div>
+        </div>
+
+        <div class="home-widget" data-home-widget="market-temperature">
+          <div class="section-title"><div><p class="eyebrow">TEMPERATURA DEL MERCATO</p><h2>Contesto prima delle singole crypto</h2></div><button class="link-button" data-go="intelligence">Apri Intelligence Hub →</button></div>
+          <div class="home-temperature-grid">
+            <article class="card temperature-metric"><span>PAURA &amp; AVIDITÀ</span><strong id="homeFearGreed">—</strong><small id="homeFearGreedLabel">Caricamento…</small></article>
+            <article class="card temperature-metric"><span>ALTCOIN SEASON</span><strong id="homeAltcoinSeason">—</strong><small id="homeAltcoinLabel">Indice 0–100</small></article>
+            <article class="card temperature-metric"><span>DOMINANZA BTC</span><strong id="homeBtcDominance">—</strong><small>Quota della capitalizzazione</small></article>
+            <article class="card temperature-metric"><span>CMC100 · 24H</span><strong id="homeCmc100">—</strong><small id="homeIntelligenceAsOf">Fonte CoinMarketCap</small></article>
+          </div>
+          <p class="market-scope-note">Questi indici descrivono il contesto e il comportamento aggregato: non prevedono il mercato e non costituiscono segnali di acquisto o vendita.</p>
         </div>
 
         <div class="home-widget" data-home-widget="movers">
@@ -193,6 +206,7 @@
           <button class="card guide-jump" data-guide-open="news-manual"><b>13 · Informazione e metodo</b><span>News, punteggi, limiti e routine consigliata</span></button>
           <button class="card guide-jump" data-guide-open="copilot-manual"><b>14 · Copilota 360</b><span>Controlli, passaporti, fisco, sicurezza e privacy</span></button>
           <button class="card guide-jump" data-guide-open="advanced-manual"><b>15 · Strumenti avanzati</b><span>Esecuzione, rischio congiunto e verifica MiCA</span></button>
+          <button class="card guide-jump" data-guide-open="intelligence-manual"><b>16 · Intelligence Hub</b><span>Contesto, esposizioni, stress, eventi, fisco e brief</span></button>
         </div>
 
         <div class="academy-layout">
@@ -416,6 +430,21 @@
                 <div class="risk-box"><b>Tre limiti essenziali</b><p>Un operatore autorizzato non rende sicuro ogni prodotto. Un nome assente non dimostra automaticamente abuso. Un omonimo non prova che sito, app o dominio appartengano al soggetto registrato.</p></div>
                 <button class="secondary" data-go="advanced">Apri Strumenti avanzati</button>
                 <label class="lesson-done"><input type="checkbox" data-complete="advanced-manual"> So confrontare l’esecuzione, leggere il rischio congiunto e verificare un operatore nelle fonti ufficiali</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="intelligence-manual">
+              <summary><span class="lesson-number">16</span><div><b>Come usare l’Intelligence Hub</b><small>Temperatura, eventi, esposizioni, stress, integrità fiscale e brief</small></div><span class="lesson-time">45 min</span></summary>
+              <div class="lesson-content">
+                <h3>Prima il contesto, poi la singola crypto</h3><p>Il pannello Temperatura riunisce Fear &amp; Greed, Altcoin Season, dominanza di BTC ed ETH, mercato globale e CMC100. Leggili insieme: un valore estremo descrive il posizionamento recente, non stabilisce quando il mercato invertirà. Confronta il dato corrente con i 30 giorni e annota cosa è cambiato.</p>
+                <div class="screen-map"><div><b>Fear &amp; Greed</b><p>Riassume la propensione al rischio del mercato. Estrema paura non equivale a “prezzo minimo”; estrema avidità non impone una vendita. Serve a riconoscere il contesto emotivo.</p></div><div><b>Altcoin Season</b><p>Misura quanto il mercato recente favorisce le altcoin rispetto a Bitcoin. Non valuta qualità, liquidità o sopravvivenza delle singole crypto.</p></div><div><b>Dominanza</b><p>Mostra quale quota della capitalizzazione appartiene a BTC o ETH. Può cambiare sia per rialzi sia per ribassi relativi: verifica sempre i prezzi.</p></div><div><b>CMC100</b><p>È un benchmark aggregato delle principali crypto. Il peso dei costituenti aiuta a capire se il “mercato” è guidato da pochi asset.</p></div></div>
+                <h3>Radar eventi con provenienza visibile</h3><p>Inserisci unlock, aggiornamenti, governance, regolazione o incidenti soltanto dopo aver aperto una fonte. Per marcare un evento come ufficiale o confermato è obbligatorio un collegamento HTTPS. La data resta una voce di ricerca dell’utente: Crypto Radar non certifica che l’evento avverrà né ne stima l’effetto.</p>
+                <h3>Esposizioni nascoste</h3><p>Il portafoglio viene raggruppato per ecosistema e settore usando i metadati disponibili. Cinque token possono sembrare diversificati ma dipendere dalla stessa chain, dallo stesso tema o dalla stessa propensione al rischio. “Non classificato” significa che servono ricerche manuali, non che il rischio sia assente.</p>
+                <h3>Stress Studio</h3><ol class="learning-steps"><li>Scegli uno scenario oppure inserisci shock personalizzati per BTC, ETH e altcoin.</li><li>Leggi perdita in euro e percentuale, quindi il contributo di ogni posizione.</li><li>Confronta il risultato con la perdita tollerabile del Piano personale.</li><li>Modifica pesi o limiti nel piano, senza trattare lo scenario come previsione.</li></ol><p>Gli shock sono ipotesi deterministiche, non probabilità, VaR certificato o worst case. Non includono slippage, blocco dei prelievi, tasse o perdita totale per bug e frodi.</p>
+                <h3>Integrità fiscale e brief quotidiano</h3><p>Il controllo fiscale cerca campi mancanti, tipi sconosciuti e trasferimenti potenzialmente non abbinati negli import CSV. Non determina imponibile o correttezza legale: serve a preparare il fascicolo da verificare con istruzioni annuali e professionista. Il Brief riunisce mercato, portafoglio, eventi, anomalie e limiti in una pagina copiabile, senza generare ordini o suggerimenti.</p>
+                <div class="risk-box"><b>Routine di 10 minuti</b><p>Controlla la temperatura, leggi solo gli eventi con fonte, osserva le esposizioni, esegui uno stress test quando cambiano i pesi e chiudi con il brief. Se un dato non è disponibile, non sostituirlo con un’ipotesi silenziosa.</p></div>
+                <button class="secondary" data-go="intelligence">Apri Intelligence Hub</button>
+                <label class="lesson-done"><input type="checkbox" data-complete="intelligence-manual"> So distinguere contesto, ipotesi, fonte e controllo documentale</label>
               </div>
             </details>
           </div>
@@ -855,6 +884,65 @@
             <article class="card"><p class="eyebrow">COME INTERPRETARE</p><h2>Una corrispondenza non basta</h2><div class="risk-insights"><div class="risk-item">Confronta ragione sociale, dominio, paese e autorità.</div><div class="risk-item">Controlla data di fine autorizzazione e servizi consentiti.</div><div class="risk-item">Un nome assente non dimostra automaticamente irregolarità.</div><div class="risk-item danger">Se compare tra i non conformi, apri la fonte ufficiale prima di agire.</div></div></article>
           </div>
           <div id="micaSearchMeta" class="filter-warning">Il registro ESMA viene consultato direttamente e può aggiornarsi in ritardo rispetto alle autorità nazionali.</div><div id="micaResults" class="mica-results"></div>
+        </div>
+      </section>
+
+      <section id="intelligence" class="page intelligence-page">
+        <article class="card intelligence-hero">
+          <div><p class="eyebrow">CONTESTO, RISCHIO E PROVENIENZA</p><h2>Intelligence Hub personale</h2><p>Trasforma dati dispersi in controlli leggibili: mercato aggregato, eventi documentati, esposizioni nascoste, scenari di perdita, qualità fiscale e brief quotidiano.</p></div>
+          <div class="intelligence-trust"><span>ZERO ORDINI</span><span>FONTI VISIBILI</span><span>DATI LOCALI</span></div>
+        </article>
+        <div class="intelligence-tabs" role="tablist">
+          <button class="chip active" data-intelligence-tab="temperature">Temperatura</button><button class="chip" data-intelligence-tab="events">Radar eventi</button><button class="chip" data-intelligence-tab="exposure">Esposizioni</button><button class="chip" data-intelligence-tab="stress">Stress Studio</button><button class="chip" data-intelligence-tab="tax">Integrità fiscale</button><button class="chip" data-intelligence-tab="brief">Brief quotidiano</button>
+        </div>
+
+        <div id="intelligence-temperature" class="intelligence-panel active">
+          <div class="section-title topless"><div><p class="eyebrow">QUALE MERCATO STAI AFFRONTANDO?</p><h2>Temperatura e struttura</h2></div><div class="intelligence-source"><button id="refreshIntelligence" class="secondary">Aggiorna indici</button><a href="https://coinmarketcap.com/api/documentation/pro-api-reference/keyless-public-api" target="_blank" rel="noopener noreferrer">Fonte CoinMarketCap ↗</a></div></div>
+          <div id="intelligenceDataNote" class="filter-warning">Caricamento degli indici aggregati…</div>
+          <div class="temperature-primary-grid">
+            <article class="card gauge-card"><div class="gauge" id="fearGauge"><div><strong id="fearValue">—</strong><span>su 100</span></div></div><h3>Paura &amp; Avidità</h3><p id="fearInterpretation" class="muted">In attesa del dato.</p><div id="fearHistoryChart" class="mini-line-chart"></div></article>
+            <article class="card gauge-card"><div class="gauge alt" id="altcoinGauge"><div><strong id="altcoinValue">—</strong><span>su 100</span></div></div><h3>Altcoin Season</h3><p id="altcoinInterpretation" class="muted">In attesa del dato.</p><div id="altcoinHistoryChart" class="mini-line-chart"></div></article>
+            <article class="card market-structure-card"><p class="eyebrow">STRUTTURA GLOBALE</p><h2>Dominanza e liquidità</h2><div id="globalMarketMetrics" class="intelligence-metric-list"></div></article>
+          </div>
+          <div class="advanced-two-columns">
+            <article class="card"><div class="section-title topless"><div><p class="eyebrow">BENCHMARK CMC100</p><h2>Mercato aggregato</h2></div><strong id="cmc100Change" class="neutral">—</strong></div><div id="cmc100Metrics" class="summary-grid compact"></div><div id="cmc100Weights" class="behavior-breakdown"></div></article>
+            <article class="card"><p class="eyebrow">LETTURA RESPONSABILE</p><h2>Quattro domande prima di agire</h2><div class="risk-insights"><div class="risk-item">Gli indici concordano oppure raccontano segnali diversi?</div><div class="risk-item">Il movimento è ampio o guidato dai maggiori costituenti?</div><div class="risk-item">Il portafoglio è coerente con la perdita tollerabile?</div><div class="risk-item danger">Sto usando il dato come contesto o come scusa per inseguire il prezzo?</div></div></article>
+          </div>
+        </div>
+
+        <div id="intelligence-events" class="intelligence-panel">
+          <div class="section-title topless"><div><p class="eyebrow">PROVENIENZA PRIMA DELLA PREVISIONE</p><h2>Radar eventi verificabile</h2></div><span id="intelEventCount" class="muted">0 eventi</span></div>
+          <div class="advanced-two-columns">
+            <article class="card intelligence-form"><label>Titolo dell’evento<input id="intelEventTitle" maxlength="120" placeholder="Es. aggiornamento rete annunciato"></label><div class="form-grid"><label>Data<input id="intelEventDate" type="date"></label><label>Asset<input id="intelEventAsset" maxlength="20" placeholder="BTC, ADA…"></label><label>Categoria<select id="intelEventType"><option value="unlock">Unlock / emissione</option><option value="upgrade">Aggiornamento rete</option><option value="governance">Governance</option><option value="regulation">Regolazione</option><option value="security">Sicurezza</option><option value="tax">Fiscalità</option><option value="other">Altro</option></select></label><label>Impatto da monitorare<select id="intelEventImpact"><option value="high">Alto</option><option value="medium">Medio</option><option value="low">Basso</option></select></label></div><label>Livello della fonte<select id="intelEventVerification"><option value="official">Fonte ufficiale</option><option value="secondary">Fonte secondaria confermata</option><option value="unverified">Da verificare</option></select></label><label>URL della fonte<input id="intelEventSource" type="url" maxlength="500" placeholder="https://…"></label><label>Note: cosa controllare?<textarea id="intelEventNotes" maxlength="800" placeholder="Dato atteso, possibili effetti, condizioni che invalidano l’ipotesi…"></textarea></label><button id="addIntelEvent" class="primary">Salva evento documentato</button><p class="simulation-note">Per “ufficiale” o “confermata” è obbligatorio un URL HTTPS. Il livello è dichiarato dall’utente e non certificato da Crypto Radar.</p></article>
+            <article class="card"><p class="eyebrow">TRIAGE EVENTI</p><h2>Come non farsi sorprendere</h2><div id="intelEventSummary" class="summary-grid compact"></div><div class="risk-insights"><div class="risk-item"><b>T−30 giorni</b><span>Verifica calendario, fonte e dimensione relativa.</span></div><div class="risk-item"><b>T−7 giorni</b><span>Aggiorna piano, liquidità e scenario di stress.</span></div><div class="risk-item"><b>T−1 giorno</b><span>Evita decisioni impulsive e controlla gli annunci.</span></div><div class="risk-item"><b>T+1 / T+7</b><span>Registra cosa è accaduto, senza riscrivere la tesi.</span></div></div></article>
+          </div>
+          <div id="intelEventList" class="event-intelligence-list"></div>
+        </div>
+
+        <div id="intelligence-exposure" class="intelligence-panel">
+          <div class="section-title topless"><div><p class="eyebrow">TOKEN DIVERSI, RISCHI UGUALI</p><h2>Mappa delle esposizioni nascoste</h2></div><button class="secondary" data-go="portfolio">Modifica portafoglio</button></div>
+          <div id="exposureHeadline" class="filter-warning">Aggiungi posizioni valorizzate per analizzare ecosistemi e temi.</div>
+          <div class="advanced-two-columns"><article class="card"><p class="eyebrow">ECOSISTEMI E PIATTAFORME</p><h2>Dove dipendono i token</h2><div id="platformExposure" class="behavior-breakdown"></div></article><article class="card"><p class="eyebrow">SETTORI ECONOMICI</p><h2>Quali tesi stai duplicando</h2><div id="sectorExposure" class="behavior-breakdown"></div></article></div>
+          <div class="section-title"><div><p class="eyebrow">RISCHI DA INDAGARE</p><h2>Segnalazioni qualitative</h2></div><span class="muted">Metadati CoinMarketCap + portafoglio locale</span></div><div id="hiddenExposureWarnings" class="risk-insights"></div>
+        </div>
+
+        <div id="intelligence-stress" class="intelligence-panel">
+          <div class="section-title topless"><div><p class="eyebrow">IPOTESI, NON PREVISIONI</p><h2>Stress Studio di portafoglio</h2></div><span class="muted">Shock deterministici · nessuna probabilità attribuita</span></div>
+          <div class="stress-preset-grid"><button class="card stress-preset active" data-intel-stress="broad"><b>Mercato severo</b><span>BTC −30% · ETH −40% · alt −55%</span></button><button class="card stress-preset" data-intel-stress="altcoin"><b>Shock altcoin</b><span>BTC −15% · ETH −25% · alt −45%</span></button><button class="card stress-preset" data-intel-stress="depeg"><b>Depeg stablecoin</b><span>Stablecoin −10% · resto invariato</span></button><button class="card stress-preset" data-intel-stress="custom"><b>Scenario personale</b><span>Inserisci shock separati</span></button></div>
+          <article class="card stress-controls"><div class="form-grid"><label>Shock BTC (%)<input id="intelStressBtc" type="number" min="-100" max="100" value="-30"></label><label>Shock ETH (%)<input id="intelStressEth" type="number" min="-100" max="100" value="-40"></label><label>Shock altcoin (%)<input id="intelStressAlt" type="number" min="-100" max="100" value="-55"></label><label>Shock stablecoin (%)<input id="intelStressStable" type="number" min="-100" max="100" value="0"></label></div><button id="runIntelStress" class="primary">Esegui scenario</button></article>
+          <div id="intelStressMetrics" class="summary-grid"></div><div class="advanced-two-columns"><article class="card"><p class="eyebrow">CONTRIBUTI ALLA PERDITA</p><h2>Quale posizione pesa di più</h2><div id="intelStressContributions" class="behavior-breakdown"></div></article><article class="card"><p class="eyebrow">CONTROLLO DEL PIANO</p><h2>È sostenibile per te?</h2><div id="intelStressPlan" class="risk-insights"></div></article></div>
+          <p class="simulation-note">Non include slippage, imposte, leva, blocchi degli exchange, attacchi, perdita della chiave, liquidità insufficiente o fallimento totale. Il risultato non è un VaR e può sottostimare gravemente la perdita reale.</p>
+        </div>
+
+        <div id="intelligence-tax" class="intelligence-panel">
+          <div class="section-title topless"><div><p class="eyebrow">DAL CSV AL FASCICOLO</p><h2>Controllo di integrità fiscale</h2></div><div><button id="runTaxIntegrity" class="secondary">Ripeti controllo</button> <button class="secondary" data-go="tax">Apri guida fiscale</button></div></div>
+          <div id="intelTaxMetrics" class="summary-grid"></div><div class="advanced-two-columns"><article class="card"><p class="eyebrow">ANOMALIE TECNICHE</p><h2>Cosa riconciliare</h2><div id="intelTaxIssues" class="risk-insights"></div></article><article class="card"><p class="eyebrow">FASCICOLO PROBATORIO</p><h2>Cosa conservare</h2><div id="intelTaxEvidence" class="risk-insights"></div></article></div>
+          <p class="tax-warning">Questo controllo cerca qualità e completezza tecnica dei dati importati. Non calcola plusvalenze, imposte o quadri dichiarativi e non sostituisce CAF, commercialista, istruzioni dell’Agenzia delle Entrate o interpretazione professionale.</p>
+        </div>
+
+        <div id="intelligence-brief" class="intelligence-panel">
+          <div class="section-title topless"><div><p class="eyebrow">UNA PAGINA, NESSUN RUMORE</p><h2>Brief quotidiano personale</h2></div><div><button id="copyIntelBrief" class="secondary">Copia testo</button> <button id="downloadIntelBrief" class="secondary">Scarica .txt</button></div></div>
+          <div class="brief-layout"><article class="card daily-brief"><div class="daily-brief-head"><div><span>CRYPTO RADAR · BRIEF</span><strong id="intelBriefDate">—</strong></div><span class="badge">sola lettura</span></div><div id="intelBriefContent" class="brief-content"></div></article><aside class="card"><p class="eyebrow">REGOLE DEL BRIEF</p><h2>Cosa include e cosa esclude</h2><div class="risk-insights"><div class="risk-item rule-ok">Dati di mercato con data e fonte.</div><div class="risk-item rule-ok">Portafoglio, eventi e anomalie locali.</div><div class="risk-item rule-ok">Limiti personali già impostati.</div><div class="risk-item danger">Nessun “compra”, “vendi” o rendimento atteso.</div></div><button id="regenerateIntelBrief" class="primary">Rigenera brief</button></aside></div>
         </div>
       </section>
 

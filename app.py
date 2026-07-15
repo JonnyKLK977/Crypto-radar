@@ -671,6 +671,98 @@ def coinmarketcap_market_movers() -> dict:
     }
 
 
+def coinmarketcap_market_intelligence() -> dict:
+    endpoints = {
+        "fear": f"{COINMARKETCAP_PUBLIC}/v3/fear-and-greed/latest",
+        "fearHistory": f"{COINMARKETCAP_PUBLIC}/v3/fear-and-greed/historical?start=1&limit=30",
+        "altcoin": f"{COINMARKETCAP_PUBLIC}/v1/altcoin-season-index/latest",
+        "altcoinHistory": f"{COINMARKETCAP_PUBLIC}/v1/altcoin-season-index/historical?timeframe=30d",
+        "global": f"{COINMARKETCAP_PUBLIC}/v1/global-metrics/quotes/latest?convert=EUR",
+        "cmc100": f"{COINMARKETCAP_PUBLIC}/v3/index/cmc100-latest",
+        "listings": f"{COINMARKETCAP_PUBLIC}/v3/cryptocurrency/listings/latest?start=1&limit=100&convert=EUR",
+    }
+    results: dict[str, dict] = {}
+    errors: dict[str, str] = {}
+
+    def fetch(name: str, url: str) -> tuple[str, object]:
+        return name, public_json(url, ttl=300)
+
+    with ThreadPoolExecutor(max_workers=7) as executor:
+        jobs = {executor.submit(fetch, name, url): name for name, url in endpoints.items()}
+        for job in as_completed(jobs):
+            name = jobs[job]
+            try:
+                key, payload = job.result()
+                if isinstance(payload, dict):
+                    results[key] = payload
+                else:
+                    errors[name] = "Risposta non valida"
+            except Exception as exc:
+                errors[name] = str(exc)
+
+    fear = results.get("fear", {}).get("data", {})
+    fear_history = results.get("fearHistory", {}).get("data", [])
+    altcoin = results.get("altcoin", {}).get("data", {})
+    altcoin_history = results.get("altcoinHistory", {}).get("data", {}).get("points", [])
+    global_data = results.get("global", {}).get("data", {})
+    global_quote = global_data.get("quote", {}).get("EUR", {}) if isinstance(global_data, dict) else {}
+    cmc100 = results.get("cmc100", {}).get("data", {})
+    listing_rows = results.get("listings", {}).get("data", [])
+    assets = []
+    for item in listing_rows if isinstance(listing_rows, list) else []:
+        if not isinstance(item, dict):
+            continue
+        raw_quote = item.get("quote")
+        quote = next((entry for entry in raw_quote if isinstance(entry, dict) and entry.get("symbol") == "EUR"), {}) if isinstance(raw_quote, list) else (raw_quote.get("EUR", {}) if isinstance(raw_quote, dict) else {})
+        assets.append({
+            "cmcId": item.get("id"),
+            "name": item.get("name"),
+            "symbol": item.get("symbol"),
+            "rank": item.get("cmc_rank"),
+            "platform": item.get("platform", {}).get("name") if isinstance(item.get("platform"), dict) else f"{item.get('symbol', 'Asset')} native",
+            "tags": [tag for tag in item.get("tags", []) if isinstance(tag, str)],
+            "price": quote.get("price"),
+            "marketCap": quote.get("market_cap"),
+            "change24h": quote.get("percent_change_24h"),
+            "change7d": quote.get("percent_change_7d"),
+        })
+
+    as_of_candidates = [
+        results.get("fear", {}).get("status", {}).get("timestamp"),
+        results.get("global", {}).get("status", {}).get("timestamp"),
+        results.get("cmc100", {}).get("status", {}).get("timestamp"),
+    ]
+    return {
+        "source": "CoinMarketCap Keyless Public API",
+        "sourceUrl": "https://coinmarketcap.com/charts/",
+        "asOf": next((value for value in as_of_candidates if value), ""),
+        "fearGreed": fear if isinstance(fear, dict) else {},
+        "fearHistory": fear_history if isinstance(fear_history, list) else [],
+        "altcoinSeason": altcoin if isinstance(altcoin, dict) else {},
+        "altcoinHistory": altcoin_history if isinstance(altcoin_history, list) else [],
+        "global": {
+            "btcDominance": global_data.get("btc_dominance"),
+            "ethDominance": global_data.get("eth_dominance"),
+            "btcDominanceChange24h": global_data.get("btc_dominance_24h_percentage_change"),
+            "activeCryptocurrencies": global_data.get("active_cryptocurrencies"),
+            "activeExchanges": global_data.get("active_exchanges"),
+            "activeMarketPairs": global_data.get("active_market_pairs"),
+            "totalMarketCap": global_quote.get("total_market_cap"),
+            "totalVolume24h": global_quote.get("total_volume_24h"),
+            "marketCapChange24h": global_quote.get("total_market_cap_yesterday_percentage_change"),
+            "volumeChange24h": global_quote.get("total_volume_24h_yesterday_percentage_change"),
+        },
+        "cmc100": {
+            "value": cmc100.get("value") if isinstance(cmc100, dict) else None,
+            "change24h": cmc100.get("value_24h_percentage_change") if isinstance(cmc100, dict) else None,
+            "lastUpdate": cmc100.get("last_update") if isinstance(cmc100, dict) else None,
+            "constituents": cmc100.get("constituents", []) if isinstance(cmc100, dict) else [],
+        },
+        "assets": assets,
+        "errors": errors,
+    }
+
+
 def normalize_book(source: str, bids: list, asks: list, amount_eur: float, side: str) -> dict:
     clean_bids = sorted([(float(x[0]), float(x[1])) for x in bids if float(x[0]) > 0 and float(x[1]) > 0], reverse=True)
     clean_asks = sorted([(float(x[0]), float(x[1])) for x in asks if float(x[0]) > 0 and float(x[1]) > 0])
@@ -875,6 +967,8 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json({"data": fallback["data"], "asOf": fallback["generatedAt"], "source": "fallback", "stale": True})
             if parsed.path == "/api/market-movers":
                 return self.send_json(coinmarketcap_market_movers())
+            if parsed.path == "/api/market-intelligence":
+                return self.send_json(coinmarketcap_market_intelligence())
             if parsed.path == "/api/trending":
                 data = coingecko_get("/search/trending", {}, ttl=600)
                 return self.send_json(data)
