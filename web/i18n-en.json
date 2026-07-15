@@ -974,7 +974,6 @@
   "Momentum o ampiezza deboli: priorità al controllo del rischio.": "Weak momentum or amplitude: Prioritize risk control.",
   "Monitoraggio": "Monitoring",
   "Mostra apertura, massimo, minimo e chiusura per ogni periodo. È il formato più informativo per studiare il prezzo.": "Shows open, high, low and close for each period. It is the most informative format for studying the price.",
-  "Mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto per capitalizzazione, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.": "Shows the five biggest rises and falls among the top 100 cryptocurrencies by capitalization, excluding stablecoins and wrapped or staked versions. It is a retrospective photograph, not a prediction.",
   "Mostra la partecipazione allo scambio.": "Shows participation in the exchange.",
   "Motivazione": "Motivation",
   "Motivo verificabile, orizzonte e dati che sostengono la scelta. Evita “salirà”.": "Verifiable reason, horizon and data that support the choice. Avoid “will go up”.",
@@ -1485,7 +1484,6 @@
   "Spiega come vengono costruiti score, regime e classi di rischio e quali dati non sono inclusi. È la pagina da consultare prima di interpretare una graduatoria.": "It explains how the score, regime and risk classes are constructed and what data is not included. This is the page to consult before interpreting a ranking.",
   "Spread": "Spreads",
   "Stabilisci una percentuale massima del patrimonio destinata alle crypto.": "Establish a maximum percentage of assets allocated to cryptocurrencies.",
-  "Stablecoin, versioni wrapped/staked e asset senza variazione settimanale valida sono esclusi. La classifica descrive il movimento passato: non è una previsione né un invito all’acquisto.": "Stablecoins, wrapped/staked versions and assets without valid weekly variation are excluded. The ranking describes past movement: it is not a forecast nor an invitation to purchase.",
   "Staking, DeFi, NFT e airdrop separati": "Separate staking, DeFi, NFT and airdrop",
   "Staking, DeFi, NFT e airdrop sono separati": "Staking, DeFi, NFT and airdrop are separate",
   "Staking, lending, airdrop, DeFi o NFT": "Staking, lending, airdrop, DeFi or NFT",
@@ -1540,7 +1538,6 @@
   "Token non fungibile identificabile singolarmente e con proprietà potenzialmente uniche.": "Non-fungible token that is individually identifiable and has potentially unique properties.",
   "Token unlock": "Token unlock",
   "Tokenomics": "Tokenomics",
-  "Top 100 per capitalizzazione · ultime 7 giornate": "Top 100 by capitalization · last 7 days",
   "Top 50 in rialzo": "Top 50 rising",
   "Transazioni totali": "Total transactions",
   "Trasferimenti": "Transfers",
@@ -1773,5 +1770,10 @@
   "✓ Dati del Copilota nel browser": "✓ Copilot data in the browser",
   "✓ Export controllato dall’utente": "✓ User-controlled export",
   "✓ Motivazioni visibili": "✓ Visible motivations",
-  "✓ Nessuna esecuzione di ordini": "✓ No order execution"
+  "✓ Nessuna esecuzione di ordini": "✓ No order execution",
+  "Dati ufficiali CoinMarketCap sulle prime 100 crypto per capitalizzazione nelle ultime 7 giornate. Stablecoin, versioni wrapped/staked e asset senza variazione settimanale valida sono esclusi. La classifica descrive il movimento passato: non è una previsione né un invito all’acquisto.": "Official CoinMarketCap data on the top 100 cryptocurrencies by capitalization in the last 7 days. Stablecoins, wrapped/staked versions and assets without valid weekly variation are excluded. The ranking describes past movement: it is not a forecast nor an invitation to purchase.",
+  "Fonte CoinMarketCap ↗": "Source CoinMarketCap ↗",
+  "Nessun dato settimanale disponibile nel campione CoinMarketCap.": "No weekly data available in CoinMarketCap sample.",
+  "Prezzi, ranking, capitalizzazioni e variazioni a 7 giorni arrivano dall’API ufficiale CoinMarketCap. La sezione mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.": "Prices, ranking, capitalizations and 7-day changes come from the official CoinMarketCap API. The section shows the five biggest rises and falls among the top 100 cryptocurrencies, excluding stablecoins and wrapped or staked versions. It is a retrospective photograph, not a prediction.",
+  "noopener,noreferrer": "noopener,noreferrer"
 }

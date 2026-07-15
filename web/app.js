@@ -1,4 +1,4 @@
-const state = { markets: [], scored: [], portfolio: null, plan: null, journal: [], trending: [], news: [], translations: {}, newsFilter: "ALL", currentPage: "overview", demo: false, marketStale: false, marketAsOf: 0, marketSource: "unknown", transactionTotal: 0 };
+const state = { markets: [], scored: [], marketMovers: {gainers:[],losers:[]}, portfolio: null, plan: null, journal: [], trending: [], news: [], translations: {}, newsFilter: "ALL", currentPage: "overview", demo: false, marketStale: false, marketAsOf: 0, marketSource: "unknown", transactionTotal: 0 };
 const $ = (id) => document.getElementById(id);
 const clamp = (x, lo=0, hi=100) => Math.min(hi, Math.max(lo, x));
 const uiLocale = () => window.CryptoRadarI18n?.locale() || "it-IT";
@@ -56,14 +56,15 @@ async function loadAll(showFlash=false){
   try{
     $("notice").classList.add("hidden");
     if(showFlash) $("refreshBtn").classList.add("flash");
-    const [marketResponse,portfolio,plan,journalResponse,trendResponse,newsResponse,config]=await Promise.all([
-      api("/api/markets"), api("/api/portfolio"), api("/api/plan"), api("/api/journal").catch(()=>({entries:[]})),
+    const [marketResponse,moversResponse,portfolio,plan,journalResponse,trendResponse,newsResponse,config]=await Promise.all([
+      api("/api/markets"), api("/api/market-movers").catch(error=>({source:"CoinMarketCap",gainers:[],losers:[],error:error.message})), api("/api/portfolio"), api("/api/plan"), api("/api/journal").catch(()=>({entries:[]})),
       api("/api/trending").catch(()=>({coins:[]})),
       api("/api/news").catch(()=>({articles:[]})), api("/api/config").catch(()=>({demo:false}))
     ]);
     state.demo=Boolean(config.demo);
     state.markets=marketResponse.data;
     state.scored=state.markets.map(scoreCoin).sort((a,b)=>b._score-a._score);
+    state.marketMovers=moversResponse;
     state.portfolio=state.demo?localData("cryptoRadarPortfolio",{currency:"eur",holdings:[]}):portfolio;
     state.plan=state.demo?localData("cryptoRadarPlan",plan):plan;
     state.journal=state.demo?localData("cryptoRadarDecisionJournal",[]):journalResponse.entries||[];
@@ -124,15 +125,17 @@ function renderHomeLanguage(){
 }
 
 function renderWeeklyMovers(){
-  const universe=state.scored.filter(c=>c.market_cap_rank<=100&&!stableLike(c)&&!excludedName.test(c.name)&&Number.isFinite(Number(c.price_change_percentage_7d_in_currency)));
-  const gainers=[...universe].filter(c=>change(c,"7d")>0).sort((a,b)=>change(b,"7d")-change(a,"7d")).slice(0,5);
-  const losers=[...universe].filter(c=>change(c,"7d")<0).sort((a,b)=>change(a,"7d")-change(b,"7d")).slice(0,5);
-  const moverRow=(c,index)=>`<button type="button" class="mover-row" data-mover-id="${esc(c.id)}"><span class="mover-position">${index+1}</span><span class="mover-coin"><img src="${esc(c.image)}" alt=""><span><b>${esc(c.name)}</b><small>${esc(c.symbol.toUpperCase())} · rank #${num(c.market_cap_rank)}</small></span></span><span class="mover-price"><b>${fmtEur(c.current_price)}</b><small>${fmtEur(c.market_cap,true)} market cap</small></span><strong class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</strong></button>`;
+  const gainers=state.marketMovers?.gainers||[],losers=state.marketMovers?.losers||[];
+  const moverRow=(asset,index)=>{const matched=state.scored.find(c=>c.symbol.toUpperCase()===asset.symbol&&c.name.toLowerCase()===asset.name.toLowerCase())||state.scored.find(c=>c.symbol.toUpperCase()===asset.symbol);return `<button type="button" class="mover-row" ${matched?`data-mover-id="${esc(matched.id)}"`:`data-cmc-slug="${esc(asset.slug)}"`}><span class="mover-position">${index+1}</span><span class="mover-coin"><img src="${esc(asset.image)}" alt=""><span><b>${esc(asset.name)}</b><small>${esc(asset.symbol)} · CMC rank #${num(asset.rank)}</small></span></span><span class="mover-price"><b>${fmtEur(asset.price)}</b><small>${fmtEur(asset.marketCap,true)} market cap</small></span><strong class="${pctClass(num(asset.change7d))}">${fmtPct(num(asset.change7d))}</strong></button>`};
   $("weeklyGainersCount").textContent=`${gainers.length}/5`;
   $("weeklyLosersCount").textContent=`${losers.length}/5`;
-  $("weeklyGainers").innerHTML=gainers.map(moverRow).join("")||`<p class="mover-empty muted">Nessun rialzo settimanale disponibile nel campione.</p>`;
-  $("weeklyLosers").innerHTML=losers.map(moverRow).join("")||`<p class="mover-empty muted">Nessun ribasso settimanale disponibile nel campione.</p>`;
+  const unavailable=state.marketMovers?.error?`CoinMarketCap è momentaneamente non disponibile: ${esc(state.marketMovers.error)}`:"Nessun dato settimanale disponibile nel campione CoinMarketCap.";
+  $("weeklyGainers").innerHTML=gainers.map(moverRow).join("")||`<p class="mover-empty muted">${unavailable}</p>`;
+  $("weeklyLosers").innerHTML=losers.map(moverRow).join("")||`<p class="mover-empty muted">${unavailable}</p>`;
+  const asOf=new Date(state.marketMovers?.asOf||"");
+  $("weeklyMoversMeta").textContent=Number.isNaN(asOf.valueOf())?"In attesa dei dati":asOf.toLocaleString(uiLocale(),{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
   document.querySelectorAll("[data-mover-id]").forEach(button=>button.onclick=()=>openDetail(button.dataset.moverId));
+  document.querySelectorAll("[data-cmc-slug]").forEach(button=>button.onclick=()=>window.open(`https://coinmarketcap.com/currencies/${encodeURIComponent(button.dataset.cmcSlug)}/`,"_blank","noopener,noreferrer"));
 }
 
 function renderOverview(){

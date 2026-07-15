@@ -33,6 +33,7 @@ JOURNAL_FILE = DATA_DIR / "decision_journal.json"
 TRANSACTIONS_FILE = DATA_DIR / "transactions.json"
 MARKET_FALLBACK_FILE = ROOT / "market_fallback.json"
 COINGECKO = "https://api.coingecko.com/api/v3"
+COINMARKETCAP_PUBLIC = "https://pro-api.coinmarketcap.com/public-api"
 COINDESK_RSS = "https://www.coindesk.com/arc/outboundfeeds/rss/"
 CRIPTOVALUTA_RSS = "https://www.criptovaluta.it/feed/"
 ESMA_CASP_CSV = "https://www.esma.europa.eu/sites/default/files/2024-12/CASPS.csv"
@@ -609,6 +610,67 @@ def public_json(url: str, ttl: int = 30) -> object:
         raise RuntimeError("Fonte di mercato temporaneamente non disponibile.") from exc
 
 
+def coinmarketcap_market_movers() -> dict:
+    params = urllib.parse.urlencode({"start": "1", "limit": "100", "convert": "EUR"})
+    payload = public_json(f"{COINMARKETCAP_PUBLIC}/v3/cryptocurrency/listings/latest?{params}", ttl=300)
+    if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+        raise RuntimeError("CoinMarketCap non ha restituito una classifica valida.")
+    status = payload.get("status") if isinstance(payload.get("status"), dict) else {}
+    if str(status.get("error_code", "0")) != "0":
+        raise RuntimeError(str(status.get("error_message") or "CoinMarketCap non disponibile."))
+
+    assets = []
+    for item in payload["data"]:
+        if not isinstance(item, dict):
+            continue
+        raw_quote = item.get("quote")
+        if isinstance(raw_quote, list):
+            quote = next((entry for entry in raw_quote if isinstance(entry, dict) and entry.get("symbol") == "EUR"), None)
+        elif isinstance(raw_quote, dict):
+            quote = raw_quote.get("EUR")
+        else:
+            quote = None
+        if not isinstance(quote, dict):
+            continue
+        try:
+            change_7d = float(quote.get("percent_change_7d"))
+            price = float(quote.get("price"))
+            market_cap = float(quote.get("market_cap"))
+            rank = int(item.get("cmc_rank"))
+            cmc_id = int(item.get("id"))
+        except (TypeError, ValueError):
+            continue
+        name = str(item.get("name", "")).strip()
+        tags = {str(tag).lower() for tag in item.get("tags", []) if isinstance(tag, str)}
+        excluded_name = any(term in name.lower() for term in ("wrapped", "bridged", "staked", "restaked", "liquid staking"))
+        if "stablecoin" in tags or excluded_name or not name or not 1 <= rank <= 100:
+            continue
+        assets.append({
+            "cmcId": cmc_id,
+            "name": name,
+            "symbol": str(item.get("symbol", "")).strip().upper()[:15],
+            "slug": str(item.get("slug", "")).strip(),
+            "rank": rank,
+            "price": price,
+            "marketCap": market_cap,
+            "change7d": change_7d,
+            "lastUpdated": str(quote.get("last_updated") or item.get("last_updated") or ""),
+            "image": f"https://s2.coinmarketcap.com/static/img/coins/64x64/{cmc_id}.png",
+        })
+
+    gainers = sorted((asset for asset in assets if asset["change7d"] > 0), key=lambda asset: asset["change7d"], reverse=True)[:5]
+    losers = sorted((asset for asset in assets if asset["change7d"] < 0), key=lambda asset: asset["change7d"])[:5]
+    return {
+        "source": "CoinMarketCap",
+        "sourceUrl": "https://coinmarketcap.com/",
+        "asOf": str(status.get("timestamp") or ""),
+        "universe": "Prime 100 crypto per capitalizzazione CoinMarketCap, escluse stablecoin e versioni wrapped/staked.",
+        "eligibleCount": len(assets),
+        "gainers": gainers,
+        "losers": losers,
+    }
+
+
 def normalize_book(source: str, bids: list, asks: list, amount_eur: float, side: str) -> dict:
     clean_bids = sorted([(float(x[0]), float(x[1])) for x in bids if float(x[0]) > 0 and float(x[1]) > 0], reverse=True)
     clean_asks = sorted([(float(x[0]), float(x[1])) for x in asks if float(x[0]) > 0 and float(x[1]) > 0])
@@ -811,6 +873,8 @@ class Handler(BaseHTTPRequestHandler):
                 except RuntimeError:
                     fallback = json.loads(MARKET_FALLBACK_FILE.read_text(encoding="utf-8"))
                     return self.send_json({"data": fallback["data"], "asOf": fallback["generatedAt"], "source": "fallback", "stale": True})
+            if parsed.path == "/api/market-movers":
+                return self.send_json(coinmarketcap_market_movers())
             if parsed.path == "/api/trending":
                 data = coingecko_get("/search/trending", {}, ttl=600)
                 return self.send_json(data)

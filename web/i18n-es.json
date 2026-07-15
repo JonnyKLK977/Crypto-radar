@@ -974,7 +974,6 @@
   "Momentum o ampiezza deboli: priorità al controllo del rischio.": "Débil impulso o amplitud: Priorizar el control de riesgos.",
   "Monitoraggio": "Monitoreo",
   "Mostra apertura, massimo, minimo e chiusura per ogni periodo. È il formato più informativo per studiare il prezzo.": "Muestra apertura, máximo, mínimo y cierre para cada período. Es el formato más informativo para estudiar el precio.",
-  "Mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto per capitalizzazione, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.": "Muestra las cinco mayores subidas y bajadas entre las 100 principales criptomonedas por capitalización, excluidas las monedas estables y las versiones envueltas o apostadas. Es una fotografía retrospectiva, no una predicción.",
   "Mostra la partecipazione allo scambio.": "Muestra participación en el intercambio.",
   "Motivazione": "Motivación",
   "Motivo verificabile, orizzonte e dati che sostengono la scelta. Evita “salirà”.": "Motivo comprobable, horizonte y datos que avalan la elección. Evite “subirá”.",
@@ -1485,7 +1484,6 @@
   "Spiega come vengono costruiti score, regime e classi di rischio e quali dati non sono inclusi. È la pagina da consultare prima di interpretare una graduatoria.": "Explica cómo se construyen la puntuación, el régimen y las clases de riesgo y qué datos no se incluyen. Esta es la página a consultar antes de interpretar un ranking.",
   "Spread": "diferenciales",
   "Stabilisci una percentuale massima del patrimonio destinata alle crypto.": "Establecer un porcentaje máximo de activos destinados a criptomonedas.",
-  "Stablecoin, versioni wrapped/staked e asset senza variazione settimanale valida sono esclusi. La classifica descrive il movimento passato: non è una previsione né un invito all’acquisto.": "Se excluyen las monedas estables, las versiones empaquetadas/apuestas y los activos sin variación semanal válida. El ranking describe movimientos pasados: no es una previsión ni una invitación a comprar.",
   "Staking, DeFi, NFT e airdrop separati": "Stake separado, DeFi, NFT y airdrop",
   "Staking, DeFi, NFT e airdrop sono separati": "Stake, DeFi, NFT y airdrop están separados",
   "Staking, lending, airdrop, DeFi o NFT": "Apostar, prestar, lanzar desde el aire, DeFi o NFT",
@@ -1540,7 +1538,6 @@
   "Token non fungibile identificabile singolarmente e con proprietà potenzialmente uniche.": "Token no fungible que es identificable individualmente y tiene propiedades potencialmente únicas.",
   "Token unlock": "Desbloqueo de tokens",
   "Tokenomics": "Tokenómica",
-  "Top 100 per capitalizzazione · ultime 7 giornate": "Top 100 por capitalización · últimos 7 días",
   "Top 50 in rialzo": "Top 50 en ascenso",
   "Transazioni totali": "Transacciones totales",
   "Trasferimenti": "Transferencias",
@@ -1773,5 +1770,10 @@
   "✓ Dati del Copilota nel browser": "✓ Datos del copiloto en el navegador",
   "✓ Export controllato dall’utente": "✓ Exportación controlada por el usuario",
   "✓ Motivazioni visibili": "✓ Motivaciones visibles",
-  "✓ Nessuna esecuzione di ordini": "✓ Sin ejecución de órdenes"
+  "✓ Nessuna esecuzione di ordini": "✓ Sin ejecución de órdenes",
+  "Dati ufficiali CoinMarketCap sulle prime 100 crypto per capitalizzazione nelle ultime 7 giornate. Stablecoin, versioni wrapped/staked e asset senza variazione settimanale valida sono esclusi. La classifica descrive il movimento passato: non è una previsione né un invito all’acquisto.": "Datos oficiales de CoinMarketCap sobre las 100 principales criptomonedas por capitalización en los últimos 7 días. Se excluyen las monedas estables, las versiones empaquetadas/apuestas y los activos sin variación semanal válida. El ranking describe movimientos pasados: no es una previsión ni una invitación a comprar.",
+  "Fonte CoinMarketCap ↗": "Fuente CoinMarketCap ↗",
+  "Nessun dato settimanale disponibile nel campione CoinMarketCap.": "No hay datos semanales disponibles en la muestra de CoinMarketCap.",
+  "Prezzi, ranking, capitalizzazioni e variazioni a 7 giorni arrivano dall’API ufficiale CoinMarketCap. La sezione mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.": "Los precios, la clasificación, las capitalizaciones y los cambios de 7 días provienen de la API oficial CoinMarketCap. La sección muestra las cinco mayores subidas y bajadas entre las 100 principales criptomonedas, excluidas las monedas estables y las versiones envueltas o apostadas. Es una fotografía retrospectiva, no una predicción.",
+  "noopener,noreferrer": "sin abrir, sin referencia"
 }
