@@ -44,6 +44,23 @@ Il **Centro operativo** riunisce quattro strumenti salvati localmente nel browse
 
 Le variazioni settimanali precedenti alla prima fotografia sono stime ricostruite dai rendimenti degli asset. Il simulatore non riproduce spread, slippage, profondità di mercato o fiscalità.
 
+## Copilota 360
+
+Il **Copilota 360** è un livello locale di controllo e documentazione, non un servizio di consulenza o esecuzione. Comprende:
+
+- simulatore pre-azione con impatto su concentrazione, allocazione crypto, costi e stress della posizione;
+- semaforo che misura la completezza del processo, senza prevedere il rendimento;
+- Passaporti delle decisioni con tesi, invalidazione, fonti e fotografia dello score;
+- Indicatore di preparazione fiscale con anomalie e checklist annuale;
+- confronto tra fotografie dello score e relative componenti;
+- Radar sicurezza guidato per URL, provider, wallet e contratti;
+- report HTML redatto per familiare o commercialista;
+- backup JSON, profilo locale, inventario e cancellazione dei dati del browser;
+- Tutor contestuale disponibile in tutte le pagine;
+- punteggio di disciplina basato su attività prudenti, non sul numero di operazioni.
+
+I link condivisibili con scadenza e la sincronizzazione tra dispositivi non sono attivi: richiedono account reali, database persistente, isolamento per utente, gestione del consenso e verifica legale. La demo non simula queste garanzie.
+
 Non sono necessarie chiavi API o librerie Python aggiuntive. I dati arrivano dalla API pubblica CoinGecko e il portafoglio viene salvato esclusivamente in `data/portfolio.json`.
 
 La pagina **News & trend** separa volutamente tre concetti diversi:
@@ -75,7 +92,7 @@ Il **Decision Lab** aggiunge:
 
 Il diario viene salvato in `data/decision_journal.json`.
 
-La pagina **Guide per principianti** contiene un percorso educativo in tredici moduli:
+La pagina **Guide per principianti** contiene un percorso educativo in quattordici moduli:
 
 - basi di crypto, token, exchange e wallet;
 - budget, rischio e piano personale;
@@ -88,6 +105,7 @@ La pagina **Guide per principianti** contiene un percorso educativo in tredici m
 - uso guidato di portafoglio, import CSV e Piano personale;
 - manuale completo di Decision Lab e Centro operativo;
 - flusso di News, Metodo e guida fiscale.
+- manuale completo del Copilota 360, della condivisione e del Centro privacy.
 
 Include un glossario ricercabile e una checklist pre-acquisto. L'avanzamento viene memorizzato nel browser e non viene inviato al server.
 

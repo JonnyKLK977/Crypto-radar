@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="/phase10.css">
   <link rel="stylesheet" href="/phase11.css">
   <link rel="stylesheet" href="/phase12.css">
+  <link rel="stylesheet" href="/phase13.css">
 </head>
 <body>
   <div class="shell">
@@ -29,6 +30,7 @@
         <button class="nav" data-target="connections">Exchange & wallet</button>
         <button class="nav" data-target="academy">Guide per principianti</button>
         <button class="nav" data-target="plan">Piano personale</button>
+        <button class="nav" data-target="copilot">Copilota 360</button>
         <button class="nav" data-target="decision">Decision Lab</button>
         <button class="nav" data-target="operations">Centro operativo</button>
         <button class="nav" data-target="news">News & trend</button>
@@ -45,7 +47,7 @@
       </header>
 
       <div id="notice" class="notice hidden"></div>
-      <div id="demoBanner" class="demo-banner hidden"><b>Modalità demo pubblica</b><span>I dati personali non vengono salvati. Portafoglio, piano e diario sono esempi locali in sola lettura.</span></div>
+      <div id="demoBanner" class="demo-banner hidden"><b>Modalità demo pubblica</b><span>Le scritture sul server sono disattivate. Preferenze, Copilota e strumenti operativi possono restare soltanto nel browser e si gestiscono dal Centro privacy.</span></div>
 
       <section id="overview" class="page active">
         <div class="hero-grid">
@@ -314,6 +316,17 @@
                 <label class="lesson-done"><input type="checkbox" data-complete="news-manual"> So usare l’intero flusso senza confondere dati, segnali e consulenza</label>
               </div>
             </details>
+
+            <details class="card lesson" data-lesson="copilot-manual">
+              <summary><span class="lesson-number">14</span><div><b>Come usare il Copilota 360</b><small>Semaforo, Passaporti, fisco, sicurezza, condivisione e privacy</small></div><span class="lesson-time">30 min</span></summary>
+              <div class="lesson-content">
+                <h3>Il significato del semaforo</h3><p>Il risultato verde, giallo o rosso misura quanto il processo dichiarato è completo e coerente con i dati disponibili. Non stima il rendimento, non certifica la crypto e non suggerisce di eseguire l’operazione. Un controllo verde può comunque precedere una perdita totale.</p>
+                <div class="screen-map"><div><b>Prima di comprare</b><p>Inserisci crypto, azione, importo, costi, emozione, tesi, invalidazione e fonti. Conferma soltanto controlli realmente eseguiti. Leggi peso previsto, stress, costi e ogni avviso prima di salvare.</p></div><div><b>Passaporti</b><p>Congelano prezzo, score, componenti, fonti e motivazione. Dopo 7, 30 e 90 giorni mostrano l’andamento del prezzo rispetto alla fotografia, senza attribuire automaticamente merito o colpa alla decisione.</p></div><div><b>Fisco continuo</b><p>Registra transazioni e anomalie e completa la checklist. La percentuale misura preparazione documentale dichiarata, non correttezza della dichiarazione.</p></div><div><b>Perché è cambiato?</b><p>Salva una fotografia degli score. Al controllo successivo vedrai variazione totale e contributi di momentum, liquidità, tokenomics e rischio.</p></div><div><b>Radar sicurezza</b><p>Controlla URL, contratto, registro, permessi, incidenti e test minimo. Il punteggio riflette le verifiche completate e non garantisce che un soggetto sia sicuro.</p></div><div><b>Condividi</b><p>Scegli sezioni, destinatario e occultamento importi. Il file HTML è in sola lettura, ma dopo l’invio non può essere revocato: aprilo e controllalo prima.</p></div><div><b>Privacy</b><p>Gestisci profilo locale, inventario, backup e cancellazione. Il profilo non è un account cloud e non sincronizza dispositivi.</p></div><div><b>Tutor “?”</b><p>Il pulsante in basso apre istruzioni relative alla pagina corrente e collega la guida o lo strumento successivo.</p></div></div>
+                <h3>Procedura consigliata</h3><ol class="learning-steps"><li>Compila prima Portafoglio e Piano personale.</li><li>Ricerca progetto, tokenomics, sicurezza e fonti.</li><li>Esegui il controllo 360 senza spuntare verifiche non effettuate.</li><li>Se il semaforo segnala lacune, correggi il processo e ripeti.</li><li>Salva il Passaporto anche quando decidi di non agire.</li><li>Rivedi i Passaporti nel report settimanale e salva periodicamente gli score.</li><li>Aggiorna il fisco continuo ogni volta che importi nuove operazioni.</li><li>Effettua un backup locale prima di cambiare browser o cancellare dati.</li></ol>
+                <button class="secondary" data-go="copilot">Apri Copilota 360</button>
+                <label class="lesson-done"><input type="checkbox" data-complete="copilot-manual"> So interpretare il semaforo e usare tutti i pannelli senza scambiarli per consulenza</label>
+              </div>
+            </details>
           </div>
 
           <aside class="academy-side">
@@ -391,6 +404,72 @@
           </div>
           <div id="dcaOutput" class="dca-output"><p class="muted">Scegli i parametri per confrontare ingressi mensili e investimento immediato.</p></div>
           <p class="simulation-note">Simulazione semplificata basata sui prezzi storici CoinGecko; non comprende commissioni, spread, staking o fiscalità.</p>
+        </div>
+      </section>
+
+      <section id="copilot" class="page copilot-page">
+        <div class="copilot-hero card">
+          <div><p class="eyebrow">CONTROLLO PRIMA DELL’AZIONE</p><h2>Copilota 360</h2><p>Collega decisione, rischio, comportamento, documenti e fiscalità. Non genera ordini né raccomandazioni personalizzate: evidenzia conseguenze e controlli mancanti.</p></div>
+          <div class="copilot-hero-metrics"><div><span>DISCIPLINA</span><b id="behaviorScore">0</b><small>/100</small></div><div><span>FISCO PRONTO</span><b id="taxReadinessScore">0%</b><small id="taxReadinessLabel">da configurare</small></div><div><span>PASSAPORTI</span><b id="passportCount">0</b><small>salvati localmente</small></div></div>
+        </div>
+        <div class="trust-strip"><span>✓ Dati del Copilota nel browser</span><span>✓ Nessuna esecuzione di ordini</span><span>✓ Motivazioni visibili</span><span>✓ Export controllato dall’utente</span></div>
+
+        <div class="copilot-nav" role="tablist"><button class="chip active" data-copilot-tab="check">Prima di comprare</button><button class="chip" data-copilot-tab="passports">Passaporti</button><button class="chip" data-copilot-tab="fiscal">Fisco continuo</button><button class="chip" data-copilot-tab="scores">Perché è cambiato?</button><button class="chip" data-copilot-tab="security">Radar sicurezza</button><button class="chip" data-copilot-tab="share">Condividi</button><button class="chip" data-copilot-tab="privacy">Privacy</button></div>
+
+        <div id="copilot-check" class="copilot-panel active">
+          <div class="section-title topless"><div><p class="eyebrow">WHAT-IF PRIMA DELL’ORDINE</p><h2>Simulatore delle conseguenze</h2></div><span class="muted">Il semaforo misura completezza e coerenza, non rendimento futuro</span></div>
+          <div class="copilot-check-grid">
+            <article class="card copilot-form">
+              <label>Crypto<select id="copilotCoin"></select></label><label>Azione<select id="copilotAction"><option value="buy">Acquisto</option><option value="sell">Vendita</option><option value="watch">Solo osservazione</option><option value="rebalance">Ribilanciamento</option></select></label>
+              <label>Importo ipotetico (€)<input id="copilotAmount" type="number" min="0" step="10" value="100"></label><label>Costi stimati (%)<input id="copilotFees" type="number" min="0" max="20" step="0.1" value="0.5"></label>
+              <label>Stato emotivo<select id="copilotEmotion"><option value="calmo">Calmo</option><option value="incerto">Incerto</option><option value="fomo">FOMO</option><option value="paura">Paura</option></select></label><label>Orizzonte della decisione<select id="copilotHorizon"><option value="days">Giorni</option><option value="months" selected>Mesi</option><option value="years">Anni</option></select></label>
+              <label class="wide">Tesi verificabile<textarea id="copilotThesis" maxlength="1600" placeholder="Quale fatto sostiene questa scelta? Quali dati posso ricontrollare?"></textarea></label><label class="wide">Condizione d’invalidazione<textarea id="copilotInvalidation" maxlength="1200" placeholder="Quale evento osservabile mi farà riesaminare la decisione?"></textarea></label>
+              <label class="wide">Fonti consultate<textarea id="copilotSources" maxlength="1600" placeholder="Un URL per riga: documentazione, comunicato, dati indipendenti…"></textarea></label>
+              <div class="wide copilot-confirmations"><label class="check"><input id="copilotPlanCheck" type="checkbox"> Ho confrontato l’operazione con il mio Piano personale</label><label class="check"><input id="copilotProjectCheck" type="checkbox"> Comprendo utilità, tokenomics e rischio specifico</label><label class="check"><input id="copilotTaxCheck" type="checkbox"> Ho considerato documentazione e possibile conseguenza fiscale</label></div>
+              <div class="wide decision-actions"><button id="runCopilot" class="primary">Esegui controllo 360</button><button id="savePassport" class="secondary" disabled>Salva Passaporto</button></div>
+            </article>
+            <article class="card copilot-output"><div class="copilot-verdict"><span id="copilotLight" class="verdict-light neutral-light"></span><div><p class="eyebrow">ESITO DEL CONTROLLO</p><h2 id="copilotVerdict">In attesa dei dati</h2><small id="copilotVerdictText">Compila il modulo e avvia l’analisi.</small></div></div><div id="copilotMetrics" class="copilot-metrics"></div><div id="copilotFindings" class="analysis-list"><p class="muted">Qui compariranno concentrazione, scenari, costi, score, qualità della tesi e controlli fiscali.</p></div></article>
+          </div>
+        </div>
+
+        <div id="copilot-passports" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">MEMORIA VERIFICABILE</p><h2>Passaporti delle decisioni</h2></div><button id="exportPassports" class="secondary">Esporta JSON</button></div>
+          <p class="filter-warning">Ogni passaporto congela input, prezzo, score, componenti del modello, impatto e fonti nel momento dell’analisi. Non dimostra che la scelta fosse corretta: rende verificabile il processo.</p>
+          <div id="passportStats" class="summary-grid"></div><div id="passportList" class="passport-list"></div>
+        </div>
+
+        <div id="copilot-fiscal" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">PREPARAZIONE DURANTE L’ANNO</p><h2>Indicatore di preparazione fiscale</h2></div><button id="openTaxGuide" class="secondary" data-go="tax">Apri guida 730</button></div>
+          <div class="fiscal-readiness-grid">
+            <article class="card readiness-meter"><div id="taxReadinessRing" class="readiness-ring"><b>0%</b></div><h3 id="taxReadinessTitle">Configura il controllo</h3><p id="taxReadinessAdvice">Completa la checklist e registra le anomalie ancora aperte.</p></article>
+            <article class="card readiness-form"><div class="recon-numbers"><label>Transazioni totali<input id="fiscalTotalTx" type="number" min="0" step="1"></label><label>Trasferimenti non abbinati<input id="fiscalUnmatched" type="number" min="0" step="1"></label><label>Operazioni senza costo<input id="fiscalMissingCost" type="number" min="0" step="1"></label><label>Eventi da classificare<input id="fiscalUnclassified" type="number" min="0" step="1"></label></div><label>Note per commercialista<textarea id="fiscalNotes" maxlength="2500" placeholder="Dubbi su swap, staking, DeFi, NFT, anni precedenti…"></textarea></label><button id="saveFiscalReadiness" class="primary">Salva situazione</button></article>
+          </div>
+          <div id="fiscalChecklist" class="card fiscal-checklist">
+            <label><input type="checkbox" data-fiscal-ready="allSources"> Ho incluso tutti gli exchange e wallet</label><label><input type="checkbox" data-fiscal-ready="fullYear"> Il periodo copre l’intero anno fiscale</label><label><input type="checkbox" data-fiscal-ready="balances"> Saldi iniziali e finali sono riconciliati</label><label><input type="checkbox" data-fiscal-ready="transfers"> I trasferimenti propri sono abbinati</label><label><input type="checkbox" data-fiscal-ready="costs"> Costi e commissioni sono documentati</label><label><input type="checkbox" data-fiscal-ready="eurValues"> I valori in euro hanno fonte e orario</label><label><input type="checkbox" data-fiscal-ready="special"> Staking, DeFi, NFT e airdrop sono separati</label><label><input type="checkbox" data-fiscal-ready="archive"> CSV originali e ricevute sono archiviati</label><label><input type="checkbox" data-fiscal-ready="review"> Un professionista verificherà i casi dubbi</label><label><input type="checkbox" data-fiscal-ready="payments"> 730-3, F24 e scadenze saranno controllati</label>
+          </div><div id="fiscalGaps" class="risk-insights"></div>
+        </div>
+
+        <div id="copilot-scores" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">TRASPARENZA DEL MODELLO</p><h2>Perché è cambiato lo score?</h2></div><button id="saveScoreSnapshot" class="secondary">Salva fotografia score</button></div>
+          <p class="filter-warning">Il confronto usa l’ultima fotografia salvata su questo browser. Variazioni piccole possono dipendere dall’aggiornamento di prezzo, volume, volatilità o offerta.</p>
+          <div id="scoreChangeSummary" class="summary-grid"></div><div id="scoreChangeList" class="score-change-list"></div>
+        </div>
+
+        <div id="copilot-security" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">CONTROLLO ANTI-TRUFFA</p><h2>Radar sicurezza guidato</h2></div><span class="muted">Non certifica l’affidabilità di un servizio o token</span></div>
+          <div class="security-radar-grid"><article class="card security-radar-form"><label>Tipo di controllo<select id="securityType"><option value="provider">Exchange / fornitore</option><option value="website">Sito o dApp</option><option value="token">Token / contratto</option><option value="wallet">Wallet</option></select></label><label>Nome<input id="securityName" maxlength="100" placeholder="Nome del servizio o token"></label><label>URL ufficiale da verificare<input id="securityUrl" type="url" maxlength="500" placeholder="https://..."></label><label>Rete e contratto / riferimento<input id="securityContract" maxlength="200" placeholder="Rete + contract address, se applicabile"></label><div class="security-confirmations"><label class="check"><input type="checkbox" data-security-check="official"> Il link proviene dalla documentazione ufficiale</label><label class="check"><input type="checkbox" data-security-check="registry"> Ho verificato autorizzazione/registro quando applicabile</label><label class="check"><input type="checkbox" data-security-check="contract"> Ho confrontato il contratto su almeno due fonti</label><label class="check"><input type="checkbox" data-security-check="permissions"> Comprendo permessi e firma richiesta</label><label class="check"><input type="checkbox" data-security-check="incidents"> Ho cercato incidenti, exploit e avvisi recenti</label><label class="check"><input type="checkbox" data-security-check="test"> Posso eseguire un test con importo minimo</label></div><button id="runSecurityRadar" class="primary">Esegui controllo guidato</button></article><article class="card security-radar-output"><div id="securityRadarScore" class="security-score">—</div><h2 id="securityRadarTitle">Nessun controllo eseguito</h2><div id="securityRadarFindings" class="analysis-list"></div><div class="official-inline"><a href="https://www.esma.europa.eu/crypto-assets" target="_blank" rel="noopener noreferrer">ESMA · Crypto e registri ↗</a><a href="https://www.consob.it/web/area-pubblica/occhio-alle-truffe" target="_blank" rel="noopener noreferrer">Consob · Occhio alle truffe ↗</a></div></article></div>
+        </div>
+
+        <div id="copilot-share" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">FAMIGLIA E PROFESSIONISTA</p><h2>Report in sola lettura e redatto</h2></div><span class="muted">Generato sul dispositivo</span></div>
+          <div class="share-grid"><article class="card share-options"><h3>Decidi che cosa includere</h3><label class="check"><input type="checkbox" data-share="overview" checked> Panoramica e posizioni aggregate</label><label class="check"><input type="checkbox" data-share="plan" checked> Limiti del piano e allocazione</label><label class="check"><input type="checkbox" data-share="behavior" checked> Punteggio di disciplina</label><label class="check"><input type="checkbox" data-share="fiscal"> Preparazione fiscale e anomalie</label><label class="check"><input type="checkbox" data-share="passports"> Passaporti delle decisioni</label><label class="check"><input type="checkbox" data-share="notes"> Note fiscali personali</label><label class="check"><input id="shareHideAmounts" type="checkbox"> Nascondi tutti gli importi</label><label>Destinatario<select id="shareAudience"><option value="family">Familiare</option><option value="accountant">Commercialista</option><option value="personal">Archivio personale</option></select></label><button id="generateShareReport" class="primary">Genera report HTML</button><button id="exportAllLocal" class="secondary">Backup completo JSON</button></article><article class="card share-preview"><p class="eyebrow">ANTEPRIMA PRIVACY</p><h2>Prima di condividere</h2><div id="sharePreview" class="risk-insights"><div class="risk-item">Il report non contiene seed phrase, chiavi private o credenziali API.</div><div class="risk-item">Controlla manualmente il file prima di inviarlo.</div><div class="risk-item">Un file scaricato non può essere revocato dopo l’invio.</div></div><p class="tax-warning">I link pubblici con scadenza richiedono account, database persistente, controllo accessi e registri di consenso. Non vengono simulati nella demo.</p></article></div>
+        </div>
+
+        <div id="copilot-privacy" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">CONTROLLO DEI DATI</p><h2>Profilo locale e Centro privacy</h2></div><span class="muted">Nessun account cloud attivo</span></div>
+          <div class="privacy-grid"><article class="card local-profile"><h3>Profilo su questo dispositivo</h3><label>Nome visualizzato<input id="profileName" maxlength="60" placeholder="Es. Mario"></label><label>Esperienza<select id="profileExperience"><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzato</option></select></label><label>Obiettivo principale<select id="profileGoal"><option value="learn">Imparare</option><option value="manage">Gestire il portafoglio</option><option value="risk">Controllare il rischio</option><option value="tax">Preparare la fiscalità</option></select></label><button id="saveLocalProfile" class="primary">Salva profilo locale</button></article><article class="card privacy-inventory"><h3>Dati presenti nel browser</h3><div id="privacyInventory"></div><div class="privacy-actions"><button id="downloadLocalData" class="secondary">Scarica i miei dati</button><button id="deleteLocalData" class="danger-button">Elimina dati locali</button></div></article></div>
+          <article class="card behavior-breakdown-card"><p class="eyebrow">PUNTEGGIO DI DISCIPLINA</p><h2>Premia il processo, non il trading</h2><div id="behaviorBreakdown" class="behavior-breakdown"></div><p class="simulation-note">Non misura competenza, adeguatezza o probabilità di profitto. Aumenta completando attività prudenti e documentabili.</p></article>
+          <article class="card account-roadmap"><p class="eyebrow">PRIMA DI ATTIVARE ACCOUNT REALI</p><h2>Requisiti non negoziabili</h2><div class="professional-grid"><span>Password con hashing robusto e protezione anti-abuso</span><span>Verifica e-mail, recupero sicuro e sessioni revocabili</span><span>Database isolato per utente e backup cifrati</span><span>API exchange cifrate, in sola lettura e mai nei log</span><span>Consenso, informativa privacy e minimizzazione dei dati</span><span>Esportazione, rettifica e cancellazione dell’account</span><span>Audit degli accessi e gestione degli incidenti</span><span>Hosting persistente: non filesystem temporaneo Render</span></div><p class="tax-note">Il profilo locale non è un account e non sincronizza dispositivi. Prima di vendere il servizio, autenticazione e privacy richiedono progettazione backend e verifica legale dedicate.</p></article>
         </div>
       </section>
 
@@ -660,6 +739,8 @@
       </section>
     </main>
   </div>
+  <button id="tutorToggle" class="tutor-toggle" aria-label="Apri tutor contestuale">?</button>
+  <aside id="tutorDrawer" class="tutor-drawer" aria-hidden="true"><div class="tutor-head"><div><p class="eyebrow">TUTOR CONTESTUALE</p><h2 id="tutorTitle">Come posso aiutarti?</h2></div><button id="tutorClose" aria-label="Chiudi">×</button></div><div id="tutorBody" class="tutor-body"></div><div id="tutorActions" class="tutor-actions"></div></aside>
   <script src="/app.js" defer></script>
 </body>
 </html>
