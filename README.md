@@ -96,7 +96,7 @@ Il **Decision Lab** aggiunge:
 
 Il diario viene salvato in `data/decision_journal.json`.
 
-La pagina **Guide per principianti** contiene un percorso educativo in quattordici moduli:
+La pagina **Guide & Manuali** contiene un percorso educativo in quattordici moduli:
 
 - basi di crypto, token, exchange e wallet;
 - budget, rischio e piano personale;
