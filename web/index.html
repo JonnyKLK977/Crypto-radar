@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Crypto Radar</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/phase2.css">
+  <link rel="stylesheet" href="/phase3.css">
+  <link rel="stylesheet" href="/phase4.css">
+  <link rel="stylesheet" href="/phase5.css">
+  <link rel="stylesheet" href="/phase6.css">
+  <link rel="stylesheet" href="/phase7.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">CR</span><div><b>Crypto Radar</b><small>Decision support</small></div></div>
+      <nav>
+        <button class="nav active" data-target="overview">Panoramica</button>
+        <button class="nav" data-target="screener">Opportunity screener</button>
+        <button class="nav" data-target="portfolio">Il mio portafoglio</button>
+        <button class="nav" data-target="connections">Exchange & wallet</button>
+        <button class="nav" data-target="academy">Academy principianti</button>
+        <button class="nav" data-target="plan">Piano personale</button>
+        <button class="nav" data-target="decision">Decision Lab</button>
+        <button class="nav" data-target="news">News & trend</button>
+        <button class="nav" data-target="method">Metodo & rischio</button>
+      </nav>
+      <div class="side-note">Dati pubblici CoinGecko<br><span id="lastUpdate">In attesa dei dati…</span></div>
+    </aside>
+
+    <main>
+      <header>
+        <div><p class="eyebrow">MERCATO CRYPTO · EUR</p><h1 id="pageTitle">Panoramica</h1></div>
+        <button id="refreshBtn" class="secondary">Aggiorna dati</button>
+      </header>
+
+      <div id="notice" class="notice hidden"></div>
+      <div id="demoBanner" class="demo-banner hidden"><b>Modalità demo pubblica</b><span>I dati personali non vengono salvati. Portafoglio, piano e diario sono esempi locali in sola lettura.</span></div>
+
+      <section id="overview" class="page active">
+        <div class="hero-grid">
+          <article class="card regime-card">
+            <div class="card-head"><span>Regime di mercato</span><span id="regimeDot" class="dot"></span></div>
+            <div id="regimeLabel" class="regime">—</div>
+            <p id="regimeText" class="muted">Calcolo basato su BTC, ETH e ampiezza delle prime crypto.</p>
+          </article>
+          <article class="card metric"><span>BTC 24h</span><strong id="btc24">—</strong><small id="btcPrice">—</small></article>
+          <article class="card metric"><span>ETH 24h</span><strong id="eth24">—</strong><small id="ethPrice">—</small></article>
+          <article class="card metric"><span>Ampiezza 7g</span><strong id="breadth">—</strong><small>Top 50 in rialzo</small></article>
+        </div>
+
+        <div class="section-title"><div><p class="eyebrow">POSIZIONI FISSATE</p><h2>POL, ALGO e ADA</h2></div><span class="muted">Segnale quantitativo, non previsione</span></div>
+        <div id="pinnedCards" class="coin-grid skeleton-grid"></div>
+
+        <div class="section-title"><div><p class="eyebrow">SEGNALI MIGLIORI</p><h2>Candidate emerse oggi</h2></div><button class="link-button" data-go="screener">Apri screener →</button></div>
+        <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>Crypto</th><th>Score</th><th>Perché emerge</th><th>Prezzo</th><th>7g</th><th>30g</th><th>Rischio</th></tr></thead><tbody id="topCandidates"></tbody></table></div></div>
+      </section>
+
+      <section id="connections" class="page">
+        <div class="section-title topless"><div><p class="eyebrow">IMPORTAZIONE SICURA</p><h2>Exchange selezionati</h2></div><span class="muted">Prima CSV, poi API in sola lettura</span></div>
+        <div class="exchange-grid">
+          <article class="card exchange-card" data-exchange="coinbase">
+            <div class="exchange-logo coinbase-logo">C</div><div><h2>Coinbase</h2><p>Primo connettore: adatto a iniziare con storico transazioni e portafoglio.</p></div>
+            <span class="connector-status ready">CSV · attivo</span><button class="secondary inspect-csv" data-exchange="coinbase">Importa CSV</button>
+          </article>
+          <article class="card exchange-card" data-exchange="kraken">
+            <div class="exchange-logo kraken-logo">K</div><div><h2>Kraken</h2><p>Supporteremo export Trades e Ledgers, mantenendo commissioni e movimenti distinti.</p></div>
+            <span class="connector-status ready">CSV · attivo</span><button class="secondary inspect-csv" data-exchange="kraken">Importa CSV</button>
+          </article>
+          <article class="card exchange-card" data-exchange="bitvavo">
+            <div class="exchange-logo bitvavo-logo">B</div><div><h2>Bitvavo</h2><p>Terzo connettore orientato agli utenti europei e alla cronologia completa.</p></div>
+            <span class="connector-status ready">CSV · attivo</span><button class="secondary inspect-csv" data-exchange="bitvavo">Importa CSV</button>
+          </article>
+        </div>
+        <input id="exchangeCsv" type="file" accept=".csv,text/csv" hidden>
+        <article class="card csv-inspector">
+          <div><p class="eyebrow">CONTROLLO FORMATO</p><h2 id="csvInspectorTitle">Nessun file selezionato</h2><p id="csvInspectorText" class="muted">Seleziona un export CSV: il file viene letto nel browser e non viene inviato a servizi esterni.</p></div>
+          <div id="csvInspectorResult" class="csv-result"></div>
+        </article>
+        <article class="card import-history-card"><div class="section-title topless"><div><p class="eyebrow">REGISTRO LOCALE</p><h2>Importazioni effettuate</h2></div><span id="transactionTotal" class="muted">0 transazioni</span></div><div id="importHistory" class="import-history"><p class="muted">Nessuna importazione salvata.</p></div></article>
+        <div class="connection-columns">
+          <article class="card insight-card"><p class="eyebrow">FASE SUCCESSIVA</p><h2>Sincronizzazione API</h2><div class="risk-insights"><div class="risk-item rule-ok">Solo permesso di lettura di saldi e transazioni.</div><div class="risk-item">Nessun permesso di trading o prelievo.</div><div class="risk-item">Credenziali cifrate e mai incluse nei log.</div></div></article>
+          <article class="card insight-card"><p class="eyebrow">REGOLE DI IMPORTAZIONE</p><h2>Dati affidabili</h2><div class="risk-insights"><div class="risk-item">Anteprima prima del salvataggio.</div><div class="risk-item">Rilevamento dei duplicati.</div><div class="risk-item">Import annullabile e storico della provenienza.</div></div></article>
+        </div>
+        <p class="simulation-note">L’importazione salva un registro normalizzato locale e conserva la provenienza. Controlla sempre l’anteprima: i formati degli exchange possono cambiare. Il calcolo automatico delle posizioni verrà attivato dopo la riconciliazione di acquisti, trasferimenti e ricompense.</p>
+      </section>
+
+      <section id="academy" class="page">
+        <div class="academy-hero card">
+          <div><p class="eyebrow">CRYPTO ACADEMY</p><h2>Impara prima di investire</h2><p>Un percorso pratico per capire strumenti, rischi, progetti, grafici e fonti. Nessun modulo contiene segnali di acquisto.</p></div>
+          <div class="academy-progress"><strong id="academyProgress">0%</strong><span>percorso completato</span><div class="bar-track"><div id="academyProgressBar" class="bar-fill"></div></div></div>
+        </div>
+
+        <div class="academy-layout">
+          <div class="academy-modules">
+            <details class="card lesson" data-lesson="foundations" open>
+              <summary><span class="lesson-number">01</span><div><b>Crypto e blockchain: dalle fondamenta</b><small>Cosa sono, come funzionano, pagamenti e NFT</small></div><span class="lesson-time">20 min</span></summary>
+              <div class="lesson-content">
+                <h3>Cos'è una criptovaluta?</h3>
+                <p>Una criptovaluta o criptoattività è un bene digitale trasferibile attraverso una rete informatica. Le transazioni vengono autorizzate con firme crittografiche: la chiave privata dimostra che il proprietario ha autorizzato l'operazione, senza dover rivelare la chiave stessa.</p>
+                <p>Non tutte le crypto vogliono essere “denaro”. Alcune servono a pagare le commissioni di una rete, altre partecipano alla governance, alimentano applicazioni, rappresentano attività o incentivano chi protegge il sistema. Possedere un token non significa automaticamente possedere una quota dell'organizzazione che lo sviluppa.</p>
+                <div class="concept-grid"><div><b>Coin</b><span>Asset nativo di una blockchain, usato spesso per commissioni e sicurezza.</span></div><div><b>Token</b><span>Asset creato sopra una blockchain esistente, con una funzione specifica.</span></div><div><b>Exchange</b><span>Intermediario per acquistare e vendere; introduce rischio di controparte.</span></div><div><b>Wallet</b><span>Gestisce le chiavi che permettono di controllare gli asset on-chain.</span></div></div>
+                <h3>Cos'è una blockchain?</h3>
+                <p>È un registro condiviso tra molti computer, chiamati nodi. Le operazioni valide vengono ordinate in blocchi; ogni blocco contiene un riferimento crittografico al precedente. Cambiare un vecchio dato altererebbe i riferimenti successivi e sarebbe rilevato dalla rete.</p>
+                <div class="blockchain-flow" aria-label="Flusso semplificato di una transazione blockchain"><div><b>1</b><span>Il wallet firma</span></div><i>→</i><div><b>2</b><span>La rete riceve</span></div><i>→</i><div><b>3</b><span>I validatori verificano</span></div><i>→</i><div><b>4</b><span>Il blocco viene aggiunto</span></div><i>→</i><div><b>5</b><span>Il registro si aggiorna</span></div></div>
+                <p>Il consenso è il metodo con cui nodi indipendenti concordano sulla versione valida del registro. Proof of Work e Proof of Stake sono due famiglie diverse: cambiano costi, incentivi e modalità di sicurezza. “Decentralizzato” non significa privo di regole o impossibile da attaccare.</p>
+                <h3>Blockchain e pagamenti tradizionali</h3>
+                <div class="payment-table table-wrap"><table><thead><tr><th></th><th>Blockchain pubblica</th><th>Carta</th><th>Bonifico bancario</th><th>Contante</th></tr></thead><tbody>
+                  <tr><td>Chi aggiorna il registro</td><td>Rete e validatori</td><td>Circuito, banca e intermediari</td><td>Banche e sistemi di pagamento</td><td>Nessun registro centrale del singolo scambio</td></tr>
+                  <tr><td>Disponibilità</td><td>In genere 24/7</td><td>Quasi immediata per l'utente; regolamento successivo</td><td>Dipende dal tipo, es. ordinario o istantaneo</td><td>Immediata, solo fisicamente</td></tr>
+                  <tr><td>Reversibilità</td><td>Normalmente irreversibile dopo la conferma</td><td>Possibili contestazioni e chargeback</td><td>Limitata dopo l'esecuzione</td><td>Di fatto irreversibile</td></tr>
+                  <tr><td>Identità</td><td>Indirizzi pseudonimi; attività spesso pubblica</td><td>Intermediari identificano il cliente</td><td>Conti intestati e controlli bancari</td><td>Può essere anonimo nello scambio diretto</td></tr>
+                  <tr><td>Rischio principale</td><td>Chiavi, rete, volatilità, smart contract</td><td>Frode e rischio intermediario</td><td>Errori, frodi e rischio intermediario</td><td>Furto, perdita e contraffazione</td></tr>
+                </tbody></table></div>
+                <p class="formula-note">Una blockchain non è sempre il metodo migliore: un database centrale può essere più veloce ed economico quando esiste un responsabile fidato. La blockchain è utile soprattutto quando più soggetti devono condividere uno stato senza affidarne il controllo operativo a una sola parte.</p>
+                <h3>Crypto fungibili e NFT</h3>
+                <div class="nft-compare"><div><span class="asset-demo coins-demo">1</span><b>Crypto fungibile</b><p>Ogni unità è equivalente a un'altra della stessa tipologia. Un ETH è intercambiabile con un altro ETH, come un euro con un altro euro dello stesso valore.</p></div><div><span class="asset-demo nft-demo">#42</span><b>NFT · non fungibile</b><p>Ogni token è identificabile e può avere proprietà differenti. Può rappresentare un oggetto digitale, un diritto di accesso o un certificato, ma possederlo non trasferisce automaticamente copyright o diritti sul bene collegato.</p></div></div>
+                <div class="beginner-rule"><b>Regola iniziale</b><span>Se non riesci a spiegare in due frasi perché il token esiste e chi dovrebbe usarlo, non sei ancora pronto ad acquistarlo.</span></div>
+                <label class="lesson-done"><input type="checkbox" data-complete="foundations"> So spiegare crypto, blockchain, transazione, consenso e differenza con un NFT</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="risk">
+              <summary><span class="lesson-number">02</span><div><b>Budget, rischio e piano</b><small>Quanto investire e come evitare decisioni impulsive</small></div><span class="lesson-time">10 min</span></summary>
+              <div class="lesson-content">
+                <p>Prima della crypto viene la tua situazione finanziaria. Fondo per emergenze, debiti costosi e spese previste non dovrebbero dipendere da un mercato molto volatile.</p>
+                <h3>Da dove parte davvero un investimento</h3>
+                <p>Investire significa rinunciare oggi alla disponibilità di una somma nella speranza che conservi o aumenti valore nel tempo. Nelle crypto il risultato è particolarmente incerto: il prezzo può scendere molto, un progetto può fallire e un intermediario può diventare insolvente. Per questo il primo obiettivo non è “trovare la moneta migliore”, ma evitare che una perdita comprometta la vita quotidiana.</p>
+                <div class="beginner-scenario"><b>Esempio didattico, non raccomandazione</b><p>Una persona riesce a risparmiare 300 € al mese ma prevede una spesa medica di 1.200 €. Quei 1.200 € non sono capitale investibile. Solo dopo aver separato emergenze e spese vicine può decidere se una parte del risparmio residuo è compatibile con il rischio crypto.</p></div>
+                <ol class="learning-steps"><li>Definisci una somma che puoi vedere perdere senza compromettere obiettivi essenziali.</li><li>Stabilisci una percentuale massima del patrimonio destinata alle crypto.</li><li>Imposta limiti per singola moneta e componente speculativa.</li><li>Scrivi orizzonte, frequenza degli acquisti e condizioni di revisione.</li></ol>
+                <div class="compare-box"><div><b>DCA</b><span>Importi uguali a intervalli regolari. Riduce il rischio di scegliere un solo momento, ma non garantisce profitti.</span></div><div><b>Acquisto immediato</b><span>Espone subito tutto il capitale: può beneficiare di un rialzo, ma aumenta il rischio legato al timing.</span></div></div>
+                <h3>I rischi non sono tutti uguali</h3>
+                <div class="table-wrap"><table><thead><tr><th>Rischio</th><th>Che cosa significa</th><th>Controllo possibile</th></tr></thead><tbody><tr><td>Mercato</td><td>Il prezzo scende anche senza problemi tecnici.</td><td>Dimensione della posizione, diversificazione e orizzonte.</td></tr><tr><td>Progetto</td><td>Utilità, team o tokenomics non funzionano come previsto.</td><td>Ricerca, limiti per singolo asset e revisione della tesi.</td></tr><tr><td>Liquidità</td><td>Non riesci a vendere al prezzo visualizzato.</td><td>Volume, spread, profondità e mercati disponibili.</td></tr><tr><td>Custodia</td><td>Perdita di credenziali, fallimento exchange o furto.</td><td>2FA, diversificazione della custodia e backup sicuri.</td></tr><tr><td>Normativo/fiscale</td><td>Regole, obblighi o disponibilità del servizio cambiano.</td><td>Fonti ufficiali e documentazione completa delle operazioni.</td></tr></tbody></table></div>
+                <h3>Scrivi un piano prima del primo acquisto</h3>
+                <div class="plan-template"><span><b>Obiettivo</b> Perché investo e per quanto tempo?</span><span><b>Budget</b> Quanto posso versare senza usare denaro necessario?</span><span><b>Limiti</b> Quanto può pesare la singola crypto?</span><span><b>Revisione</b> Quale fatto mi farà rivalutare la tesi?</span><span><b>Uscita</b> Come ribilancio o riduco il rischio?</span></div>
+                <label class="lesson-done"><input type="checkbox" data-complete="risk"> Ho definito limiti e perdita massima sostenibile nel Piano personale</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="research">
+              <summary><span class="lesson-number">03</span><div><b>Come analizzare una crypto</b><small>Utilità, adozione, tokenomics e rischi</small></div><span class="lesson-time">15 min</span></summary>
+              <div class="lesson-content">
+                <p>L'analisi fondamentale prova a capire che cosa sostiene la domanda del token e quali eventi potrebbero distruggerla. Non consiste nel trovare argomenti a favore: una buona ricerca cerca deliberatamente anche le ragioni per cui l'investimento potrebbe essere sbagliato.</p>
+                <div class="research-table table-wrap"><table><thead><tr><th>Parametro</th><th>Cosa chiedersi</th><th>Segnale d'allarme</th></tr></thead><tbody>
+                  <tr><td>Problema e utilità</td><td>Quale bisogno risolve? Il token è davvero necessario?</td><td>Descrizione vaga o basata solo sul prezzo.</td></tr>
+                  <tr><td>Team e governance</td><td>Chi sviluppa? Come vengono prese le decisioni?</td><td>Identità, fondi o poteri poco trasparenti.</td></tr>
+                  <tr><td>Adozione</td><td>Utenti, attività, sviluppatori e ricavi stanno crescendo?</td><td>Partnership annunciate senza utilizzo misurabile.</td></tr>
+                  <tr><td>Tokenomics</td><td>Offerta circolante, massima, emissione e sblocchi?</td><td>Grandi unlock o concentrazione in pochi wallet.</td></tr>
+                  <tr><td>Liquidità</td><td>Volume reale e profondità permettono di uscire?</td><td>Volume basso, spread ampio o pochi mercati.</td></tr>
+                  <tr><td>Sicurezza</td><td>Audit, incidenti, dipendenze e decentralizzazione?</td><td>Chiavi amministrative o bridge non documentati.</td></tr>
+                </tbody></table></div>
+                <p class="formula-note"><b>Prezzo unitario basso ≠ crypto economica.</b> Guarda la capitalizzazione: prezzo × offerta circolante. Confrontala anche con la valutazione diluita (FDV).</p>
+                <h3>Procedura di ricerca per principianti</h3>
+                <ol class="learning-steps"><li>Scrivi in una frase il problema risolto e chi dovrebbe usare il prodotto.</li><li>Individua il ruolo indispensabile — oppure non indispensabile — del token.</li><li>Leggi documentazione ufficiale, white paper e pagina dei rischi.</li><li>Controlla offerta circolante, massima, calendario delle emissioni e destinatari iniziali.</li><li>Cerca utilizzo misurabile: attività della rete, commissioni, utenti, sviluppatori o ricavi, secondo il progetto.</li><li>Verifica incidenti, audit e poteri amministrativi.</li><li>Confronta almeno due concorrenti e chiediti perché questo progetto dovrebbe prevalere.</li><li>Scrivi tre motivi contrari all'acquisto e una condizione di invalidazione.</li></ol>
+                <div class="beginner-scenario"><b>Esempio: token a 0,10 €</b><p>Con 20 miliardi di token circolanti, la capitalizzazione è 2 miliardi €. Se l'offerta massima è 100 miliardi, la FDV teorica è 10 miliardi €. Il prezzo di 0,10 € sembra basso, ma la valutazione complessiva e la futura diluizione possono essere elevate.</p></div>
+                <h3>Come leggere gli unlock</h3><p>Un unlock rende trasferibili token prima bloccati per team, investitori o incentivi. Non provoca automaticamente una vendita, ma aumenta l'offerta potenzialmente disponibile. Osserva quantità, percentuale rispetto all'offerta circolante, destinatari, frequenza e liquidità del mercato.</p>
+                <label class="lesson-done"><input type="checkbox" data-complete="research"> So distinguere prezzo, market cap, offerta circolante e FDV</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="charts">
+              <summary><span class="lesson-number">04</span><div><b>Leggere grafici e candele</b><small>OHLC, trend, timeframe, volumi e indicatori</small></div><span class="lesson-time">25 min</span></summary>
+              <div class="lesson-content">
+                <h3>Prima scegli il tipo di grafico</h3>
+                <div class="chart-types"><div><svg viewBox="0 0 150 70"><polyline points="5,58 28,43 50,50 75,25 98,32 125,10 145,18"/></svg><b>Linea</b><span>Collega normalmente i prezzi di chiusura. È pulito per vedere la direzione generale, ma nasconde massimi, minimi e volatilità interna.</span></div><div><svg viewBox="0 0 150 70"><line x1="28" y1="8" x2="28" y2="61"/><rect class="candle-up" x="21" y="28" width="14" height="22"/><line x1="70" y1="9" x2="70" y2="60"/><rect class="candle-down" x="63" y="20" width="14" height="29"/><line x1="112" y1="15" x2="112" y2="62"/><rect class="candle-up" x="105" y="24" width="14" height="25"/></svg><b>Candele</b><span>Mostra apertura, massimo, minimo e chiusura per ogni periodo. È il formato più informativo per studiare il prezzo.</span></div><div><svg viewBox="0 0 150 70"><rect x="8" y="45" width="13" height="20"/><rect x="33" y="30" width="13" height="35"/><rect x="58" y="39" width="13" height="26"/><rect x="83" y="15" width="13" height="50"/><rect x="108" y="24" width="13" height="41"/></svg><b>Volume</b><span>Misura quanto è stato scambiato nel periodo. Non indica da solo se prevalgono compratori o venditori.</span></div></div>
+                <h3>Anatomia di una candela · OHLC</h3>
+                <div class="candle-guide">
+                  <svg viewBox="0 0 460 230" role="img" aria-label="Anatomia delle candele rialzista e ribassista"><line x1="105" y1="20" x2="105" y2="190"/><rect class="candle-up" x="72" y="72" width="66" height="70"/><line class="guide-line" x1="105" y1="20" x2="190" y2="20"/><line class="guide-line" x1="138" y1="72" x2="190" y2="72"/><line class="guide-line" x1="138" y1="142" x2="190" y2="142"/><line class="guide-line" x1="105" y1="190" x2="190" y2="190"/><text x="196" y="25">Massimo</text><text x="196" y="77">Chiusura</text><text x="196" y="147">Apertura</text><text x="196" y="195">Minimo</text><line x1="355" y1="20" x2="355" y2="190"/><rect class="candle-down" x="322" y="64" width="66" height="86"/><text x="56" y="220">Rialzista</text><text x="318" y="220">Ribassista</text></svg>
+                  <div><p><b>Open:</b> primo prezzo del periodo.</p><p><b>High:</b> prezzo massimo raggiunto.</p><p><b>Low:</b> prezzo minimo raggiunto.</p><p><b>Close:</b> ultimo prezzo del periodo.</p><p><b>Corpo:</b> distanza tra apertura e chiusura.</p><p><b>Ombre:</b> estremi raggiunti oltre il corpo.</p></div>
+                </div>
+                <div class="candle-reading"><div><b>Corpo lungo</b><span>Grande distanza fra apertura e chiusura: movimento deciso in quel periodo.</span></div><div><b>Corpo piccolo</b><span>Apertura e chiusura vicine: equilibrio o indecisione, da leggere nel contesto.</span></div><div><b>Ombra superiore lunga</b><span>Il prezzo è salito ma ha restituito terreno prima della chiusura.</span></div><div><b>Ombra inferiore lunga</b><span>Il prezzo è sceso ma ha recuperato prima della chiusura.</span></div></div>
+                <h3>Metodo di lettura in cinque passaggi</h3>
+                <div class="chart-rules"><div><b>1. Parti dal timeframe lungo</b><span>Settimanale e giornaliero mostrano il contesto; timeframe brevi contengono più rumore.</span></div><div><b>2. Cerca massimi e minimi</b><span>Massimi/minimi crescenti suggeriscono un trend rialzista; decrescenti un trend ribassista.</span></div><div><b>3. Conferma con il volume</b><span>Un movimento con volume crescente è generalmente più significativo, non necessariamente duraturo.</span></div><div><b>4. Usa zone, non linee perfette</b><span>Supporti e resistenze sono aree dove domanda e offerta hanno reagito, non barriere certe.</span></div></div>
+                <div class="trend-example"><div><b>Trend rialzista</b><span>Massimo 1 → massimo 2 più alto<br>Minimo 1 → minimo 2 più alto</span></div><div><b>Trend laterale</b><span>Il prezzo oscilla fra due zone senza una sequenza direzionale chiara.</span></div><div><b>Trend ribassista</b><span>Massimi e minimi successivi tendono a essere più bassi.</span></div></div>
+                <h3>Indicatori: cosa dicono davvero</h3>
+                <div class="indicator-table table-wrap"><table><thead><tr><th>Indicatore</th><th>Uso comune</th><th>Limite</th></tr></thead><tbody><tr><td>Media mobile</td><td>Smussa il prezzo e aiuta a descrivere il trend.</td><td>È ritardata perché usa dati passati.</td></tr><tr><td>RSI</td><td>Misura intensità relativa dei movimenti recenti su scala 0–100.</td><td>“Ipercomprato” non significa vendita certa; può restare alto in un trend forte.</td></tr><tr><td>MACD</td><td>Confronta medie mobili per descrivere momentum e possibili cambiamenti.</td><td>Può produrre molti falsi segnali nei mercati laterali.</td></tr><tr><td>Volume</td><td>Mostra la partecipazione allo scambio.</td><td>Dati diversi tra exchange e volume elevato non garantiscono direzione.</td></tr></tbody></table></div>
+                <div class="risk-item warn">RSI, medie mobili e pattern non prevedono il futuro. Sono descrizioni matematiche del prezzo passato e vanno letti insieme a rischio, liquidità e contesto.</div>
+                <label class="lesson-done"><input type="checkbox" data-complete="charts"> So leggere OHLC, corpo, ombre, timeframe, trend, volume e limiti degli indicatori</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="information">
+              <summary><span class="lesson-number">05</span><div><b>Informarsi senza cadere nell'hype</b><small>Fonti, notizie, influencer e verifica</small></div><span class="lesson-time">12 min</span></summary>
+              <div class="lesson-content">
+                <ol class="learning-steps"><li>Parti da documentazione ufficiale, white paper, governance e repository di sviluppo.</li><li>Verifica dati quantitativi con più fonti indipendenti.</li><li>Distingui la data di pubblicazione dalla data dell'evento.</li><li>Cerca conflitti d'interesse: chi parla possiede o viene pagato dal progetto?</li><li>Controlla autorizzazione del fornitore e avvisi delle autorità.</li></ol>
+                <div class="source-ladder"><span class="best">Più solido: dati on-chain, documenti e registri ufficiali</span><span>Da confrontare: analisi indipendenti e stampa specializzata</span><span class="weak">Più debole: social, testimonial, promesse e screenshot</span></div>
+                <h3>Come leggere una notizia crypto</h3>
+                <div class="news-reading-grid"><div><b>1 · Titolo</b><span>Serve ad attirare attenzione: non fermarti qui.</span></div><div><b>2 · Evento originale</b><span>Cerca comunicato, documento, transazione o decisione citata.</span></div><div><b>3 · Data e portata</b><span>È nuovo? È già avvenuto? Riguarda davvero l'intero progetto?</span></div><div><b>4 · Impatto economico</b><span>Modifica domanda, offerta, costi, sicurezza o utilizzo?</span></div><div><b>5 · Conferma</b><span>Confronta una fonte primaria e almeno una fonte indipendente.</span></div><div><b>6 · Reazione</b><span>Non confondere un movimento di prezzo con la prova che il titolo sia corretto.</span></div></div>
+                <div class="beginner-scenario"><b>Attenzione alle “partnership”</b><p>Un accordo può essere una prova tecnica limitata, un'integrazione commerciale o un semplice memorandum. Verifica chi lo annuncia, cosa verrà realmente utilizzato, tempi, valore economico e se il token è necessario.</p></div>
+                <label class="lesson-done"><input type="checkbox" data-complete="information"> Verifico fonte, data, interesse economico e conferme indipendenti</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="security">
+              <summary><span class="lesson-number">06</span><div><b>Sicurezza e custodia</b><small>Account, wallet, seed phrase e truffe</small></div><span class="lesson-time">12 min</span></summary>
+              <div class="lesson-content">
+                <div class="security-grid"><div><b>Account exchange</b><span>Password unica, gestore password, 2FA con app o chiave hardware, codici di recupero offline.</span></div><div><b>Seed phrase</b><span>Non fotografarla, non salvarla nel cloud e non inserirla mai su siti ricevuti via messaggio.</span></div><div><b>Trasferimenti</b><span>Controlla rete e indirizzo; per somme rilevanti esegui prima un piccolo test.</span></div><div><b>API</b><span>Solo lettura quando possibile; prelievi e trading disattivati, IP limitati e chiavi revocabili.</span></div></div>
+                <h3>Custodial e self-custody</h3>
+                <div class="compare-box"><div><b>Custodial · exchange</b><span>Il fornitore controlla operativamente le chiavi. Recupero dell'account più semplice, ma dipendi da sicurezza, solvibilità, regole e disponibilità del servizio.</span></div><div><b>Self-custody · wallet personale</b><span>Controlli le chiavi e hai maggiore autonomia. Errori, perdita della seed phrase o firme malevole possono essere irreversibili.</span></div></div>
+                <h3>Prima di inviare una transazione</h3><ol class="learning-steps"><li>Controlla asset e rete su entrambi i lati: lo stesso ticker può esistere su reti diverse.</li><li>Verifica indirizzo iniziale e finale, senza fidarti solo degli appunti copiati.</li><li>Controlla memo o destination tag quando richiesto.</li><li>Leggi commissione e importo netto ricevuto.</li><li>Esegui un test minimo prima di una somma importante.</li><li>Attendi la conferma e conserva hash e documentazione.</li></ol>
+                <div class="risk-item danger">Nessuna assistenza legittima ti chiederà seed phrase, chiave privata o trasferimenti per “sbloccare” il conto.</div>
+                <label class="lesson-done"><input type="checkbox" data-complete="security"> Ho attivato 2FA e so che seed phrase e chiavi private non si condividono</label>
+              </div>
+            </details>
+          </div>
+
+          <aside class="academy-side">
+            <article class="card checklist-card"><p class="eyebrow">PRIMA DI COMPRARE</p><h2>Checklist rapida</h2><label><input type="checkbox" data-check="understand"> Capisco utilità e rischi</label><label><input type="checkbox" data-check="budget"> L'importo rispetta il budget</label><label><input type="checkbox" data-check="research"> Ho verificato più fonti</label><label><input type="checkbox" data-check="tokenomics"> Ho controllato offerta e unlock</label><label><input type="checkbox" data-check="exit"> Ho scritto quando riesaminare</label><div id="academyCheckResult" class="check-result">0/5 controlli</div></article>
+            <article class="card glossary-card"><p class="eyebrow">GLOSSARIO</p><h2>Parole essenziali</h2><input id="glossarySearch" type="search" placeholder="Cerca un termine…"><div id="glossaryList"></div></article>
+            <article class="card official-sources"><p class="eyebrow">FONTI AUTOREVOLI</p><h2>Approfondisci</h2><a href="https://economiapertutti.bancaditalia.it/aree-tematiche/risparmio-e-investimenti/le-cripto-attivita/index.html" target="_blank" rel="noopener noreferrer">Banca d'Italia · Criptoattività ↗</a><a href="https://www.esma.europa.eu/press-news/esma-news/eu-supervisory-authorities-warn-consumers-risks-and-limited-protection-certain" target="_blank" rel="noopener noreferrer">ESMA · Rischi e tutele ↗</a><a href="https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica" target="_blank" rel="noopener noreferrer">ESMA · Registro MiCA ↗</a><a href="https://ethereum.org/developers/docs/intro-to-ethereum/" target="_blank" rel="noopener noreferrer">Ethereum.org · Blockchain ↗</a><a href="https://ethereum.org/nft/" target="_blank" rel="noopener noreferrer">Ethereum.org · NFT ↗</a><a href="https://bitcoin.org/en/bitcoin-paper" target="_blank" rel="noopener noreferrer">Bitcoin · White paper ↗</a></article>
+          </aside>
+        </div>
+        <p class="simulation-note">Contenuto educativo generale: non è consulenza finanziaria, fiscale o legale e non valuta l'adeguatezza di un investimento per la tua situazione personale.</p>
+      </section>
+
+      <section id="screener" class="page">
+        <div class="card filters">
+          <label>Capitalizzazione minima<input id="minCap" type="number" value="100" min="10" step="50"><small>milioni €</small></label>
+          <label>Volume 24h minimo<input id="minVolume" type="number" value="5" min="1" step="5"><small>milioni €</small></label>
+          <label>Prezzo unitario massimo<input id="maxPrice" type="number" value="10" min="0" step="1"><small>€ · non indica il valore reale</small></label>
+          <label>Rischio massimo<select id="maxRisk"><option value="all">Tutti</option><option value="medio">Medio o inferiore</option><option value="basso">Solo basso</option></select><small>Filtro di volatilità</small></label>
+          <button id="applyFilters" class="primary">Applica filtri</button>
+        </div>
+        <p class="filter-warning">Il filtro sul prezzo serve solo a trovare token acquistabili con molte unità. Capitalizzazione e diluizione restano le metriche economiche principali.</p>
+        <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>#</th><th>Crypto</th><th>Score</th><th>Motivazione</th><th>Prezzo</th><th>Market cap</th><th>7g</th><th>30g</th><th>FDV/MC</th><th>Rischio</th></tr></thead><tbody id="screenerRows"></tbody></table></div></div>
+        <p id="resultCount" class="muted result-count"></p>
+      </section>
+
+      <section id="portfolio" class="page">
+        <div class="summary-grid">
+          <article class="card metric"><span>Valore attuale</span><strong id="portfolioValue">€0</strong><small>Solo posizioni compilate</small></article>
+          <article class="card metric"><span>Capitale investito</span><strong id="portfolioCost">€0</strong><small>Costo medio × quantità</small></article>
+          <article class="card metric"><span>Risultato</span><strong id="portfolioPnl">€0</strong><small id="portfolioPnlPct">0%</small></article>
+        </div>
+        <div class="section-title"><div><p class="eyebrow">DATI LOCALI</p><h2>Le tue posizioni</h2></div><span class="muted">Non viene collegato alcun exchange</span></div>
+        <div id="holdingEditors" class="holding-editors"></div>
+        <button id="savePortfolio" class="primary">Salva portafoglio</button>
+        <div class="portfolio-insights">
+          <article class="card insight-card"><p class="eyebrow">ALLOCAZIONE</p><h2>Distribuzione attuale</h2><div id="allocationBars" class="allocation-bars"></div></article>
+          <article class="card insight-card"><p class="eyebrow">CONTROLLO RISCHIO</p><h2>Osservazioni</h2><div id="riskInsights" class="risk-insights"></div></article>
+        </div>
+      </section>
+
+      <section id="plan" class="page">
+        <div class="section-title topless"><div><p class="eyebrow">INVESTMENT POLICY</p><h2>Le tue regole prima del mercato</h2></div><span class="muted">Dati salvati solo localmente</span></div>
+        <div class="card plan-form">
+          <label>Capitale totale investibile (€)<input id="planCapital" type="number" min="0" step="100" placeholder="0"><small>Include anche la parte non ancora investita</small></label>
+          <label>Versamento mensile (€)<input id="planMonthly" type="number" min="0" step="10"><small>Budget DCA ordinario</small></label>
+          <label>Orizzonte (anni)<input id="planHorizon" type="number" min="1" max="50"><small>Periodo previsto</small></label>
+          <label>Perdita tollerabile (%)<input id="planLoss" type="number" min="0" max="100"><small>Prima di perdere serenità finanziaria</small></label>
+          <label>Crypto massimo (%)<input id="planCryptoMax" type="number" min="0" max="100"><small>Sul capitale investibile totale</small></label>
+          <label>Singola crypto massimo (%)<input id="planCoinMax" type="number" min="0" max="100"><small>Sul portafoglio crypto</small></label>
+          <label>Speculativo massimo (%)<input id="planSpecMax" type="number" min="0" max="100"><small>Nuove opportunità ad alto rischio</small></label>
+          <label>Leva consentita<select id="planLeverage"><option value="false">No</option><option value="true">Sì</option></select><small>La leva amplifica anche le perdite</small></label>
+        </div>
+
+        <div class="plan-columns">
+          <article class="card plan-panel">
+            <p class="eyebrow">PORTAFOGLIO OBIETTIVO</p><h2>Allocazione desiderata</h2>
+            <div class="table-wrap target-table"><table><thead><tr><th>Crypto</th><th>Attuale</th><th>Obiettivo</th><th>Scostamento</th></tr></thead><tbody id="targetRows"></tbody></table></div>
+            <div id="targetTotal" class="target-total"></div>
+            <button id="savePlan" class="primary">Salva piano</button>
+          </article>
+          <article class="card plan-panel">
+            <p class="eyebrow">CHECK AUTOMATICO</p><h2>Coerenza con le regole</h2>
+            <div id="ruleChecks" class="risk-insights"></div>
+            <p class="eyebrow next-title">PROSSIMO VERSAMENTO</p>
+            <div id="nextContribution" class="next-contribution"></div>
+          </article>
+        </div>
+
+        <div class="section-title"><div><p class="eyebrow">SIMULAZIONE STORICA</p><h2>DCA contro acquisto immediato</h2></div><span class="muted">Il passato non prevede il futuro</span></div>
+        <div class="card dca-box">
+          <div class="dca-controls">
+            <label>Crypto<select id="dcaCoin"><option value="bitcoin">Bitcoin (BTC)</option><option value="ethereum">Ethereum (ETH)</option><option value="polygon-ecosystem-token">POL</option><option value="algorand">Algorand (ALGO)</option><option value="cardano">Cardano (ADA)</option></select></label>
+            <label>Importo mensile (€)<input id="dcaMonthly" type="number" value="100" min="1" step="10"></label>
+            <label>Durata<select id="dcaMonths"><option value="3">3 mesi</option><option value="6">6 mesi</option><option value="12" selected>12 mesi</option></select></label>
+            <button id="runDca" class="primary">Calcola</button>
+          </div>
+          <div id="dcaOutput" class="dca-output"><p class="muted">Scegli i parametri per confrontare ingressi mensili e investimento immediato.</p></div>
+          <p class="simulation-note">Simulazione semplificata basata sui prezzi storici CoinGecko; non comprende commissioni, spread, staking o fiscalità.</p>
+        </div>
+      </section>
+
+      <section id="decision" class="page">
+        <div class="section-title topless"><div><p class="eyebrow">PRIMA DI AGIRE</p><h2>Controllo della decisione</h2></div><span class="muted">Analisi di coerenza, non consiglio finanziario</span></div>
+        <div class="decision-grid">
+          <article class="card decision-form">
+            <label>Crypto<select id="tradeCoin"></select></label>
+            <label>Decisione<select id="tradeAction"><option value="buy">Acquisto</option><option value="watch">Osservazione</option><option value="sell">Vendita</option><option value="rebalance">Ribilanciamento</option></select></label>
+            <label>Importo ipotetico (€)<input id="tradeAmount" type="number" min="0" step="10" value="100"></label>
+            <label>Stato emotivo<select id="tradeEmotion"><option value="calmo">Calmo</option><option value="incerto">Incerto</option><option value="fomo">FOMO</option><option value="paura">Paura</option></select></label>
+            <label class="wide">Perché sto considerando questa decisione?<textarea id="tradeThesis" maxlength="2000" placeholder="Tesi, orizzonte ed elementi verificabili…"></textarea></label>
+            <label class="wide">Cosa invaliderebbe la tesi?<textarea id="tradeInvalidation" maxlength="2000" placeholder="Evento o condizione che mi farebbe riesaminare la posizione…"></textarea></label>
+            <label class="check wide"><input id="tradeFollowPlan" type="checkbox"> La decisione rispetta il piano che ho definito</label>
+            <div class="decision-actions wide"><button id="analyzeTrade" class="primary">Analizza impatto</button><button id="saveDecision" class="secondary">Salva nel diario</button></div>
+          </article>
+          <article class="card decision-analysis"><p class="eyebrow">IMPATTO PREVISTO</p><h2>Risultato del controllo</h2><div id="tradeAnalysis" class="analysis-list"><p class="muted">Inserisci una decisione e premi “Analizza impatto”.</p></div></article>
+        </div>
+
+        <div class="section-title"><div><p class="eyebrow">SCENARI IPOTETICI</p><h2>Stress test del portafoglio</h2></div><div class="preset-row"><button class="chip" data-stress="correction">Correzione</button><button class="chip active" data-stress="winter">Crypto winter</button><button class="chip" data-stress="alt">Stress altcoin</button></div></div>
+        <div class="card stress-box">
+          <div class="stress-controls">
+            <label>Shock BTC <b id="btcShockLabel">−35%</b><input id="btcShock" type="range" min="-90" max="0" value="-35"></label>
+            <label>Shock ETH <b id="ethShockLabel">−45%</b><input id="ethShock" type="range" min="-90" max="0" value="-45"></label>
+            <label>Shock altcoin <b id="altShockLabel">−60%</b><input id="altShock" type="range" min="-95" max="0" value="-60"></label>
+          </div>
+          <div id="stressSummary" class="stress-summary"></div>
+          <div class="table-wrap"><table><thead><tr><th>Posizione</th><th>Valore attuale</th><th>Shock</th><th>Valore simulato</th><th>Perdita</th></tr></thead><tbody id="stressRows"></tbody></table></div>
+          <p class="simulation-note">È una simulazione lineare e semplificata: non considera correlazioni dinamiche, liquidità o variazioni dei cambi.</p>
+        </div>
+
+        <div class="section-title"><div><p class="eyebrow">MEMORIA DEL PROCESSO</p><h2>Diario delle decisioni</h2></div><span class="muted">Le decisioni restano sul dispositivo</span></div>
+        <div id="journalStats" class="summary-grid"></div>
+        <div id="journalList" class="journal-list"></div>
+      </section>
+
+      <section id="news" class="page">
+        <div class="section-title topless"><div><p class="eyebrow">INTERESSE DEL MERCATO</p><h2>Trending nelle ultime 24 ore</h2></div><span class="muted">Popolarità ≠ qualità</span></div>
+        <div id="trendingCards" class="trend-grid"></div>
+        <div class="section-title"><div><p class="eyebrow">FONTE ITALIANA</p><h2>Ultime da Criptovaluta.it</h2></div><a class="link-button" href="https://www.criptovaluta.it/" target="_blank" rel="noopener noreferrer">Visita il sito ↗</a></div>
+        <p class="filter-warning italian-source-note">Titoli pubblicati direttamente in italiano. La fonte resta separata dallo score e non costituisce una raccomandazione dell’app.</p>
+        <div id="italianNewsList" class="news-list italian-news-list"></div>
+        <div class="section-title"><div><p class="eyebrow">CONTESTO INFORMATIVO</p><h2>Ultime notizie</h2></div><div id="newsFilters" class="chip-row"><button class="chip active" data-filter="ALL">Tutte</button><button class="chip" data-filter="PORTFOLIO">Portafoglio</button><button class="chip" data-filter="POL">POL</button><button class="chip" data-filter="ALGO">ALGO</button><button class="chip" data-filter="ADA">ADA</button></div></div>
+        <p class="filter-warning">I titoli vengono tradotti automaticamente in italiano; l’originale resta visibile sotto. Le notizie forniscono contesto e non modificano lo score.</p>
+        <div id="newsList" class="news-list"></div>
+      </section>
+
+      <section id="detail" class="page">
+        <button id="backBtn" class="link-button">← Torna indietro</button>
+        <div class="detail-head"><div><p class="eyebrow">ANALISI 365 GIORNI</p><h2 id="detailTitle">—</h2></div><div id="detailScore" class="score-ring">—</div></div>
+        <div class="card chart-card"><svg id="priceChart" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-label="Grafico prezzo"></svg></div>
+        <div id="detailMetrics" class="summary-grid"></div>
+      </section>
+
+      <section id="method" class="page">
+        <article class="card prose">
+          <p class="eyebrow">VERSIONE 0.1</p><h2>Come viene calcolato lo score</h2>
+          <p>Lo score ordina le crypto, ma non stima il rendimento futuro. Combina momentum (30%), liquidità (25%), tokenomics (20%) e controllo del rischio (25%). Notizie e popolarità restano volutamente separate.</p>
+          <div class="method-grid">
+            <div><b>Momentum</b><span>Variazioni 7 e 30 giorni, con penalità per rialzi giornalieri estremi.</span></div>
+            <div><b>Liquidità</b><span>Volume rispetto alla capitalizzazione e dimensione del mercato.</span></div>
+            <div><b>Tokenomics</b><span>Rapporto fra market cap e valutazione completamente diluita.</span></div>
+            <div><b>Rischio</b><span>Volatilità recente, drawdown e posizione nella classifica.</span></div>
+          </div>
+          <div class="risk-box"><b>Importante</b><p>Un punteggio alto non significa “comprare”. Prima di investire considera orizzonte, diversificazione, perdita massima sostenibile e rischio specifico del progetto. Evita leva e denaro necessario per spese o emergenze.</p></div>
+        </article>
+      </section>
+    </main>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>

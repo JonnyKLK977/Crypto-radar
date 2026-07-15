@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: crypto-radar-demo
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: CRYPTO_RADAR_DEMO
+        value: "1"
+      - key: CRYPTO_RADAR_HOST
+        value: "0.0.0.0"
+      - key: CRYPTO_RADAR_DATA_DIR
+        value: /tmp/crypto-radar
