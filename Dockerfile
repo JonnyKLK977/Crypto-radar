@@ -9,6 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 COPY app.py ./
+COPY market_fallback.json ./
 COPY web ./web
 
 RUN useradd --system --uid 10001 appuser \
