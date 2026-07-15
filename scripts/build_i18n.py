@@ -19,6 +19,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 SPLIT = "<<<CR_SPLIT>>>"
+MANUAL_OVERRIDES = {
+    "en": {
+        "Ultime da Criptovaluta.it": "Latest from Criptovaluta.it",
+        "Apri Criptovaluta.it ↗": "Open Criptovaluta.it ↗",
+        "La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.": "The Home page shows the latest headlines from Criptovaluta.it. Always open the source and keep information separate from the quantitative score.",
+        "Trending misura attenzione, non qualità. Criptovaluta.it offre titoli italiani; le altre notizie sono tradotte mostrando anche l’originale. Usa i filtri Portafoglio/POL/ALGO/ADA e apri sempre la fonte.": "Trending measures attention, not quality. Criptovaluta.it provides Italian-language headlines; other news is translated while keeping the original visible. Use the Portfolio/POL/ALGO/ADA filters and always open the source.",
+    },
+    "es": {
+        "Ultime da Criptovaluta.it": "Lo último de Criptovaluta.it",
+        "Apri Criptovaluta.it ↗": "Abrir Criptovaluta.it ↗",
+        "La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.": "La página de inicio muestra los últimos titulares de Criptovaluta.it. Abra siempre la fuente y mantenga la información separada de la puntuación cuantitativa.",
+        "Trending misura attenzione, non qualità. Criptovaluta.it offre titoli italiani; le altre notizie sono tradotte mostrando anche l’originale. Usa i filtri Portafoglio/POL/ALGO/ADA e apri sempre la fonte.": "Las tendencias miden la atención, no la calidad. Criptovaluta.it ofrece titulares en italiano; las demás noticias se traducen manteniendo visible el original. Use los filtros Cartera/POL/ALGO/ADA y abra siempre la fuente.",
+    },
+}
 
 
 def clean(value: str) -> str:
@@ -126,6 +140,8 @@ def build(target: str) -> None:
                 time.sleep(1.5 * (attempt + 1))
         print(f"{target}: batch {index}/{len(all_batches)}")
         time.sleep(0.12)
+    output = {source: value.replace("Criptocurrency.it", "Criptovaluta.it") for source, value in output.items()}
+    output.update(MANUAL_OVERRIDES.get(target, {}))
     destination.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"wrote {destination} ({len(output)} entries)")
 

@@ -1,5 +1,5 @@
-const CACHE_NAME="crypto-radar-shell-v2";
-const SHELL=["/","/styles.css","/phase2.css","/phase3.css","/phase4.css","/phase5.css","/phase6.css","/phase7.css","/phase8.css","/phase9.css","/phase10.css","/phase11.css","/phase12.css","/phase13.css","/phase14.css","/phase15.css","/app.js","/i18n.js","/i18n-en.json","/i18n-es.json","/icon.svg","/manifest.webmanifest"];
+const CACHE_NAME="crypto-radar-shell-v3";
+const SHELL=["/","/styles.css","/phase2.css","/phase3.css","/phase4.css","/phase5.css","/phase6.css","/phase7.css","/phase8.css","/phase9.css","/phase10.css","/phase11.css","/phase12.css","/phase13.css","/phase14.css","/phase15.css","/phase16.css","/app.js","/i18n.js","/i18n-en.json","/i18n-es.json","/icon.svg","/manifest.webmanifest"];
 
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.allSettled(SHELL.map(path=>cache.add(path)))));

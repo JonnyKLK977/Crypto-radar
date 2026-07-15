@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/phase13.css">
   <link rel="stylesheet" href="/phase14.css">
   <link rel="stylesheet" href="/phase15.css">
+  <link rel="stylesheet" href="/phase16.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -56,6 +57,15 @@
       <div id="demoBanner" class="demo-banner hidden"><b>Modalità demo pubblica</b><span>Le scritture sul server sono disattivate. Preferenze, Copilota e strumenti operativi possono restare soltanto nel browser e si gestiscono dal Centro privacy.</span></div>
 
       <section id="overview" class="page active">
+        <article class="card home-language-card">
+          <div><p class="eyebrow">LINGUA DELL’APP</p><h2>Scegli come visualizzare Crypto Radar</h2><span>La preferenza viene salvata su questo browser e vale per tutta l’app.</span></div>
+          <div class="home-language-buttons" role="group" aria-label="Seleziona la lingua della Home">
+            <button type="button" data-home-language="it"><span aria-hidden="true">🇮🇹</span> Italiano</button>
+            <button type="button" data-home-language="en"><span aria-hidden="true">🇬🇧</span> English</button>
+            <button type="button" data-home-language="es"><span aria-hidden="true">🇪🇸</span> Español</button>
+          </div>
+        </article>
+
         <div class="hero-grid">
           <article class="card regime-card">
             <div class="card-head"><span>Regime di mercato</span><span id="regimeDot" class="dot"></span></div>
@@ -65,6 +75,19 @@
           <article class="card metric"><span>BTC 24h</span><strong id="btc24">—</strong><small id="btcPrice">—</small></article>
           <article class="card metric"><span>ETH 24h</span><strong id="eth24">—</strong><small id="ethPrice">—</small></article>
           <article class="card metric"><span>Ampiezza 7g</span><strong id="breadth">—</strong><small>Top 50 in rialzo</small></article>
+        </div>
+
+        <div class="section-title weekly-movers-heading"><div><p class="eyebrow">MOVIMENTI SETTIMANALI</p><h2>Chi è salito e chi è sceso di più</h2></div><span class="muted">Top 100 per capitalizzazione · ultime 7 giornate</span></div>
+        <p class="market-scope-note">Stablecoin, versioni wrapped/staked e asset senza variazione settimanale valida sono esclusi. La classifica descrive il movimento passato: non è una previsione né un invito all’acquisto.</p>
+        <div class="weekly-movers-grid">
+          <article class="card mover-panel gainers-panel">
+            <div class="mover-panel-title"><div><span class="mover-icon positive">↗</span><div><p class="eyebrow">PERFORMANCE POSITIVA</p><h3>Migliori della settimana</h3></div></div><span id="weeklyGainersCount" class="muted">—</span></div>
+            <div id="weeklyGainers" class="mover-list"></div>
+          </article>
+          <article class="card mover-panel losers-panel">
+            <div class="mover-panel-title"><div><span class="mover-icon negative">↘</span><div><p class="eyebrow">PERFORMANCE NEGATIVA</p><h3>Peggiori della settimana</h3></div></div><span id="weeklyLosersCount" class="muted">—</span></div>
+            <div id="weeklyLosers" class="mover-list"></div>
+          </article>
         </div>
 
         <div class="section-title pinned-heading"><div><p class="eyebrow">POSIZIONI FISSATE</p><h2 id="pinnedTitle">Le tue crypto</h2></div><div class="pinned-heading-actions"><span id="pinnedCount" class="muted">0/5 selezionate</span><button id="managePinned" class="secondary">Gestisci</button></div></div>
@@ -78,6 +101,10 @@
 
         <div class="section-title"><div><p class="eyebrow">SEGNALI MIGLIORI</p><h2>Candidate emerse oggi</h2></div><button class="link-button" data-go="screener">Apri screener →</button></div>
         <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>Crypto</th><th>Score</th><th>Perché emerge</th><th>Prezzo</th><th>7g</th><th>30g</th><th>Rischio</th></tr></thead><tbody id="topCandidates"></tbody></table></div></div>
+
+        <div class="section-title home-news-heading"><div><p class="eyebrow">NOTIZIE ITALIANE</p><h2>Ultime da Criptovaluta.it</h2></div><div class="home-news-actions"><button class="link-button" data-go="news">Tutte le notizie →</button><a class="secondary" href="https://www.criptovaluta.it/" target="_blank" rel="noopener noreferrer">Apri Criptovaluta.it ↗</a></div></div>
+        <p class="market-scope-note">I titoli sono mostrati per informazione e restano separati da score e classifiche. Apri l’articolo e verifica sempre fonte, data e contesto.</p>
+        <div id="homeItalianNewsList" class="home-news-grid"></div>
       </section>
 
       <section id="connections" class="page">
@@ -262,7 +289,7 @@
             <details class="card lesson" data-lesson="app-start">
               <summary><span class="lesson-number">08</span><div><b>Panoramica e Opportunity screener</b><small>Leggere regime, score, rischio e filtri senza scambiarli per previsioni</small></div><span class="lesson-time">18 min</span></summary>
               <div class="lesson-content">
-                <h3>Panoramica</h3><div class="field-guide"><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Posizioni fissate</b><span>Premi “Gestisci” e scegli fino a 5 crypto personali. La selezione resta nel browser ed è separata dal portafoglio.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div></div>
+                <h3>Panoramica</h3><div class="field-guide"><div><b>Lingua della Home</b><span>Seleziona italiano, inglese o spagnolo. La scelta viene ricordata nel browser e traduce l’intera app, non soltanto la pagina iniziale.</span></div><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Movimenti settimanali</b><span>Mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto per capitalizzazione, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.</span></div><div><b>Posizioni fissate</b><span>Premi “Gestisci” e scegli fino a 5 crypto personali. La selezione resta nel browser ed è separata dal portafoglio.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div><div><b>Notizie italiane</b><span>La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.</span></div></div>
                 <h3>Opportunity screener</h3><ol class="learning-steps"><li><b>Capitalizzazione minima:</b> esclude progetti troppo piccoli; il valore è in milioni di euro.</li><li><b>Volume 24h minimo:</b> imposta un primo controllo di liquidità, senza garantire che il volume sia di qualità.</li><li><b>Prezzo unitario massimo:</b> è solo un filtro pratico. Un prezzo basso non rende una crypto sottovalutata.</li><li><b>Rischio massimo:</b> limita la volatilità ammessa dal modello.</li><li>Premi <b>Applica filtri</b>, poi confronta score, motivazione, market cap, 7g, 30g, FDV/MC e rischio.</li><li>Apri la crypto e completa la ricerca fondamentale prima di usare Decision Lab.</li></ol>
                 <div class="beginner-rule"><b>Sequenza corretta</b><span>Screener → progetto e tokenomics → fonti → compatibilità col piano → Decision Lab. Lo score serve a restringere la ricerca, non a sostituirla.</span></div>
                 <button class="secondary" data-go="overview">Apri Panoramica</button> <button class="secondary" data-go="screener">Apri Opportunity screener</button>
