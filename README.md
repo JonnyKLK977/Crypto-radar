@@ -95,6 +95,20 @@ I moduli contengono anche esempi numerici, confronto fra pagamenti blockchain e 
 
 Lo score serve a ordinare le crypto per approfondimenti. Non è una previsione né un'indicazione personalizzata di acquisto.
 
+## 730 e fiscalità crypto
+
+La pagina **730 & fiscalità crypto** raccoglie una guida burocratica aggiornata al 2026 con:
+
+- scelta tra modello 730 e Redditi PF;
+- procedura di preparazione, invio, pagamento e conservazione;
+- checklist locale dei documenti generali e degli estratti crypto;
+- spiegazione dei quadri W/RW e T/RT;
+- trattamento generale di detenzione, vendite, permute, wallet propri, staking, DeFi e NFT;
+- calendario ufficiale 2026, correzioni, ravvedimento e principali sanzioni;
+- collegamenti diretti ad Agenzia delle Entrate, Normattiva e Giustizia tributaria.
+
+Il contenuto è educativo e non sostituisce le istruzioni annuali, un CAF o un professionista abilitato. Nessun dato fiscale viene inviato o salvato sul server; lo stato della checklist resta nel browser.
+
 ## Limiti della prima versione
 
 - La API pubblica CoinGecko può applicare limiti temporanei.
