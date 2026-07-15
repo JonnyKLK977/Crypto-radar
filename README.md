@@ -1,6 +1,8 @@
 # Crypto Radar
 
-Dashboard locale per osservare POL, ALGO, ADA e individuare altre crypto tramite uno score quantitativo trasparente.
+Dashboard per seguire fino a cinque crypto personali e individuare altre opportunità tramite uno score quantitativo trasparente.
+
+Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’utente può aggiungere e rimuovere fino a 5 crypto tra le 200 monitorate. La selezione è distinta dal portafoglio e non viene inviata al server.
 
 ## Avvio
 
@@ -14,7 +16,7 @@ Si apre automaticamente `http://127.0.0.1:8765`. Per arrestare il server premi `
 
 ## Demo pubblica
 
-Il progetto include `Dockerfile` e `render.yaml` per pubblicare una demo su Render. La configurazione pubblica imposta `CRYPTO_RADAR_DEMO=1`: portafoglio, piano e diario partono vuoti e tutte le operazioni di scrittura sono bloccate. Non inserire nella demo chiavi API, export personali o dati reali.
+Il progetto include `Dockerfile` e `render.yaml` per pubblicare una demo su Render. La configurazione pubblica imposta `CRYPTO_RADAR_DEMO=1`: portafoglio, piano e diario partono vuoti e le scritture sul server sono bloccate. Preferenze come posizioni fissate, progresso delle guide e strumenti del Centro operativo possono invece restare nel browser. Non inserire nella demo chiavi API, export personali o dati reali.
 
 Procedura sintetica:
 

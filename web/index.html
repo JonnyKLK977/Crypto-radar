@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="/phase9.css">
   <link rel="stylesheet" href="/phase10.css">
   <link rel="stylesheet" href="/phase11.css">
+  <link rel="stylesheet" href="/phase12.css">
 </head>
 <body>
   <div class="shell">
@@ -58,7 +59,13 @@
           <article class="card metric"><span>Ampiezza 7g</span><strong id="breadth">—</strong><small>Top 50 in rialzo</small></article>
         </div>
 
-        <div class="section-title"><div><p class="eyebrow">POSIZIONI FISSATE</p><h2>POL, ALGO e ADA</h2></div><span class="muted">Segnale quantitativo, non previsione</span></div>
+        <div class="section-title pinned-heading"><div><p class="eyebrow">POSIZIONI FISSATE</p><h2 id="pinnedTitle">Le tue crypto</h2></div><div class="pinned-heading-actions"><span id="pinnedCount" class="muted">0/5 selezionate</span><button id="managePinned" class="secondary">Gestisci</button></div></div>
+        <article id="pinnedManager" class="card pinned-manager hidden">
+          <div><h3>Personalizza la Home</h3><p>Scegli fino a 5 crypto tra quelle monitorate. La selezione viene salvata soltanto su questo browser.</p></div>
+          <div class="pinned-picker"><label>Aggiungi una crypto<select id="pinnedCoinSelect" aria-label="Crypto da fissare"></select></label><button id="addPinned" class="primary">Aggiungi</button></div>
+          <div id="pinnedSelection" class="pinned-selection"></div>
+          <div class="pinned-manager-footer"><span id="pinnedMessage" class="muted">Le schede non modificano il tuo portafoglio.</span><button id="closePinned" class="secondary">Chiudi</button></div>
+        </article>
         <div id="pinnedCards" class="coin-grid skeleton-grid"></div>
 
         <div class="section-title"><div><p class="eyebrow">SEGNALI MIGLIORI</p><h2>Candidate emerse oggi</h2></div><button class="link-button" data-go="screener">Apri screener →</button></div>
@@ -245,7 +252,7 @@
             <details class="card lesson" data-lesson="app-start">
               <summary><span class="lesson-number">08</span><div><b>Panoramica e Opportunity screener</b><small>Leggere regime, score, rischio e filtri senza scambiarli per previsioni</small></div><span class="lesson-time">18 min</span></summary>
               <div class="lesson-content">
-                <h3>Panoramica</h3><div class="field-guide"><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>POL, ALGO e ADA</b><span>Schede fissate per seguire le posizioni indicate dall’utente. Apri una scheda per dettaglio, grafico e metriche.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div></div>
+                <h3>Panoramica</h3><div class="field-guide"><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Posizioni fissate</b><span>Premi “Gestisci” e scegli fino a 5 crypto personali. La selezione resta nel browser ed è separata dal portafoglio.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div></div>
                 <h3>Opportunity screener</h3><ol class="learning-steps"><li><b>Capitalizzazione minima:</b> esclude progetti troppo piccoli; il valore è in milioni di euro.</li><li><b>Volume 24h minimo:</b> imposta un primo controllo di liquidità, senza garantire che il volume sia di qualità.</li><li><b>Prezzo unitario massimo:</b> è solo un filtro pratico. Un prezzo basso non rende una crypto sottovalutata.</li><li><b>Rischio massimo:</b> limita la volatilità ammessa dal modello.</li><li>Premi <b>Applica filtri</b>, poi confronta score, motivazione, market cap, 7g, 30g, FDV/MC e rischio.</li><li>Apri la crypto e completa la ricerca fondamentale prima di usare Decision Lab.</li></ol>
                 <div class="beginner-rule"><b>Sequenza corretta</b><span>Screener → progetto e tokenomics → fonti → compatibilità col piano → Decision Lab. Lo score serve a restringere la ricerca, non a sostituirla.</span></div>
                 <button class="secondary" data-go="overview">Apri Panoramica</button> <button class="secondary" data-go="screener">Apri Opportunity screener</button>

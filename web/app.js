@@ -82,6 +82,23 @@ function renderDemoMode(){
 
 function showError(message){$("notice").textContent=message;$("notice").classList.remove("hidden")}
 function coinById(id){return state.scored.find(c=>c.id===id)}
+function pinnedIds(){
+  try{const value=JSON.parse(localStorage.getItem("cryptoRadarPinnedCoins")||"[]");return Array.isArray(value)?[...new Set(value.filter(id=>typeof id==="string"))].slice(0,5):[]}
+  catch{return []}
+}
+function savePinnedIds(ids){localStorage.setItem("cryptoRadarPinnedCoins",JSON.stringify([...new Set(ids)].slice(0,5)))}
+function renderPinnedManager(){
+  const ids=pinnedIds().filter(id=>coinById(id)),coins=ids.map(coinById).filter(Boolean),available=state.scored.filter(c=>!ids.includes(c.id));
+  if(ids.length!==pinnedIds().length)savePinnedIds(ids);
+  $("pinnedCount").textContent=`${ids.length}/5 selezionate`;
+  $("pinnedTitle").textContent=ids.length?"Le tue crypto":"Scegli le crypto da seguire";
+  $("pinnedCoinSelect").innerHTML=available.length?`<option value="">Seleziona per nome o simbolo…</option>${available.map(c=>`<option value="${esc(c.id)}">#${c.market_cap_rank||"—"} · ${esc(c.name)} (${esc(c.symbol.toUpperCase())})</option>`).join("")}`:`<option value="">Nessuna crypto disponibile</option>`;
+  $("pinnedSelection").innerHTML=coins.length?coins.map(c=>`<span class="pinned-chip"><img src="${esc(c.image)}" alt=""><b>${esc(c.symbol.toUpperCase())}</b><button type="button" data-unpin="${esc(c.id)}" aria-label="Rimuovi ${esc(c.name)}">×</button></span>`).join(""):`<p class="muted">Non hai ancora fissato crypto. Scegline una dal menu.</p>`;
+  $("addPinned").disabled=true;
+  $("pinnedMessage").textContent=ids.length>=5?"Hai raggiunto il massimo di 5 crypto.":"Le schede non modificano il tuo portafoglio.";
+  document.querySelectorAll("[data-unpin]").forEach(button=>button.onclick=()=>{savePinnedIds(ids.filter(id=>id!==button.dataset.unpin));renderOverview()});
+}
+function addPinnedCoin(){const id=$("pinnedCoinSelect").value,ids=pinnedIds();if(!id||ids.includes(id))return;if(ids.length>=5){$("pinnedMessage").textContent="Puoi fissare al massimo 5 crypto.";return}savePinnedIds([...ids,id]);renderOverview()}
 function coinCell(c){return `<div class="token-cell"><img src="${c.image}" alt=""><div><b>${c.symbol.toUpperCase()}</b><span>${c.name}</span></div></div>`}
 function scoreColor(score){return score>=70?"positive":score>=52?"neutral":"negative"}
 function reasons(c){
@@ -104,10 +121,13 @@ function renderOverview(){
   const regimeScore=(btc._score*.4+eth._score*.25+breadth*.35);
   const regime=regimeScore>=65?["Costruttivo","Trend e ampiezza favorevoli.","var(--accent)"]:regimeScore>=48?["Misto","Segnali contrastanti: selettività e size contenute.","var(--yellow)"]:["Difensivo","Momentum o ampiezza deboli: priorità al controllo del rischio.","var(--red)"];
   $("regimeLabel").textContent=regime[0]; $("regimeText").textContent=regime[1]; $("regimeDot").style.background=regime[2];
-  const pinned=[coinById("polygon-ecosystem-token"),coinById("algorand"),coinById("cardano")].filter(Boolean);
-  $("pinnedCards").innerHTML=pinned.map(c=>`<article class="card coin-card" data-id="${c.id}"><div class="coin-top"><div class="coin-id"><img src="${c.image}" alt=""><div><b>${c.name}</b><span>${c.symbol.toUpperCase()} · rank #${c.market_cap_rank}</span></div></div><div class="score ${scoreColor(c._score)}">${c._score}<small>SCORE</small></div></div><div class="coin-stats"><div><span>PREZZO</span><b>${fmtEur(c.current_price)}</b></div><div><span>7 GIORNI</span><b class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</b></div><div><span>30 GIORNI</span><b class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</b></div><div><span>RISCHIO</span><b class="${c._risk==='alto'?'negative':c._risk==='medio'?'neutral':'positive'}">${c._risk}</b></div></div></article>`).join("");
+  const selectedPinned=pinnedIds(),pinned=selectedPinned.map(coinById).filter(Boolean);
+  $("pinnedCards").classList.remove("skeleton-grid");
+  $("pinnedCards").innerHTML=pinned.length?pinned.map(c=>`<article class="card coin-card" data-id="${c.id}"><div class="coin-top"><div class="coin-id"><img src="${c.image}" alt=""><div><b>${c.name}</b><span>${c.symbol.toUpperCase()} · rank #${c.market_cap_rank}</span></div></div><div class="score ${scoreColor(c._score)}">${c._score}<small>SCORE</small></div></div><div class="coin-stats"><div><span>PREZZO</span><b>${fmtEur(c.current_price)}</b></div><div><span>7 GIORNI</span><b class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</b></div><div><span>30 GIORNI</span><b class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</b></div><div><span>RISCHIO</span><b class="${c._risk==='alto'?'negative':c._risk==='medio'?'neutral':'positive'}">${c._risk}</b></div></div></article>`).join(""):`<article class="card pinned-empty"><b>La Home è pronta per essere personalizzata</b><p>Premi “Gestisci” e aggiungi da 1 a 5 crypto che vuoi seguire.</p><button class="primary" data-open-pinned>Configura le posizioni fissate</button></article>`;
+  renderPinnedManager();
+  document.querySelectorAll("[data-open-pinned]").forEach(button=>button.onclick=()=>{$("pinnedManager").classList.remove("hidden");$("pinnedCoinSelect").focus()});
   document.querySelectorAll(".coin-card").forEach(el=>el.onclick=()=>openDetail(el.dataset.id));
-  const candidates=state.scored.filter(eligible).filter(c=>!["polygon-ecosystem-token","algorand","cardano","bitcoin","ethereum"].includes(c.id)).slice(0,6);
+  const candidates=state.scored.filter(eligible).filter(c=>![...selectedPinned,"bitcoin","ethereum"].includes(c.id)).slice(0,6);
   $("topCandidates").innerHTML=candidates.map(c=>`<tr data-id="${c.id}"><td>${coinCell(c)}</td><td class="${scoreColor(c._score)}"><b>${c._score}</b></td><td class="reason">${reasons(c)}</td><td>${fmtEur(c.current_price)}</td><td class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</td><td class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</td><td><span class="badge ${c._risk}">${c._risk}</span></td></tr>`).join("");
   bindRows($("topCandidates"));
 }
@@ -413,5 +433,6 @@ document.querySelectorAll('[data-ops-tab]').forEach(button=>button.onclick=()=>{
 document.querySelectorAll('#newsFilters .chip').forEach(button=>button.onclick=()=>{state.newsFilter=button.dataset.filter;document.querySelectorAll('#newsFilters .chip').forEach(x=>x.classList.toggle('active',x===button));renderNews()});
 document.querySelectorAll("[data-stress]").forEach(button=>button.onclick=()=>setStressPreset(button.dataset.stress));
 $("refreshBtn").onclick=()=>loadAll(true);$("applyFilters").onclick=renderScreener;$("savePortfolio").onclick=savePortfolio;$("savePlan").onclick=savePlan;$("runDca").onclick=runDca;$("analyzeTrade").onclick=analyzeTrade;$("saveDecision").onclick=saveDecision;$("backBtn").onclick=()=>showPage('overview');
+$("managePinned").onclick=()=>{$("pinnedManager").classList.toggle("hidden");if(!$("pinnedManager").classList.contains("hidden"))$("pinnedCoinSelect").focus()};$("closePinned").onclick=()=>$("pinnedManager").classList.add("hidden");$("addPinned").onclick=addPinnedCoin;$("pinnedCoinSelect").onchange=()=>{$("addPinned").disabled=!$("pinnedCoinSelect").value||pinnedIds().length>=5};
 $("saveAlertSettings").onclick=saveAlertSettings;$("saveWeeklySnapshot").onclick=saveWeeklySnapshot;$("printWeeklyReport").onclick=()=>window.print();$("paperCoin").onchange=updatePaperPreview;$("paperAmount").oninput=updatePaperPreview;$("paperFee").oninput=updatePaperPreview;$("paperAction").onchange=updatePaperPreview;$("executePaper").onclick=executePaper;$("resetPaper").onclick=resetPaper;$("addCalendarEvent").onclick=addCalendarEvent;$("saveCalendarRoutines").onclick=saveCalendarRoutines;$("exportCalendar").onclick=exportCalendar;
 loadAll();
