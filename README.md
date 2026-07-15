@@ -73,7 +73,7 @@ Il **Decision Lab** aggiunge:
 
 Il diario viene salvato in `data/decision_journal.json`.
 
-La pagina **Academy principianti** contiene un percorso educativo in sei moduli:
+La pagina **Guide per principianti** contiene un percorso educativo in tredici moduli:
 
 - basi di crypto, token, exchange e wallet;
 - budget, rischio e piano personale;
@@ -81,6 +81,11 @@ La pagina **Academy principianti** contiene un percorso educativo in sei moduli:
 - lettura di candele, trend, timeframe, volumi e livelli;
 - verifica delle fonti e difesa dall'hype;
 - custodia, seed phrase, 2FA e sicurezza delle API.
+- scelta e apertura di wallet per reti EVM/POL, Algorand e Cardano;
+- manuale di Panoramica, Opportunity screener e dettaglio crypto;
+- uso guidato di portafoglio, import CSV e Piano personale;
+- manuale completo di Decision Lab e Centro operativo;
+- flusso di News, Metodo e guida fiscale.
 
 Include un glossario ricercabile e una checklist pre-acquisto. L'avanzamento viene memorizzato nel browser e non viene inviato al server.
 
@@ -97,7 +102,7 @@ Lo score serve a ordinare le crypto per approfondimenti. Non è una previsione n
 
 ## 730 e fiscalità crypto
 
-La pagina **730 & fiscalità crypto** raccoglie una guida burocratica aggiornata al 2026 con:
+La pagina **730 & fiscalità crypto** raccoglie una guida burocratica aggiornata al 2026 con 15 capitoli, tra cui:
 
 - scelta tra modello 730 e Redditi PF;
 - procedura di preparazione, invio, pagamento e conservazione;

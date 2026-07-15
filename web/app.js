@@ -344,7 +344,7 @@ function exportCalendar(){const cal=calendarState(),events=[...(cal.events||[]),
 
 function renderOperations(){renderAlerts();renderWeeklyReport();renderPaper();renderCalendar()}
 
-function showPage(id,title){state.currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.target===id));$("pageTitle").textContent=title||({overview:'Panoramica',screener:'Opportunity screener',portfolio:'Il mio portafoglio',connections:'Exchange & wallet',academy:'Academy principianti',plan:'Piano personale',decision:'Decision Lab',operations:'Centro operativo',news:'News & trend',tax:'730 & fiscalità crypto',method:'Metodo & rischio'}[id]||'Analisi');window.scrollTo({top:0,behavior:'smooth'})}
+function showPage(id,title){state.currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.target===id));$("pageTitle").textContent=title||({overview:'Panoramica',screener:'Opportunity screener',portfolio:'Il mio portafoglio',connections:'Exchange & wallet',academy:'Guide per principianti',plan:'Piano personale',decision:'Decision Lab',operations:'Centro operativo',news:'News & trend',tax:'730 & fiscalità crypto',method:'Metodo & rischio'}[id]||'Analisi');window.scrollTo({top:0,behavior:'smooth'})}
 const glossary=[
   ["Altcoin","Qualsiasi crypto diversa da Bitcoin; non indica automaticamente qualità o rischio."],["ATH","All-time high: prezzo massimo storico registrato."],["Blockchain","Registro condiviso in cui le transazioni vengono validate secondo le regole del protocollo."],["Circulating supply","Numero di token attualmente in circolazione."],["DCA","Acquisti di importo uguale effettuati a intervalli regolari."],["Drawdown","Perdita percentuale da un massimo a un minimo successivo."],["FDV","Valutazione teorica ottenuta usando l'offerta totale o massima, se disponibile."],["Gas fee","Commissione pagata per eseguire una transazione su una blockchain."],["Market cap","Prezzo corrente moltiplicato per l'offerta circolante."],["Seed phrase","Sequenza segreta che consente di recuperare un wallet; non va mai condivisa."],["Slippage","Differenza tra prezzo atteso e prezzo effettivo di esecuzione."],["Spread","Differenza tra miglior prezzo di acquisto e di vendita."],["Stablecoin","Token che mira a mantenere un valore stabile; non è privo di rischio."],["Staking","Impiego di token nella sicurezza o nel funzionamento di una rete in cambio di ricompense."],["TVL","Valore totale degli asset depositati in un protocollo, usato soprattutto nella DeFi."],["Volatilità","Ampiezza e frequenza delle variazioni di prezzo."],["Volume","Valore scambiato in un periodo; va interpretato insieme a liquidità e affidabilità del mercato."],["White paper","Documento che descrive progetto, funzionamento, rischi e caratteristiche del token."]
 ];
@@ -354,6 +354,12 @@ glossary.push(
   ["NFT","Token non fungibile identificabile singolarmente e con proprietà potenzialmente uniche."],
   ["Nodo","Computer che conserva o verifica dati e regole di una rete blockchain."],
   ["Smart contract","Programma eseguito dalla blockchain quando vengono soddisfatte le condizioni previste."]
+  ,["Cold wallet","Sistema di custodia in cui le chiavi sono mantenute offline o in un dispositivo dedicato."]
+  ,["Hot wallet","Wallet software su dispositivo connesso a internet, comodo ma più esposto agli attacchi."]
+  ,["Chiave privata","Segreto crittografico che autorizza le operazioni; non deve essere condiviso."]
+  ,["Indirizzo","Identificativo pubblico usato per ricevere asset su una specifica rete."]
+  ,["Hash transazione","Identificativo con cui cercare e documentare una transazione sulla blockchain."]
+  ,["Ribilanciamento","Operazioni con cui si riporta il portafoglio verso l’allocazione obiettivo."]
 );
 function loadAcademyState(){try{return JSON.parse(localStorage.getItem("cryptoRadarAcademy")||"{}")||{}}catch{return {}}}
 function saveAcademyState(data){localStorage.setItem("cryptoRadarAcademy",JSON.stringify(data))}
@@ -369,6 +375,7 @@ function renderGlossary(query=""){const needle=query.trim().toLowerCase(),rows=g
 document.querySelectorAll('[data-complete],[data-check]').forEach(input=>input.onchange=persistAcademy);
 $("glossarySearch").oninput=event=>renderGlossary(event.target.value);
 renderGlossary();renderAcademy();
+document.querySelectorAll('[data-guide-open]').forEach(button=>button.onclick=()=>{const lesson=document.querySelector(`[data-lesson="${button.dataset.guideOpen}"]`);if(!lesson)return;lesson.open=true;lesson.scrollIntoView({behavior:"smooth",block:"start"})});
 function renderTaxChecklist(){const checks=[...document.querySelectorAll('[data-tax-check]')],saved=localData("cryptoRadarTaxChecklist",{});checks.forEach((check,index)=>check.checked=Boolean(saved[index]));const done=checks.filter(check=>check.checked).length,pct=checks.length?Math.round(done/checks.length*100):0;if($("taxCheckLabel"))$("taxCheckLabel").textContent=`${done}/${checks.length} documenti controllati`;if($("taxCheckBar"))$("taxCheckBar").style.width=`${pct}%`}
 document.querySelectorAll('[data-tax-check]').forEach((check,index)=>check.onchange=()=>{const saved=localData("cryptoRadarTaxChecklist",{});saved[index]=check.checked;saveLocalData("cryptoRadarTaxChecklist",saved);renderTaxChecklist()});
 renderTaxChecklist();
