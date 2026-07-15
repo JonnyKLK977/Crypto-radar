@@ -31,6 +31,17 @@ La pagina **Exchange & wallet** importa CSV di Coinbase, Kraken e Bitvavo in un 
 
 I formati CSV possono cambiare nel tempo: prima di usare il registro per calcoli contabili o fiscali, verifica sempre l'anteprima e confronta i totali con l'exchange.
 
+## Centro operativo
+
+Il **Centro operativo** riunisce quattro strumenti salvati localmente nel browser:
+
+- alert configurabili per movimenti, concentrazione, scostamento dagli obiettivi, score e notizie;
+- report settimanale con contributi delle posizioni, controlli del piano e fotografie storiche;
+- portafoglio simulato con 10.000 € virtuali, commissioni, posizioni e diario delle operazioni;
+- calendario personale con routine DCA/revisione, eventi verificati ed esportazione iCalendar `.ics`.
+
+Le variazioni settimanali precedenti alla prima fotografia sono stime ricostruite dai rendimenti degli asset. Il simulatore non riproduce spread, slippage, profondità di mercato o fiscalità.
+
 Non sono necessarie chiavi API o librerie Python aggiuntive. I dati arrivano dalla API pubblica CoinGecko e il portafoglio viene salvato esclusivamente in `data/portfolio.json`.
 
 La pagina **News & trend** separa volutamente tre concetti diversi:

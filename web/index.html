@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="/phase5.css">
   <link rel="stylesheet" href="/phase6.css">
   <link rel="stylesheet" href="/phase7.css">
+  <link rel="stylesheet" href="/phase8.css">
+  <link rel="stylesheet" href="/phase9.css">
 </head>
 <body>
   <div class="shell">
@@ -25,6 +27,7 @@
         <button class="nav" data-target="academy">Academy principianti</button>
         <button class="nav" data-target="plan">Piano personale</button>
         <button class="nav" data-target="decision">Decision Lab</button>
+        <button class="nav" data-target="operations">Centro operativo</button>
         <button class="nav" data-target="news">News & trend</button>
         <button class="nav" data-target="method">Metodo & rischio</button>
       </nav>
@@ -316,6 +319,49 @@
         <div class="section-title"><div><p class="eyebrow">MEMORIA DEL PROCESSO</p><h2>Diario delle decisioni</h2></div><span class="muted">Le decisioni restano sul dispositivo</span></div>
         <div id="journalStats" class="summary-grid"></div>
         <div id="journalList" class="journal-list"></div>
+      </section>
+
+      <section id="operations" class="page">
+        <div class="ops-tabs" role="tablist"><button class="chip active" data-ops-tab="alerts">Alert</button><button class="chip" data-ops-tab="report">Report settimanale</button><button class="chip" data-ops-tab="paper">Simulatore</button><button class="chip" data-ops-tab="calendar">Calendario</button></div>
+
+        <div id="ops-alerts" class="ops-panel active">
+          <div class="section-title topless"><div><p class="eyebrow">CONTROLLO CONTINUO</p><h2>Alert intelligenti</h2></div><span id="alertCount" class="muted">Analisi in corso</span></div>
+          <div class="ops-two-columns">
+            <article class="card alert-settings"><h3>Soglie personali</h3><label>Movimento 24h (%)<input id="alertDailyMove" type="number" min="1" max="100" step="1"></label><label>Movimento 7 giorni (%)<input id="alertWeeklyMove" type="number" min="1" max="200" step="1"></label><label>Concentrazione massima (%)<input id="alertConcentration" type="number" min="1" max="100" step="1"></label><label>Scostamento obiettivo (p.p.)<input id="alertTargetGap" type="number" min="1" max="100" step="1"></label><label class="check"><input id="alertNews" type="checkbox"> Avvisa per notizie sul portafoglio</label><button id="saveAlertSettings" class="secondary">Salva soglie</button></article>
+            <div id="smartAlerts" class="smart-alerts"></div>
+          </div>
+          <p class="simulation-note">Gli alert evidenziano condizioni misurabili; non indicano automaticamente di comprare o vendere.</p>
+        </div>
+
+        <div id="ops-report" class="ops-panel">
+          <div class="section-title topless"><div><p class="eyebrow">REVISIONE PERIODICA</p><h2>Report settimanale</h2></div><div class="ops-actions"><button id="saveWeeklySnapshot" class="secondary">Salva fotografia</button><button id="printWeeklyReport" class="secondary">Stampa / PDF</button></div></div>
+          <div id="weeklyReportMeta" class="report-meta"></div>
+          <div id="weeklyReportMetrics" class="summary-grid"></div>
+          <div class="ops-two-columns report-columns"><article class="card"><p class="eyebrow">CONTRIBUTI</p><h2>Cosa ha inciso</h2><div id="weeklyContributors"></div></article><article class="card"><p class="eyebrow">AZIONI DI REVISIONE</p><h2>Cosa controllare</h2><div id="weeklyActions" class="risk-insights"></div></article></div>
+          <article class="card report-history-card"><p class="eyebrow">FOTOGRAFIE SALVATE</p><h2>Storico del portafoglio</h2><div id="weeklySnapshots" class="snapshot-list"></div></article>
+          <p class="simulation-note">La variazione a 7 giorni prima della prima fotografia è una stima ricostruita dai prezzi degli asset, non un rendimento contabile certificato.</p>
+        </div>
+
+        <div id="ops-paper" class="ops-panel">
+          <div class="section-title topless"><div><p class="eyebrow">CAPITALE VIRTUALE</p><h2>Portafoglio simulato</h2></div><button id="resetPaper" class="secondary">Azzera simulazione</button></div>
+          <div id="paperMetrics" class="summary-grid"></div>
+          <div class="ops-two-columns">
+            <article class="card paper-order"><h2>Nuova operazione virtuale</h2><label>Crypto<select id="paperCoin"></select></label><label>Operazione<select id="paperAction"><option value="buy">Acquisto</option><option value="sell">Vendita</option></select></label><label>Importo in euro<input id="paperAmount" type="number" min="1" step="10" value="100"></label><label>Commissione (%)<input id="paperFee" type="number" min="0" max="10" step="0.1" value="0.5"></label><div id="paperOrderPreview" class="order-preview"></div><button id="executePaper" class="primary">Esegui simulazione</button></article>
+            <article class="card"><p class="eyebrow">POSIZIONI VIRTUALI</p><h2>Portafoglio paper</h2><div class="table-wrap"><table><thead><tr><th>Crypto</th><th>Quantità</th><th>Costo medio</th><th>Valore</th><th>P/L</th></tr></thead><tbody id="paperPositions"></tbody></table></div></article>
+          </div>
+          <article class="card paper-ledger-card"><p class="eyebrow">DIARIO SIMULATO</p><h2>Operazioni effettuate</h2><div id="paperLedger" class="paper-ledger"></div></article>
+          <p class="simulation-note">È un ambiente didattico: utilizza prezzi correnti indicativi e non riproduce spread, slippage, profondità o fiscalità reali.</p>
+        </div>
+
+        <div id="ops-calendar" class="ops-panel">
+          <div class="section-title topless"><div><p class="eyebrow">PIANIFICAZIONE</p><h2>Calendario personale</h2></div><button id="exportCalendar" class="secondary">Esporta .ics</button></div>
+          <div class="ops-two-columns">
+            <article class="card calendar-form"><h2>Aggiungi evento verificato</h2><label>Titolo<input id="calendarTitle" type="text" maxlength="120" placeholder="Es. Controllare unlock ADA"></label><label>Data<input id="calendarDate" type="date"></label><label>Categoria<select id="calendarType"><option value="review">Revisione</option><option value="dca">DCA</option><option value="unlock">Token unlock</option><option value="governance">Governance</option><option value="network">Aggiornamento rete</option><option value="macro">Evento macro</option><option value="other">Altro</option></select></label><label>Crypto / riferimento<input id="calendarAsset" type="text" maxlength="20" placeholder="ADA, POL, BCE…"></label><label class="wide">Note e fonte<textarea id="calendarNotes" maxlength="500" placeholder="Aggiungi il collegamento o la fonte da ricontrollare…"></textarea></label><button id="addCalendarEvent" class="primary">Aggiungi evento</button></article>
+            <article class="card calendar-routines"><h2>Routine automatiche</h2><label>Giorno mensile DCA<input id="calendarDcaDay" type="number" min="1" max="28" value="5"></label><label class="check"><input id="calendarWeeklyReview" type="checkbox" checked> Revisione ogni domenica</label><p class="muted">Le routine generano promemoria locali per i prossimi 90 giorni. Gli eventi di mercato vanno inseriti solo dopo aver verificato una fonte ufficiale.</p><button id="saveCalendarRoutines" class="secondary">Salva routine</button></article>
+          </div>
+          <div class="section-title"><div><p class="eyebrow">PROSSIMI 90 GIORNI</p><h2>Eventi e promemoria</h2></div><span id="calendarCount" class="muted"></span></div>
+          <div id="calendarEvents" class="calendar-events"></div>
+        </div>
       </section>
 
       <section id="news" class="page">

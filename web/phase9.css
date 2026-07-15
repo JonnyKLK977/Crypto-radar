@@ -1,0 +1,9 @@
+@media print{
+  body *{visibility:hidden}
+  #operations,#operations *{visibility:visible}
+  #operations{position:absolute;inset:0;background:#fff;color:#111}
+  .ops-tabs,#ops-alerts,#ops-paper,#ops-calendar,.ops-actions,.sidebar,header{display:none!important}
+  #ops-report{display:block!important}
+  .card{border:1px solid #ccc;box-shadow:none}
+  .muted,.report-meta,.simulation-note{color:#555!important}
+}
