@@ -4,6 +4,8 @@ Dashboard per seguire fino a cinque crypto personali e individuare altre opportu
 
 Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’utente può aggiungere e rimuovere fino a 5 crypto tra le 200 monitorate. La selezione è distinta dal portafoglio e non viene inviata al server. La stessa pagina include il cambio lingua rapido, i cinque maggiori rialzi e ribassi settimanali ricavati dall’API ufficiale CoinMarketCap tra le prime 100 crypto idonee e gli ultimi articoli di Criptovaluta.it.
 
+L’intera Home è componibile: ogni browser conserva ordine e visibilità dei sette moduli disponibili. Il pannello consente trascinamento, spostamento accessibile con frecce, mostra/nascondi e ripristino. Oltre ai moduli di mercato sono disponibili una sintesi personale del portafoglio e scorciatoie verso Copilota 360, Decision Lab, guide e fiscalità.
+
 La pagina **Il mio portafoglio** parte vuota: POL, ALGO, ADA o altre crypto non vengono assegnate automaticamente. L'utente può aggiungere e rimuovere liberamente fino a 30 asset dal catalogo di mercato, quindi compilare quantità e costo medio. Nella demo pubblica portafoglio e piano vengono salvati soltanto nel browser utilizzato.
 
 ## Avvio

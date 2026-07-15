@@ -138,6 +138,57 @@ function renderWeeklyMovers(){
   document.querySelectorAll("[data-cmc-slug]").forEach(button=>button.onclick=()=>window.open(`https://coinmarketcap.com/currencies/${encodeURIComponent(button.dataset.cmcSlug)}/`,"_blank","noopener,noreferrer"));
 }
 
+const homeLayoutStore="cryptoRadarHomeLayoutV1";
+const homeWidgetCatalog=[
+  {id:"snapshot",label:"Mercato e lingua",description:"Regime, BTC, ETH, ampiezza e cambio lingua"},
+  {id:"portfolio-pulse",label:"Sintesi portafoglio",description:"Valore, risultato indicativo e concentrazione personale"},
+  {id:"movers",label:"Movimenti settimanali",description:"Migliori e peggiori dati CoinMarketCap a 7 giorni"},
+  {id:"pinned",label:"Crypto fissate",description:"Fino a cinque asset scelti personalmente"},
+  {id:"candidates",label:"Candidate emerse",description:"Risultati quantitativi dello screener"},
+  {id:"italian-news",label:"Notizie italiane",description:"Ultimi articoli pubblicati da Criptovaluta.it"},
+  {id:"quick-actions",label:"Azioni rapide",description:"Collegamenti a Copilota, Decision Lab, guide e fisco"}
+];
+const defaultHomeOrder=homeWidgetCatalog.map(widget=>widget.id);
+function homeLayout(){
+  const saved=localData(homeLayoutStore,{}),known=new Set(defaultHomeOrder),savedOrder=Array.isArray(saved.order)?saved.order.filter(id=>known.has(id)):[];
+  return {order:[...new Set([...savedOrder,...defaultHomeOrder])],hidden:Array.isArray(saved.hidden)?[...new Set(saved.hidden.filter(id=>known.has(id)))]:[]};
+}
+function persistHomeLayout(layout){saveLocalData(homeLayoutStore,layout);applyHomeLayout()}
+function applyHomeLayout(refreshManager=true){
+  const area=$("homeWidgetArea"),layout=homeLayout();if(!area)return;
+  layout.order.forEach(id=>{const widget=area.querySelector(`[data-home-widget="${id}"]`);if(widget)area.appendChild(widget)});
+  area.querySelectorAll("[data-home-widget]").forEach(widget=>widget.classList.toggle("home-widget-off",layout.hidden.includes(widget.dataset.homeWidget)));
+  if(refreshManager)renderHomeLayoutManager();
+}
+function renderHomeLayoutManager(){
+  const list=$("homeWidgetManagerList");if(!list)return;const layout=homeLayout(),catalog=new Map(homeWidgetCatalog.map(widget=>[widget.id,widget])),visibleLabel="Visibile",moveUp="Sposta su",moveDown="Sposta giù";
+  list.innerHTML=layout.order.map((id,index)=>{const widget=catalog.get(id);if(!widget)return"";return `<div class="home-widget-manager-row" draggable="true" data-home-manager-id="${esc(id)}"><span class="home-drag-handle" title="Trascina per riordinare">⋮⋮</span><div><b>${esc(widget.label)}</b><small>${esc(widget.description)}</small></div><label><input type="checkbox" data-home-visible="${esc(id)}" ${layout.hidden.includes(id)?"":"checked"}> ${visibleLabel}</label><div class="home-order-buttons"><button type="button" data-home-move="-1" data-home-move-id="${esc(id)}" title="${moveUp}" aria-label="${moveUp}" ${index===0?"disabled":""}>↑</button><button type="button" data-home-move="1" data-home-move-id="${esc(id)}" title="${moveDown}" aria-label="${moveDown}" ${index===layout.order.length-1?"disabled":""}>↓</button></div></div>`}).join("");
+  list.querySelectorAll("[data-home-visible]").forEach(input=>input.onchange=()=>{const next=homeLayout(),hidden=new Set(next.hidden);input.checked?hidden.delete(input.dataset.homeVisible):hidden.add(input.dataset.homeVisible);persistHomeLayout({...next,hidden:[...hidden]})});
+  list.querySelectorAll("[data-home-move-id]").forEach(button=>button.onclick=()=>moveHomeWidget(button.dataset.homeMoveId,num(button.dataset.homeMove)));
+  list.querySelectorAll("[data-home-manager-id]").forEach(row=>{
+    row.ondragstart=event=>{event.dataTransfer.effectAllowed="move";event.dataTransfer.setData("text/plain",row.dataset.homeManagerId);row.classList.add("dragging")};
+    row.ondragover=event=>{event.preventDefault();event.dataTransfer.dropEffect="move";row.classList.add("drag-over")};
+    row.ondragleave=()=>row.classList.remove("drag-over");
+    row.ondrop=event=>{event.preventDefault();const source=event.dataTransfer.getData("text/plain"),target=row.dataset.homeManagerId;reorderHomeWidget(source,target)};
+    row.ondragend=()=>list.querySelectorAll(".dragging,.drag-over").forEach(item=>item.classList.remove("dragging","drag-over"));
+  });
+  window.CryptoRadarI18n?.translateDocument();
+}
+function moveHomeWidget(id,direction){const layout=homeLayout(),from=layout.order.indexOf(id),to=clamp(from+direction,0,layout.order.length-1);if(from<0||from===to)return;layout.order.splice(from,1);layout.order.splice(to,0,id);persistHomeLayout(layout)}
+function reorderHomeWidget(source,target){if(!source||source===target)return;const layout=homeLayout(),from=layout.order.indexOf(source),to=layout.order.indexOf(target);if(from<0||to<0)return;layout.order.splice(from,1);layout.order.splice(to,0,source);persistHomeLayout(layout)}
+function toggleHomeLayout(open){$("homeLayoutManager").classList.toggle("hidden",!open);$("openHomeLayout").classList.toggle("active",open);if(open){renderHomeLayoutManager();$("homeLayoutManager").scrollIntoView({behavior:"smooth",block:"nearest"})}}
+function resetHomeLayout(){localStorage.removeItem(homeLayoutStore);applyHomeLayout();$("homeLayoutStatus").textContent="Impostazione iniziale ripristinata";window.CryptoRadarI18n?.translateDocument()}
+
+function renderHomePortfolioPulse(holdings=state.portfolio?.holdings||[]){
+  const positions=holdings.map(holding=>{const coin=coinById(holding.id),value=num(holding.amount)*num(coin?.current_price),cost=num(holding.amount)*num(holding.avgCost);return {...holding,coin,value,cost}}).filter(position=>position.value>0).sort((a,b)=>b.value-a.value),value=positions.reduce((sum,position)=>sum+position.value,0),cost=positions.reduce((sum,position)=>sum+position.cost,0),completeCost=positions.length>0&&positions.every(position=>position.cost>0),pnl=value-cost,pct=cost?pnl/cost*100:0,largest=positions[0],largestWeight=value&&largest?largest.value/value*100:0,limit=num(state.plan?.maxSingleCoin);
+  $("homePortfolioValue").textContent=fmtEur(value);$("homePortfolioPositions").textContent=`${positions.length}/30`;
+  $("homePortfolioPnl").textContent=completeCost?fmtEur(pnl):"—";$("homePortfolioPnl").className=completeCost?pctClass(pnl):"neutral";$("homePortfolioPnlPct").textContent=completeCost?fmtPct(pct):positions.length?"Costo medio incompleto":"Portafoglio non compilato";
+  $("homePortfolioLargest").textContent=largest?.symbol||"—";$("homePortfolioLargestWeight").textContent=largest?`${largestWeight.toFixed(1)}%`:"Portafoglio non compilato";
+  const risk=!positions.length?["Da configurare","Aggiungi quantità e costo medio","neutral"]:!limit?["Limite mancante","Definisci il piano personale","neutral"]:largestWeight>limit?["Da riequilibrare",`${largestWeight.toFixed(1)}% / ${limit.toFixed(0)}%`,"negative"]:positions.length===1?["Concentrato",`${largestWeight.toFixed(1)}% / ${limit.toFixed(0)}%`,"neutral"]:["Nel limite",`${largestWeight.toFixed(1)}% / ${limit.toFixed(0)}%`,"positive"];
+  $("homePortfolioRisk").textContent=risk[0];$("homePortfolioRisk").className=risk[2];$("homePortfolioRiskText").textContent=risk[1];
+  window.CryptoRadarI18n?.translateDocument();
+}
+
 function renderOverview(){
   const btc=coinById("bitcoin"),eth=coinById("ethereum"); if(!btc||!eth)return;
   renderHomeLanguage();
@@ -159,6 +210,7 @@ function renderOverview(){
   const candidates=state.scored.filter(eligible).filter(c=>![...selectedPinned,"bitcoin","ethereum"].includes(c.id)).slice(0,6);
   $("topCandidates").innerHTML=candidates.map(c=>`<tr data-id="${c.id}"><td>${coinCell(c)}</td><td class="${scoreColor(c._score)}"><b>${c._score}</b></td><td class="reason">${reasons(c)}</td><td>${fmtEur(c.current_price)}</td><td class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</td><td class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</td><td><span class="badge ${c._risk}">${c._risk}</span></td></tr>`).join("");
   bindRows($("topCandidates"));
+  renderHomePortfolioPulse();applyHomeLayout();
 }
 
 function renderScreener(){
@@ -185,7 +237,7 @@ function previewPortfolio(){
   if(!state.portfolio)return; const holdings=portfolioDraft(); let value=0,cost=0;
   holdings.forEach(h=>{value+=h.amount*num(coinById(h.id)?.current_price);cost+=h.amount*h.avgCost}); const pnl=value-cost,pct=cost?pnl/cost*100:0;
   $("portfolioValue").textContent=fmtEur(value);$("portfolioCost").textContent=fmtEur(cost);$("portfolioPnl").textContent=fmtEur(pnl);$("portfolioPnl").className=pctClass(pnl);$("portfolioPnlPct").textContent=fmtPct(pct);
-  renderPortfolioInsights(holdings,value);
+  renderPortfolioInsights(holdings,value);renderHomePortfolioPulse(holdings);
 }
 function renderPortfolioInsights(holdings,total){
   const positions=holdings.map(h=>({...h,value:h.amount*num(coinById(h.id)?.current_price)})).filter(h=>h.value>0).sort((a,b)=>b.value-a.value);
@@ -571,6 +623,7 @@ document.querySelectorAll('[data-advanced-tab]').forEach(button=>button.onclick=
 document.querySelectorAll('#newsFilters .chip').forEach(button=>button.onclick=()=>{state.newsFilter=button.dataset.filter;document.querySelectorAll('#newsFilters .chip').forEach(x=>x.classList.toggle('active',x===button));renderNews()});
 document.querySelectorAll("[data-stress]").forEach(button=>button.onclick=()=>setStressPreset(button.dataset.stress));
 $("refreshBtn").onclick=()=>loadAll(true);$("applyFilters").onclick=renderScreener;$("savePortfolio").onclick=savePortfolio;$("addPortfolioCoin").onclick=addPortfolioCoin;$("savePlan").onclick=savePlan;$("runDca").onclick=runDca;$("analyzeTrade").onclick=analyzeTrade;$("saveDecision").onclick=saveDecision;$("backBtn").onclick=()=>showPage('overview');
+$("openHomeLayout").onclick=()=>toggleHomeLayout($("homeLayoutManager").classList.contains("hidden"));$("closeHomeLayout").onclick=()=>toggleHomeLayout(false);$("resetHomeLayout").onclick=resetHomeLayout;
 $("managePinned").onclick=()=>{$("pinnedManager").classList.toggle("hidden");if(!$("pinnedManager").classList.contains("hidden"))$("pinnedCoinSelect").focus()};$("closePinned").onclick=()=>$("pinnedManager").classList.add("hidden");$("addPinned").onclick=addPinnedCoin;$("pinnedCoinSelect").onchange=()=>{$("addPinned").disabled=!$("pinnedCoinSelect").value||pinnedIds().length>=5};
 $("runCopilot").onclick=runCopilotWithCooldown;$("savePassport").onclick=savePassport;$("exportMonthlyReport").onclick=exportMonthlyBehavior;$("saveFiscalReadiness").onclick=saveFiscalReadiness;$("saveScoreSnapshot").onclick=saveScoreSnapshot;$("refreshQuality").onclick=renderDataQuality;$("dataQualityBadge").onclick=()=>openCopilotTab("quality");$("runSecurityRadar").onclick=runSecurityRadar;$("saveLocalProfile").onclick=saveLocalProfile;$("generateShareReport").onclick=generateShareReport;$("exportAllLocal").onclick=downloadAllLocal;$("downloadLocalData").onclick=downloadAllLocal;$("exportPassports").onclick=()=>downloadBlob(`crypto-radar-passaporti-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(localData(copilotStore.passports,[]),null,2));$("deleteLocalData").onclick=()=>{if(!confirm("Eliminare tutti i dati locali di Crypto Radar da questo browser? L’operazione non può essere annullata senza un backup."))return;[...Array(localStorage.length)].map((_,i)=>localStorage.key(i)).filter(k=>k?.startsWith("cryptoRadar")).forEach(k=>localStorage.removeItem(k));location.reload()};$("tutorToggle").onclick=()=>toggleTutor(!$("tutorDrawer").classList.contains("open"));$("tutorClose").onclick=()=>toggleTutor(false);
 $("saveAlertSettings").onclick=saveAlertSettings;$("saveWeeklySnapshot").onclick=saveWeeklySnapshot;$("printWeeklyReport").onclick=()=>window.print();$("paperCoin").onchange=updatePaperPreview;$("paperAmount").oninput=updatePaperPreview;$("paperFee").oninput=updatePaperPreview;$("paperAction").onchange=updatePaperPreview;$("executePaper").onclick=executePaper;$("resetPaper").onclick=resetPaper;$("addCalendarEvent").onclick=addCalendarEvent;$("saveCalendarRoutines").onclick=saveCalendarRoutines;$("exportCalendar").onclick=exportCalendar;

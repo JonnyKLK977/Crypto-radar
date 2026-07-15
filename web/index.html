@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="/phase14.css">
   <link rel="stylesheet" href="/phase15.css">
   <link rel="stylesheet" href="/phase16.css">
+  <link rel="stylesheet" href="/phase17.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -57,6 +58,18 @@
       <div id="demoBanner" class="demo-banner hidden"><b>Modalità demo pubblica</b><span>Le scritture sul server sono disattivate. Preferenze, Copilota e strumenti operativi possono restare soltanto nel browser e si gestiscono dal Centro privacy.</span></div>
 
       <section id="overview" class="page active">
+        <article class="card home-layout-bar">
+          <div><p class="eyebrow">LA TUA DASHBOARD</p><h2>Organizza la Home come preferisci</h2><span>Ordine e sezioni visibili restano salvati soltanto in questo browser.</span></div>
+          <button id="openHomeLayout" class="secondary">Personalizza Home</button>
+        </article>
+        <article id="homeLayoutManager" class="card home-layout-manager hidden">
+          <div class="home-layout-manager-head"><div><p class="eyebrow">COMPONI LA HOME</p><h2>Sposta, nascondi o aggiungi moduli</h2><p>Trascina le righe oppure usa le frecce. Le modifiche vengono salvate automaticamente.</p></div><button id="closeHomeLayout" class="secondary">Chiudi</button></div>
+          <div id="homeWidgetManagerList" class="home-widget-manager-list"></div>
+          <div class="home-layout-manager-footer"><button id="resetHomeLayout" class="secondary">Ripristina impostazione iniziale</button><span id="homeLayoutStatus" class="muted">Configurazione locale attiva</span></div>
+        </article>
+
+        <div id="homeWidgetArea" class="home-widget-area">
+        <div class="home-widget" data-home-widget="snapshot">
         <article class="card home-language-card">
           <div><p class="eyebrow">LINGUA DELL’APP</p><h2>Scegli come visualizzare Crypto Radar</h2><span>La preferenza viene salvata su questo browser e vale per tutta l’app.</span></div>
           <div class="home-language-buttons" role="group" aria-label="Seleziona la lingua della Home">
@@ -76,7 +89,9 @@
           <article class="card metric"><span>ETH 24h</span><strong id="eth24">—</strong><small id="ethPrice">—</small></article>
           <article class="card metric"><span>Ampiezza 7g</span><strong id="breadth">—</strong><small>Top 50 in rialzo</small></article>
         </div>
+        </div>
 
+        <div class="home-widget" data-home-widget="movers">
         <div class="section-title weekly-movers-heading"><div><p class="eyebrow">MOVIMENTI SETTIMANALI</p><h2>Chi è salito e chi è sceso di più</h2></div><div class="weekly-source"><a href="https://coinmarketcap.com/" target="_blank" rel="noopener noreferrer">Fonte CoinMarketCap ↗</a><span id="weeklyMoversMeta" class="muted">In attesa dei dati</span></div></div>
         <p class="market-scope-note">Dati ufficiali CoinMarketCap sulle prime 100 crypto per capitalizzazione nelle ultime 7 giornate. Stablecoin, versioni wrapped/staked e asset senza variazione settimanale valida sono esclusi. La classifica descrive il movimento passato: non è una previsione né un invito all’acquisto.</p>
         <div class="weekly-movers-grid">
@@ -89,7 +104,9 @@
             <div id="weeklyLosers" class="mover-list"></div>
           </article>
         </div>
+        </div>
 
+        <div class="home-widget" data-home-widget="pinned">
         <div class="section-title pinned-heading"><div><p class="eyebrow">POSIZIONI FISSATE</p><h2 id="pinnedTitle">Le tue crypto</h2></div><div class="pinned-heading-actions"><span id="pinnedCount" class="muted">0/5 selezionate</span><button id="managePinned" class="secondary">Gestisci</button></div></div>
         <article id="pinnedManager" class="card pinned-manager hidden">
           <div><h3>Personalizza la Home</h3><p>Scegli fino a 5 crypto tra quelle monitorate. La selezione viene salvata soltanto su questo browser.</p></div>
@@ -98,13 +115,39 @@
           <div class="pinned-manager-footer"><span id="pinnedMessage" class="muted">Le schede non modificano il tuo portafoglio.</span><button id="closePinned" class="secondary">Chiudi</button></div>
         </article>
         <div id="pinnedCards" class="coin-grid skeleton-grid"></div>
+        </div>
 
+        <div class="home-widget" data-home-widget="portfolio-pulse">
+          <div class="section-title"><div><p class="eyebrow">SINTESI PERSONALE</p><h2>Il portafoglio in un colpo d’occhio</h2></div><button class="link-button" data-go="portfolio">Gestisci portafoglio →</button></div>
+          <div class="home-portfolio-grid">
+            <article class="card home-portfolio-metric"><span>VALORE ATTUALE</span><strong id="homePortfolioValue">€0</strong><small id="homePortfolioPositions">0 posizioni valorizzate</small></article>
+            <article class="card home-portfolio-metric"><span>RISULTATO INDICATIVO</span><strong id="homePortfolioPnl">€0</strong><small id="homePortfolioPnlPct">—</small></article>
+            <article class="card home-portfolio-metric"><span>POSIZIONE MAGGIORE</span><strong id="homePortfolioLargest">—</strong><small id="homePortfolioLargestWeight">Portafoglio non compilato</small></article>
+            <article class="card home-portfolio-metric"><span>CONTROLLO RAPIDO</span><strong id="homePortfolioRisk">Da configurare</strong><small id="homePortfolioRiskText">Aggiungi quantità e costo medio</small></article>
+          </div>
+        </div>
+
+        <div class="home-widget" data-home-widget="candidates">
         <div class="section-title"><div><p class="eyebrow">SEGNALI MIGLIORI</p><h2>Candidate emerse oggi</h2></div><button class="link-button" data-go="screener">Apri screener →</button></div>
         <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>Crypto</th><th>Score</th><th>Perché emerge</th><th>Prezzo</th><th>7g</th><th>30g</th><th>Rischio</th></tr></thead><tbody id="topCandidates"></tbody></table></div></div>
+        </div>
 
+        <div class="home-widget" data-home-widget="quick-actions">
+          <div class="section-title"><div><p class="eyebrow">PROSSIMO PASSO</p><h2>Azioni rapide e consapevoli</h2></div><span class="muted">Prima il processo, poi la decisione</span></div>
+          <div class="home-quick-grid">
+            <button class="card home-quick-action" data-go="copilot"><span>01</span><div><b>Controlla una decisione</b><small>Usa il Copilota 360 prima di agire</small></div><i>→</i></button>
+            <button class="card home-quick-action" data-go="decision"><span>02</span><div><b>Simula rischio e peso</b><small>Apri Decision Lab e confronta il piano</small></div><i>→</i></button>
+            <button class="card home-quick-action" data-go="academy"><span>03</span><div><b>Chiarisci un dubbio</b><small>Consulta Guide & Manuali</small></div><i>→</i></button>
+            <button class="card home-quick-action" data-go="tax"><span>04</span><div><b>Aggiorna la parte fiscale</b><small>Controlla documenti e riconciliazione</small></div><i>→</i></button>
+          </div>
+        </div>
+
+        <div class="home-widget" data-home-widget="italian-news">
         <div class="section-title home-news-heading"><div><p class="eyebrow">NOTIZIE ITALIANE</p><h2>Ultime da Criptovaluta.it</h2></div><div class="home-news-actions"><button class="link-button" data-go="news">Tutte le notizie →</button><a class="secondary" href="https://www.criptovaluta.it/" target="_blank" rel="noopener noreferrer">Apri Criptovaluta.it ↗</a></div></div>
         <p class="market-scope-note">I titoli sono mostrati per informazione e restano separati da score e classifiche. Apri l’articolo e verifica sempre fonte, data e contesto.</p>
         <div id="homeItalianNewsList" class="home-news-grid"></div>
+        </div>
+        </div>
       </section>
 
       <section id="connections" class="page">
@@ -289,7 +332,7 @@
             <details class="card lesson" data-lesson="app-start">
               <summary><span class="lesson-number">08</span><div><b>Panoramica e Opportunity screener</b><small>Leggere regime, score, rischio e filtri senza scambiarli per previsioni</small></div><span class="lesson-time">18 min</span></summary>
               <div class="lesson-content">
-                <h3>Panoramica</h3><div class="field-guide"><div><b>Lingua della Home</b><span>Seleziona italiano, inglese o spagnolo. La scelta viene ricordata nel browser e traduce l’intera app, non soltanto la pagina iniziale.</span></div><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Movimenti settimanali</b><span>Prezzi, ranking, capitalizzazioni e variazioni a 7 giorni arrivano dall’API ufficiale CoinMarketCap. La sezione mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.</span></div><div><b>Posizioni fissate</b><span>Premi “Gestisci” e scegli fino a 5 crypto personali. La selezione resta nel browser ed è separata dal portafoglio.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div><div><b>Notizie italiane</b><span>La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.</span></div></div>
+                <h3>Panoramica</h3><div class="field-guide"><div><b>Personalizza Home</b><span>Apri il pannello in cima alla pagina. Trascina i moduli o usa le frecce per cambiarne l’ordine; disattiva “Visibile” per nasconderli e riattivala per aggiungerli di nuovo. “Ripristina” torna all’ordine iniziale. Tutto resta nel browser.</span></div><div><b>Lingua della Home</b><span>Seleziona italiano, inglese o spagnolo. La scelta viene ricordata nel browser e traduce l’intera app, non soltanto la pagina iniziale.</span></div><div><b>Sintesi portafoglio</b><span>Riepiloga valore, risultato indicativo, posizione maggiore e confronto col limite personale. Se mancano costi medi o piano, lo segnala invece di produrre una conclusione incompleta.</span></div><div><b>Azioni rapide</b><span>Collega i passaggi più utili: controllo 360, Decision Lab, guide e fiscalità. Puoi spostare o nascondere anche questo modulo.</span></div><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Movimenti settimanali</b><span>Prezzi, ranking, capitalizzazioni e variazioni a 7 giorni arrivano dall’API ufficiale CoinMarketCap. La sezione mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.</span></div><div><b>Posizioni fissate</b><span>Premi “Gestisci” e scegli fino a 5 crypto personali. La selezione resta nel browser ed è separata dal portafoglio.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div><div><b>Notizie italiane</b><span>La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.</span></div></div>
                 <h3>Opportunity screener</h3><ol class="learning-steps"><li><b>Capitalizzazione minima:</b> esclude progetti troppo piccoli; il valore è in milioni di euro.</li><li><b>Volume 24h minimo:</b> imposta un primo controllo di liquidità, senza garantire che il volume sia di qualità.</li><li><b>Prezzo unitario massimo:</b> è solo un filtro pratico. Un prezzo basso non rende una crypto sottovalutata.</li><li><b>Rischio massimo:</b> limita la volatilità ammessa dal modello.</li><li>Premi <b>Applica filtri</b>, poi confronta score, motivazione, market cap, 7g, 30g, FDV/MC e rischio.</li><li>Apri la crypto e completa la ricerca fondamentale prima di usare Decision Lab.</li></ol>
                 <div class="beginner-rule"><b>Sequenza corretta</b><span>Screener → progetto e tokenomics → fonti → compatibilità col piano → Decision Lab. Lo score serve a restringere la ricerca, non a sostituirla.</span></div>
                 <button class="secondary" data-go="overview">Apri Panoramica</button> <button class="secondary" data-go="screener">Apri Opportunity screener</button>
