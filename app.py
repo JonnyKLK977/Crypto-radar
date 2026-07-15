@@ -31,6 +31,7 @@ TRANSLATIONS_FILE = DATA_DIR / "news_translations_it.json"
 PLAN_FILE = DATA_DIR / "investment_plan.json"
 JOURNAL_FILE = DATA_DIR / "decision_journal.json"
 TRANSACTIONS_FILE = DATA_DIR / "transactions.json"
+COMMUNITY_FILE = DATA_DIR / "community.json"
 MARKET_FALLBACK_FILE = ROOT / "market_fallback.json"
 COINGECKO = "https://api.coingecko.com/api/v3"
 COINMARKETCAP_PUBLIC = "https://pro-api.coinmarketcap.com/public-api"
@@ -63,6 +64,9 @@ DEFAULT_PLAN = {
 _cache: dict[str, tuple[float, object]] = {}
 _import_previews: dict[str, dict] = {}
 _translation_locks = {language: threading.Lock() for language in ("it", "en", "es")}
+_community_lock = threading.Lock()
+_community_rate: dict[tuple[str, str], list[float]] = {}
+_community_presence: dict[str, float] = {}
 
 
 def json_bytes(value: object) -> bytes:
@@ -166,6 +170,26 @@ def write_journal(entries: list[dict]) -> None:
     temp.replace(JOURNAL_FILE)
 
 
+def restore_local_backup(payload: dict) -> dict:
+    storage = payload.get("storage")
+    if not isinstance(storage, dict):
+        raise ValueError("Backup Crypto Radar non valido.")
+    restored: list[str] = []
+    portfolio = storage.get("cryptoRadarPortfolio")
+    if isinstance(portfolio, dict):
+        save_portfolio(portfolio)
+        restored.append("portfolio")
+    plan = storage.get("cryptoRadarPlan")
+    if isinstance(plan, dict):
+        save_plan(plan)
+        restored.append("plan")
+    journal = storage.get("cryptoRadarDecisionJournal")
+    if isinstance(journal, list):
+        write_journal([entry for entry in journal if isinstance(entry, dict)][:1000])
+        restored.append("journal")
+    return {"restored": restored}
+
+
 def load_transactions() -> list[dict]:
     try:
         data = json.loads(TRANSACTIONS_FILE.read_text(encoding="utf-8"))
@@ -179,6 +203,265 @@ def write_transactions(entries: list[dict]) -> None:
     temp = TRANSACTIONS_FILE.with_suffix(".tmp")
     temp.write_text(json.dumps(entries, ensure_ascii=False, indent=2), encoding="utf-8")
     temp.replace(TRANSACTIONS_FILE)
+
+
+def empty_community() -> dict:
+    return {
+        "profiles": {},
+        "messages": [],
+        "posts": [],
+        "follows": {},
+        "strategyFollows": {},
+        "reactions": {},
+    }
+
+
+def load_community_unlocked() -> dict:
+    try:
+        data = json.loads(COMMUNITY_FILE.read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            raise ValueError("community non valida")
+    except (OSError, ValueError, json.JSONDecodeError):
+        return empty_community()
+    result = empty_community()
+    for key, expected in (
+        ("profiles", dict),
+        ("messages", list),
+        ("posts", list),
+        ("follows", dict),
+        ("strategyFollows", dict),
+        ("reactions", dict),
+    ):
+        if isinstance(data.get(key), expected):
+            result[key] = data[key]
+    return result
+
+
+def write_community_unlocked(data: dict) -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    temp = COMMUNITY_FILE.with_suffix(".tmp")
+    temp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    temp.replace(COMMUNITY_FILE)
+
+
+def community_id(value: object, label: str = "profilo") -> str:
+    cleaned = str(value or "").strip()[:64]
+    if not cleaned or not all(char.isalnum() or char in "-_" for char in cleaned):
+        raise ValueError(f"Identificativo {label} non valido.")
+    return cleaned
+
+
+def community_text(value: object, maximum: int, label: str, minimum: int = 0) -> str:
+    cleaned = " ".join(str(value or "").strip().split())[:maximum]
+    if len(cleaned) < minimum:
+        raise ValueError(f"{label}: inserisci almeno {minimum} caratteri.")
+    return cleaned
+
+
+def community_rate_allowed(client_ip: str, bucket: str, limit: int, window: int) -> bool:
+    now = time.time()
+    key = (client_ip, bucket)
+    with _community_lock:
+        recent = [stamp for stamp in _community_rate.get(key, []) if now - stamp < window]
+        if len(recent) >= limit:
+            _community_rate[key] = recent
+            return False
+        recent.append(now)
+        _community_rate[key] = recent
+    return True
+
+
+def community_snapshot(viewer_value: object) -> dict:
+    viewer = str(viewer_value or "").strip()[:64]
+    with _community_lock:
+        data = load_community_unlocked()
+        if viewer in data["profiles"]:
+            _community_presence[viewer] = time.time()
+        cutoff = time.time() - 120
+        for user_id, last_seen in list(_community_presence.items()):
+            if last_seen < cutoff:
+                _community_presence.pop(user_id, None)
+        follower_counts: dict[str, int] = {}
+        for targets in data["follows"].values():
+            if not isinstance(targets, list):
+                continue
+            for target in set(str(item) for item in targets):
+                follower_counts[target] = follower_counts.get(target, 0) + 1
+        profiles = []
+        for profile in data["profiles"].values():
+            if isinstance(profile, dict):
+                profiles.append({**profile, "followerCount": follower_counts.get(str(profile.get("id", "")), 0)})
+        profiles.sort(key=lambda item: (-int(item.get("followerCount", 0)), str(item.get("displayName", "")).lower()))
+        return {
+            "profiles": profiles,
+            "messages": [item for item in data["messages"] if isinstance(item, dict)][-120:],
+            "posts": sorted(
+                [item for item in data["posts"] if isinstance(item, dict)],
+                key=lambda item: int(item.get("createdAt", 0)),
+                reverse=True,
+            )[:300],
+            "following": data["follows"].get(viewer, []) if viewer else [],
+            "followedStrategies": data["strategyFollows"].get(viewer, []) if viewer else [],
+            "reactedPosts": [
+                post_id for post_id, user_ids in data["reactions"].items()
+                if isinstance(user_ids, list) and viewer in user_ids
+            ] if viewer else [],
+            "activeNow": len(_community_presence),
+            "asOf": int(time.time()),
+            "persistence": "temporary" if DEMO_MODE else "local-file",
+        }
+
+
+def save_community_profile(payload: dict) -> dict:
+    user_id = community_id(payload.get("userId"))
+    display_name = community_text(payload.get("displayName"), 40, "Nome", 2)
+    handle = community_text(payload.get("handle"), 24, "Handle", 3).lower().lstrip("@")
+    if not all(char.isalnum() or char == "_" for char in handle):
+        raise ValueError("L'handle puo contenere solo lettere, numeri e underscore.")
+    bio = community_text(payload.get("bio"), 180, "Bio")
+    experience = str(payload.get("experience", "beginner"))
+    if experience not in {"beginner", "intermediate", "advanced"}:
+        experience = "beginner"
+    focus = []
+    for item in payload.get("focus", []):
+        cleaned = community_text(item, 18, "Focus").upper()
+        if cleaned and cleaned not in focus:
+            focus.append(cleaned)
+    with _community_lock:
+        data = load_community_unlocked()
+        for profile_id, profile in data["profiles"].items():
+            if profile_id != user_id and isinstance(profile, dict) and profile.get("handle") == handle:
+                raise ValueError("Questo handle e gia in uso.")
+        previous = data["profiles"].get(user_id, {})
+        profile = {
+            "id": user_id,
+            "displayName": display_name,
+            "handle": handle,
+            "bio": bio,
+            "experience": experience,
+            "focus": focus[:5],
+            "createdAt": int(previous.get("createdAt", time.time())),
+            "updatedAt": int(time.time()),
+        }
+        data["profiles"][user_id] = profile
+        write_community_unlocked(data)
+    return profile
+
+
+def add_community_message(payload: dict) -> dict:
+    user_id = community_id(payload.get("userId"))
+    body = community_text(payload.get("body"), 400, "Messaggio", 2)
+    category = str(payload.get("category", "idea"))
+    if category not in {"idea", "question", "source", "risk"}:
+        category = "idea"
+    asset = community_text(payload.get("asset"), 12, "Asset").upper()
+    with _community_lock:
+        data = load_community_unlocked()
+        if user_id not in data["profiles"]:
+            raise ValueError("Completa il profilo community prima di scrivere.")
+        message = {"id": uuid.uuid4().hex, "authorId": user_id, "body": body, "category": category, "asset": asset, "createdAt": int(time.time())}
+        data["messages"] = ([item for item in data["messages"] if isinstance(item, dict)] + [message])[-500:]
+        write_community_unlocked(data)
+    return message
+
+
+def add_community_post(payload: dict) -> dict:
+    user_id = community_id(payload.get("userId"))
+    kind = str(payload.get("kind", "analysis"))
+    if kind not in {"analysis", "strategy", "question", "lesson"}:
+        kind = "analysis"
+    title = community_text(payload.get("title"), 100, "Titolo", 5)
+    body = community_text(payload.get("body"), 2200, "Contenuto", 30)
+    asset = community_text(payload.get("asset"), 18, "Asset").upper()
+    timeframe = str(payload.get("timeframe", "not-set"))
+    if timeframe not in {"intraday", "week", "month", "long-term", "not-set"}:
+        timeframe = "not-set"
+    risk = str(payload.get("risk", "not-assessed"))
+    if risk not in {"low", "medium", "high", "not-assessed"}:
+        risk = "not-assessed"
+    thesis = community_text(payload.get("thesis"), 1200, "Tesi")
+    invalidation = community_text(payload.get("invalidation"), 800, "Invalidazione")
+    source_url = str(payload.get("sourceUrl", "")).strip()[:500]
+    if source_url:
+        parsed = urllib.parse.urlparse(source_url)
+        if parsed.scheme != "https" or not parsed.netloc:
+            raise ValueError("La fonte deve essere un URL HTTPS completo.")
+    if kind == "strategy" and (len(thesis) < 30 or len(invalidation) < 20):
+        raise ValueError("Una strategia richiede una tesi e una condizione di invalidazione concrete.")
+    quality = sum((len(thesis) >= 30, len(invalidation) >= 20, risk != "not-assessed", bool(source_url)))
+    with _community_lock:
+        data = load_community_unlocked()
+        if user_id not in data["profiles"]:
+            raise ValueError("Completa il profilo community prima di pubblicare.")
+        post = {
+            "id": uuid.uuid4().hex,
+            "authorId": user_id,
+            "kind": kind,
+            "title": title,
+            "body": body,
+            "asset": asset,
+            "timeframe": timeframe,
+            "risk": risk,
+            "thesis": thesis,
+            "invalidation": invalidation,
+            "sourceUrl": source_url,
+            "quality": quality,
+            "createdAt": int(time.time()),
+            "reactionCount": 0,
+            "strategyFollowerCount": 0,
+        }
+        data["posts"] = ([item for item in data["posts"] if isinstance(item, dict)] + [post])[-300:]
+        write_community_unlocked(data)
+    return post
+
+
+def update_community_relation(payload: dict) -> dict:
+    user_id = community_id(payload.get("userId"))
+    action = str(payload.get("action", ""))
+    target_id = community_id(payload.get("targetId"), "destinazione")
+    active = bool(payload.get("active", True))
+    with _community_lock:
+        data = load_community_unlocked()
+        if user_id not in data["profiles"]:
+            raise ValueError("Profilo community non trovato.")
+        if action == "follow-profile":
+            if target_id == user_id or target_id not in data["profiles"]:
+                raise ValueError("Profilo da seguire non valido.")
+            bucket = data["follows"].setdefault(user_id, [])
+            count_field = None
+        elif action == "follow-strategy":
+            if not any(item.get("id") == target_id and item.get("kind") == "strategy" for item in data["posts"] if isinstance(item, dict)):
+                raise ValueError("Strategia non trovata.")
+            bucket = data["strategyFollows"].setdefault(user_id, [])
+            count_field = "strategyFollowerCount"
+        elif action == "react":
+            if not any(item.get("id") == target_id for item in data["posts"] if isinstance(item, dict)):
+                raise ValueError("Post non trovato.")
+            bucket = data["reactions"].setdefault(target_id, [])
+            count_field = "reactionCount"
+        else:
+            raise ValueError("Azione community non valida.")
+        values = [str(item) for item in bucket if isinstance(item, str)]
+        member_id = user_id if action == "react" else target_id
+        if active and member_id not in values:
+            values.append(member_id)
+        if not active:
+            values = [item for item in values if item != member_id]
+        if action == "react":
+            data["reactions"][target_id] = values
+        elif action == "follow-profile":
+            data["follows"][user_id] = values
+        else:
+            data["strategyFollows"][user_id] = values
+        if count_field:
+            for post in data["posts"]:
+                if isinstance(post, dict) and post.get("id") == target_id:
+                    if action == "follow-strategy":
+                        post[count_field] = sum(target_id in items for items in data["strategyFollows"].values() if isinstance(items, list))
+                    else:
+                        post[count_field] = len(values)
+        write_community_unlocked(data)
+    return {"action": action, "targetId": target_id, "active": active}
 
 
 def normalized_header(value: str) -> str:
@@ -929,6 +1212,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json({"ok": True, "time": int(time.time()), "demo": DEMO_MODE})
             if parsed.path == "/api/config":
                 return self.send_json({"demo": DEMO_MODE, "writesEnabled": not DEMO_MODE})
+            if parsed.path == "/api/community":
+                viewer = urllib.parse.parse_qs(parsed.query).get("viewer", [""])[0]
+                return self.send_json(community_snapshot(viewer))
             if parsed.path == "/api/portfolio":
                 return self.send_json(json.loads(json.dumps(DEFAULT_PORTFOLIO)) if DEMO_MODE else load_portfolio())
             if parsed.path == "/api/plan":
@@ -1027,9 +1313,11 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({"error": "Errore interno inatteso."}, 500)
 
     def do_POST(self) -> None:  # noqa: N802
-        if self.path not in ("/api/portfolio", "/api/plan", "/api/journal", "/api/import/preview", "/api/import/confirm"):
+        community_paths = {"/api/community/profile", "/api/community/message", "/api/community/post", "/api/community/action"}
+        allowed_paths = {"/api/portfolio", "/api/plan", "/api/journal", "/api/import/preview", "/api/import/confirm", "/api/restore-local-backup"} | community_paths
+        if self.path not in allowed_paths:
             return self.send_json({"error": "Endpoint non trovato."}, 404)
-        if DEMO_MODE:
+        if DEMO_MODE and self.path not in community_paths:
             return self.send_json({"error": "La demo pubblica è in sola lettura e non salva dati personali."}, 403)
         try:
             length = int(self.headers.get("Content-Length", "0"))
@@ -1037,6 +1325,25 @@ class Handler(BaseHTTPRequestHandler):
             if length > limit:
                 return self.send_json({"error": "Richiesta troppo grande."}, 413)
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
+            if self.path in community_paths:
+                rules = {
+                    "/api/community/profile": ("profile", 8, 600),
+                    "/api/community/message": ("message", 15, 60),
+                    "/api/community/post": ("post", 5, 600),
+                    "/api/community/action": ("action", 40, 60),
+                }
+                bucket, count, window = rules[self.path]
+                if not community_rate_allowed(self.client_address[0], bucket, count, window):
+                    return self.send_json({"error": "Troppe azioni ravvicinate. Attendi qualche minuto."}, 429)
+                if self.path == "/api/community/profile":
+                    return self.send_json(save_community_profile(payload), 201)
+                if self.path == "/api/community/message":
+                    return self.send_json(add_community_message(payload), 201)
+                if self.path == "/api/community/post":
+                    return self.send_json(add_community_post(payload), 201)
+                return self.send_json(update_community_relation(payload))
+            if self.path == "/api/restore-local-backup":
+                return self.send_json(restore_local_backup(payload))
             if self.path == "/api/import/preview":
                 return self.send_json(preview_csv_import(payload))
             if self.path == "/api/import/confirm":
@@ -1047,7 +1354,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(save_plan(payload))
             return self.send_json(save_portfolio(payload))
         except (ValueError, json.JSONDecodeError) as exc:
-            if self.path in {"/api/journal", "/api/import/preview", "/api/import/confirm"} and str(exc):
+            if self.path in ({"/api/journal", "/api/import/preview", "/api/import/confirm"} | community_paths) and str(exc):
                 return self.send_json({"error": str(exc)}, 400)
             self.send_json({"error": "Dati portafoglio non validi."}, 400)
 

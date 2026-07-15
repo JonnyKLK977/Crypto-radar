@@ -140,6 +140,17 @@ La modalità Avanzata include un centro di controllo costruito con funzioni che 
 
 Gli indici aggregati arrivano dalla Keyless Public API di CoinMarketCap e vengono memorizzati dal server per cinque minuti per rispettare i limiti condivisi. Gli endpoint senza chiave sono adatti a prototipi e uso leggero: una futura versione commerciale dovrà usare un piano/API key adeguato. Eventi, classificazioni e stress restano strumenti di ricerca e non raccomandazioni.
 
+## Piazza Radar
+
+La sezione **Piazza Radar** concentra la community in uno spazio compatto con due viste:
+
+- **Live Desk** per domande, fonti, idee e rischi in messaggi brevi, aggiornati ogni cinque secondi;
+- **Bacheca delle tesi** per analisi, domande, lezioni e Carte Strategia consultabili nel tempo.
+
+Una Carta Strategia separa contenuto, tesi, condizione di invalidazione, orizzonte, rischio dichiarato e fonte HTTPS. Il comando "Segui strategia" la aggiunge al radar sociale dell'utente: non copia operazioni e non esegue ordini. Profili, follow, messaggi, post e reazioni vengono salvati in `data/community.json`, separati da portafoglio e piano personale. Sono presenti limiti di lunghezza, convalida degli URL e rate limiting essenziale.
+
+Nella demo Render le scritture community sono abilitate per consentire l'interazione tra visitatori, ma il filesystem resta temporaneo: un riavvio o una nuova distribuzione puo cancellare i contenuti. Prima di un uso pubblico stabile servono database persistente, autenticazione, recupero account, segnalazioni, moderazione, blocco utenti, informativa privacy e controlli anti-abuso piu robusti.
+
 ## Lingue
 
 Il selettore nell'intestazione e quello dedicato nella Home permettono di usare l'interfaccia in **italiano, inglese o spagnolo**. I due controlli sono sincronizzati e la preferenza resta nel browser. I dizionari locali inclusi in `web/i18n-en.json` e `web/i18n-es.json` coprono pagine, guide, moduli, attributi accessibili e messaggi dinamici; il cambio lingua non invia dati personali a servizi di traduzione. Le notizie mantengono sempre il titolo originale e possono richiedere una traduzione automatica separata.
