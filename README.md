@@ -63,6 +63,8 @@ I link condivisibili con scadenza e la sincronizzazione tra dispositivi non sono
 
 Non sono necessarie chiavi API o librerie Python aggiuntive. I dati arrivano dalla API pubblica CoinGecko e il portafoglio viene salvato esclusivamente in `data/portfolio.json`.
 
+Se CoinGecko applica temporaneamente un limite all’IP del server, `/api/markets` utilizza uno snapshot ridotto incluso nel progetto e lo segnala come `stale: true`. L’interfaccia mostra chiaramente “Dati di riserva” con la data dello snapshot; appena la fonte live torna disponibile, il server riprende automaticamente i dati correnti.
+
 La pagina **News & trend** separa volutamente tre concetti diversi:
 
 - qualità quantitativa, rappresentata dallo score;

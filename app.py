@@ -30,12 +30,14 @@ TRANSLATIONS_FILE = DATA_DIR / "news_translations_it.json"
 PLAN_FILE = DATA_DIR / "investment_plan.json"
 JOURNAL_FILE = DATA_DIR / "decision_journal.json"
 TRANSACTIONS_FILE = DATA_DIR / "transactions.json"
+MARKET_FALLBACK_FILE = ROOT / "market_fallback.json"
 COINGECKO = "https://api.coingecko.com/api/v3"
 COINDESK_RSS = "https://www.coindesk.com/arc/outboundfeeds/rss/"
 CRIPTOVALUTA_RSS = "https://www.criptovaluta.it/feed/"
 PORT = int(os.environ.get("PORT", os.environ.get("CRYPTO_RADAR_PORT", "8765")))
 HOST = os.environ.get("CRYPTO_RADAR_HOST", "127.0.0.1")
 DEMO_MODE = os.environ.get("CRYPTO_RADAR_DEMO", "0").strip().lower() in {"1", "true", "yes", "on"}
+FORCE_MARKET_FALLBACK = os.environ.get("CRYPTO_RADAR_FORCE_FALLBACK", "0").strip().lower() in {"1", "true", "yes", "on"}
 
 DEFAULT_PORTFOLIO = {
     "currency": "eur",
@@ -627,19 +629,25 @@ class Handler(BaseHTTPRequestHandler):
                         batches[batch_id]["count"] += 1
                 return self.send_json({"transactions": transactions[-500:], "total": len(transactions), "batches": sorted(batches.values(), key=lambda x: x.get("importedAt", 0), reverse=True)})
             if parsed.path == "/api/markets":
-                data = coingecko_get(
-                    "/coins/markets",
-                    {
-                        "vs_currency": "eur",
-                        "order": "market_cap_desc",
-                        "per_page": "200",
-                        "page": "1",
-                        "sparkline": "true",
-                        "price_change_percentage": "1h,24h,7d,30d,1y",
-                    },
-                    ttl=180,
-                )
-                return self.send_json({"data": data, "asOf": int(time.time())})
+                try:
+                    if FORCE_MARKET_FALLBACK:
+                        raise RuntimeError("Fallback market data forced for verification.")
+                    data = coingecko_get(
+                        "/coins/markets",
+                        {
+                            "vs_currency": "eur",
+                            "order": "market_cap_desc",
+                            "per_page": "200",
+                            "page": "1",
+                            "sparkline": "true",
+                            "price_change_percentage": "1h,24h,7d,30d,1y",
+                        },
+                        ttl=180,
+                    )
+                    return self.send_json({"data": data, "asOf": int(time.time()), "source": "live", "stale": False})
+                except RuntimeError:
+                    fallback = json.loads(MARKET_FALLBACK_FILE.read_text(encoding="utf-8"))
+                    return self.send_json({"data": fallback["data"], "asOf": fallback["generatedAt"], "source": "fallback", "stale": True})
             if parsed.path == "/api/trending":
                 data = coingecko_get("/search/trending", {}, ttl=600)
                 return self.send_json(data)

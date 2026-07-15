@@ -1,4 +1,4 @@
-const state = { markets: [], scored: [], portfolio: null, plan: null, journal: [], trending: [], news: [], translations: {}, newsFilter: "ALL", currentPage: "overview", demo: false };
+const state = { markets: [], scored: [], portfolio: null, plan: null, journal: [], trending: [], news: [], translations: {}, newsFilter: "ALL", currentPage: "overview", demo: false, marketStale: false };
 const $ = (id) => document.getElementById(id);
 const clamp = (x, lo=0, hi=100) => Math.min(hi, Math.max(lo, x));
 const fmtEur = (n, compact=false) => new Intl.NumberFormat("it-IT", {style:"currency",currency:"EUR",notation:compact?"compact":"standard",maximumFractionDigits:n<1?5:2}).format(n||0);
@@ -68,7 +68,8 @@ async function loadAll(showFlash=false){
     state.trending=(trendResponse.coins||[]).map(x=>x.item).slice(0,10);
     state.news=newsResponse.articles||[];
     state.demo=Boolean(config.demo);
-    $("lastUpdate").textContent=`Aggiornato ${new Date(marketResponse.asOf*1000).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}`;
+    state.marketStale=Boolean(marketResponse.stale);
+    $("lastUpdate").textContent=state.marketStale?`Dati di riserva · ${new Date(marketResponse.asOf*1000).toLocaleDateString("it-IT")}`:`Aggiornato ${new Date(marketResponse.asOf*1000).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}`;
     renderOverview(); renderScreener(); renderPortfolio(); renderPlan(); renderDecisionLab(); renderDiscovery(); renderDemoMode(); loadImportHistory(); renderOperations(); renderCopilot();
     loadTranslations();
   }catch(error){ showError(error.message); }
