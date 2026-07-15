@@ -18,6 +18,9 @@
   <link rel="stylesheet" href="/phase11.css">
   <link rel="stylesheet" href="/phase12.css">
   <link rel="stylesheet" href="/phase13.css">
+  <link rel="stylesheet" href="/phase14.css">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
 <body>
   <div class="shell">
@@ -37,13 +40,14 @@
         <button class="nav" data-target="tax">730 & fiscalità crypto</button>
         <button class="nav" data-target="method">Metodo & rischio</button>
       </nav>
+      <div class="sidebar-profile"><button id="openOnboarding" class="secondary">Configura profilo</button><button id="interfaceMode" class="mode-button">Modalità: Principiante</button></div>
       <div class="side-note">Dati pubblici CoinGecko<br><span id="lastUpdate">In attesa dei dati…</span></div>
     </aside>
 
     <main>
       <header>
         <div><p class="eyebrow">MERCATO CRYPTO · EUR</p><h1 id="pageTitle">Panoramica</h1></div>
-        <button id="refreshBtn" class="secondary">Aggiorna dati</button>
+        <div class="header-actions"><button id="dataQualityBadge" class="data-quality-badge" data-go="copilot">Qualità dati: —</button><button id="refreshBtn" class="secondary">Aggiorna dati</button></div>
       </header>
 
       <div id="notice" class="notice hidden"></div>
@@ -358,6 +362,7 @@
           <article class="card metric"><span>Risultato</span><strong id="portfolioPnl">€0</strong><small id="portfolioPnlPct">0%</small></article>
         </div>
         <div class="section-title"><div><p class="eyebrow">DATI LOCALI</p><h2>Le tue posizioni</h2></div><span class="muted">Non viene collegato alcun exchange</span></div>
+        <article class="card portfolio-builder"><div><h3>Aggiungi una posizione</h3><p>Scegli liberamente una crypto monitorata. Puoi gestire fino a 30 posizioni e rimuoverle in qualsiasi momento.</p></div><div><select id="portfolioCoinSelect" aria-label="Crypto da aggiungere"></select><button id="addPortfolioCoin" class="primary">Aggiungi</button></div></article>
         <div id="holdingEditors" class="holding-editors"></div>
         <button id="savePortfolio" class="primary">Salva portafoglio</button>
         <div class="portfolio-insights">
@@ -414,7 +419,7 @@
         </div>
         <div class="trust-strip"><span>✓ Dati del Copilota nel browser</span><span>✓ Nessuna esecuzione di ordini</span><span>✓ Motivazioni visibili</span><span>✓ Export controllato dall’utente</span></div>
 
-        <div class="copilot-nav" role="tablist"><button class="chip active" data-copilot-tab="check">Prima di comprare</button><button class="chip" data-copilot-tab="passports">Passaporti</button><button class="chip" data-copilot-tab="fiscal">Fisco continuo</button><button class="chip" data-copilot-tab="scores">Perché è cambiato?</button><button class="chip" data-copilot-tab="security">Radar sicurezza</button><button class="chip" data-copilot-tab="share">Condividi</button><button class="chip" data-copilot-tab="privacy">Privacy</button></div>
+        <div class="copilot-nav" role="tablist"><button class="chip active" data-copilot-tab="check">Prima di comprare</button><button class="chip" data-copilot-tab="passports">Passaporti</button><button class="chip" data-copilot-tab="monthly">Report mensile</button><button class="chip advanced-only" data-copilot-tab="fiscal">Fisco continuo</button><button class="chip advanced-only" data-copilot-tab="scores">Perché è cambiato?</button><button class="chip" data-copilot-tab="quality">Qualità dati</button><button class="chip advanced-only" data-copilot-tab="security">Radar sicurezza</button><button class="chip" data-copilot-tab="share">Condividi</button><button class="chip" data-copilot-tab="privacy">Privacy</button></div>
 
         <div id="copilot-check" class="copilot-panel active">
           <div class="section-title topless"><div><p class="eyebrow">WHAT-IF PRIMA DELL’ORDINE</p><h2>Simulatore delle conseguenze</h2></div><span class="muted">Il semaforo misura completezza e coerenza, non rendimento futuro</span></div>
@@ -430,12 +435,18 @@
             </article>
             <article class="card copilot-output"><div class="copilot-verdict"><span id="copilotLight" class="verdict-light neutral-light"></span><div><p class="eyebrow">ESITO DEL CONTROLLO</p><h2 id="copilotVerdict">In attesa dei dati</h2><small id="copilotVerdictText">Compila il modulo e avvia l’analisi.</small></div></div><div id="copilotMetrics" class="copilot-metrics"></div><div id="copilotFindings" class="analysis-list"><p class="muted">Qui compariranno concentrazione, scenari, costi, score, qualità della tesi e controlli fiscali.</p></div></article>
           </div>
+          <article id="cooldownCard" class="card cooldown-card hidden"><div><p class="eyebrow">PAUSA VOLONTARIA ANTI-FOMO</p><h2 id="cooldownTitle">Prenditi tempo</h2><p id="cooldownText">Blocca volontariamente il processo e riesamina la tesi quando l’emozione si è ridotta.</p></div><div id="cooldownActions"><button class="secondary" data-cooldown-hours="12">Pausa 12 ore</button><button class="secondary" data-cooldown-hours="24">Pausa 24 ore</button></div></article>
         </div>
 
         <div id="copilot-passports" class="copilot-panel">
           <div class="section-title topless"><div><p class="eyebrow">MEMORIA VERIFICABILE</p><h2>Passaporti delle decisioni</h2></div><button id="exportPassports" class="secondary">Esporta JSON</button></div>
           <p class="filter-warning">Ogni passaporto congela input, prezzo, score, componenti del modello, impatto e fonti nel momento dell’analisi. Non dimostra che la scelta fosse corretta: rende verificabile il processo.</p>
           <div id="passportStats" class="summary-grid"></div><div id="passportList" class="passport-list"></div>
+        </div>
+
+        <div id="copilot-monthly" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">COME STAI INVESTENDO?</p><h2>Report mensile del comportamento</h2></div><button id="exportMonthlyReport" class="secondary">Esporta report HTML</button></div>
+          <div id="monthlyBehaviorMetrics" class="summary-grid"></div><div class="monthly-report-grid"><article class="card"><p class="eyebrow">QUALITÀ DEL PROCESSO</p><h2>Indicatori del mese</h2><div id="monthlyBehaviorDetails" class="behavior-breakdown"></div></article><article class="card"><p class="eyebrow">REVISIONE GUIDATA</p><h2>Cosa migliorare</h2><div id="monthlyBehaviorActions" class="risk-insights"></div></article></div><div id="monthlyDecisionList" class="passport-list"></div>
         </div>
 
         <div id="copilot-fiscal" class="copilot-panel">
@@ -455,6 +466,11 @@
           <div id="scoreChangeSummary" class="summary-grid"></div><div id="scoreChangeList" class="score-change-list"></div>
         </div>
 
+        <div id="copilot-quality" class="copilot-panel">
+          <div class="section-title topless"><div><p class="eyebrow">TRASPARENZA E AFFIDABILITÀ</p><h2>Centro qualità dei dati</h2></div><button id="refreshQuality" class="secondary">Ricontrolla</button></div>
+          <div id="dataQualityMetrics" class="summary-grid"></div><div class="quality-layout"><article class="card"><p class="eyebrow">FONTI E FRESCHEZZA</p><h2>Stato delle sorgenti</h2><div id="dataSourceStatus" class="data-source-list"></div></article><article class="card"><p class="eyebrow">COMPLETEZZA PERSONALE</p><h2>Dati da correggere</h2><div id="dataQualityIssues" class="risk-insights"></div></article></div><p class="tax-note">Live significa aggiornato dalla fonte al caricamento; riserva significa snapshot locale. Stimato identifica un calcolo ricostruito. Nessuna etichetta certifica l’accuratezza economica o fiscale.</p>
+        </div>
+
         <div id="copilot-security" class="copilot-panel">
           <div class="section-title topless"><div><p class="eyebrow">CONTROLLO ANTI-TRUFFA</p><h2>Radar sicurezza guidato</h2></div><span class="muted">Non certifica l’affidabilità di un servizio o token</span></div>
           <div class="security-radar-grid"><article class="card security-radar-form"><label>Tipo di controllo<select id="securityType"><option value="provider">Exchange / fornitore</option><option value="website">Sito o dApp</option><option value="token">Token / contratto</option><option value="wallet">Wallet</option></select></label><label>Nome<input id="securityName" maxlength="100" placeholder="Nome del servizio o token"></label><label>URL ufficiale da verificare<input id="securityUrl" type="url" maxlength="500" placeholder="https://..."></label><label>Rete e contratto / riferimento<input id="securityContract" maxlength="200" placeholder="Rete + contract address, se applicabile"></label><div class="security-confirmations"><label class="check"><input type="checkbox" data-security-check="official"> Il link proviene dalla documentazione ufficiale</label><label class="check"><input type="checkbox" data-security-check="registry"> Ho verificato autorizzazione/registro quando applicabile</label><label class="check"><input type="checkbox" data-security-check="contract"> Ho confrontato il contratto su almeno due fonti</label><label class="check"><input type="checkbox" data-security-check="permissions"> Comprendo permessi e firma richiesta</label><label class="check"><input type="checkbox" data-security-check="incidents"> Ho cercato incidenti, exploit e avvisi recenti</label><label class="check"><input type="checkbox" data-security-check="test"> Posso eseguire un test con importo minimo</label></div><button id="runSecurityRadar" class="primary">Esegui controllo guidato</button></article><article class="card security-radar-output"><div id="securityRadarScore" class="security-score">—</div><h2 id="securityRadarTitle">Nessun controllo eseguito</h2><div id="securityRadarFindings" class="analysis-list"></div><div class="official-inline"><a href="https://www.esma.europa.eu/crypto-assets" target="_blank" rel="noopener noreferrer">ESMA · Crypto e registri ↗</a><a href="https://www.consob.it/web/area-pubblica/occhio-alle-truffe" target="_blank" rel="noopener noreferrer">Consob · Occhio alle truffe ↗</a></div></article></div>
@@ -467,7 +483,7 @@
 
         <div id="copilot-privacy" class="copilot-panel">
           <div class="section-title topless"><div><p class="eyebrow">CONTROLLO DEI DATI</p><h2>Profilo locale e Centro privacy</h2></div><span class="muted">Nessun account cloud attivo</span></div>
-          <div class="privacy-grid"><article class="card local-profile"><h3>Profilo su questo dispositivo</h3><label>Nome visualizzato<input id="profileName" maxlength="60" placeholder="Es. Mario"></label><label>Esperienza<select id="profileExperience"><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzato</option></select></label><label>Obiettivo principale<select id="profileGoal"><option value="learn">Imparare</option><option value="manage">Gestire il portafoglio</option><option value="risk">Controllare il rischio</option><option value="tax">Preparare la fiscalità</option></select></label><button id="saveLocalProfile" class="primary">Salva profilo locale</button></article><article class="card privacy-inventory"><h3>Dati presenti nel browser</h3><div id="privacyInventory"></div><div class="privacy-actions"><button id="downloadLocalData" class="secondary">Scarica i miei dati</button><button id="deleteLocalData" class="danger-button">Elimina dati locali</button></div></article></div>
+          <div class="privacy-grid"><article class="card local-profile"><h3>Profilo su questo dispositivo</h3><label>Nome visualizzato<input id="profileName" maxlength="60" placeholder="Es. Mario"></label><label>Esperienza<select id="profileExperience"><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzato</option></select></label><label>Obiettivo principale<select id="profileGoal"><option value="learn">Imparare</option><option value="manage">Gestire il portafoglio</option><option value="risk">Controllare il rischio</option><option value="tax">Preparare la fiscalità</option></select></label><button id="saveLocalProfile" class="primary">Salva profilo locale</button><button id="installApp" class="secondary hidden">Installa Crypto Radar</button><button id="enableNotifications" class="secondary">Abilita notifiche locali</button></article><article class="card privacy-inventory"><h3>Dati presenti nel browser</h3><div id="privacyInventory"></div><div class="privacy-actions"><button id="downloadLocalData" class="secondary">Scarica i miei dati</button><button id="deleteLocalData" class="danger-button">Elimina dati locali</button></div></article></div>
           <article class="card behavior-breakdown-card"><p class="eyebrow">PUNTEGGIO DI DISCIPLINA</p><h2>Premia il processo, non il trading</h2><div id="behaviorBreakdown" class="behavior-breakdown"></div><p class="simulation-note">Non misura competenza, adeguatezza o probabilità di profitto. Aumenta completando attività prudenti e documentabili.</p></article>
           <article class="card account-roadmap"><p class="eyebrow">PRIMA DI ATTIVARE ACCOUNT REALI</p><h2>Requisiti non negoziabili</h2><div class="professional-grid"><span>Password con hashing robusto e protezione anti-abuso</span><span>Verifica e-mail, recupero sicuro e sessioni revocabili</span><span>Database isolato per utente e backup cifrati</span><span>API exchange cifrate, in sola lettura e mai nei log</span><span>Consenso, informativa privacy e minimizzazione dei dati</span><span>Esportazione, rettifica e cancellazione dell’account</span><span>Audit degli accessi e gestione degli incidenti</span><span>Hosting persistente: non filesystem temporaneo Render</span></div><p class="tax-note">Il profilo locale non è un account e non sincronizza dispositivi. Prima di vendere il servizio, autenticazione e privacy richiedono progettazione backend e verifica legale dedicate.</p></article>
         </div>
@@ -741,6 +757,7 @@
   </div>
   <button id="tutorToggle" class="tutor-toggle" aria-label="Apri tutor contestuale">?</button>
   <aside id="tutorDrawer" class="tutor-drawer" aria-hidden="true"><div class="tutor-head"><div><p class="eyebrow">TUTOR CONTESTUALE</p><h2 id="tutorTitle">Come posso aiutarti?</h2></div><button id="tutorClose" aria-label="Chiudi">×</button></div><div id="tutorBody" class="tutor-body"></div><div id="tutorActions" class="tutor-actions"></div></aside>
+  <div id="onboardingOverlay" class="onboarding-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle"><div class="card onboarding-modal"><div class="onboarding-head"><div><p class="eyebrow">CONFIGURAZIONE GUIDATA</p><h2 id="onboardingTitle">Prepara Crypto Radar per te</h2></div><button id="closeOnboarding" aria-label="Chiudi">×</button></div><div class="onboarding-progress"><span id="onboardingStepLabel">Passaggio 1 di 4</span><div class="bar-track"><div id="onboardingBar" class="bar-fill"></div></div></div><div id="onboardingSteps"><section class="onboarding-step active" data-onboarding-step="0"><h3>Da dove parti?</h3><p>Serve a scegliere il livello di dettaglio, non a valutare la tua competenza.</p><label>Nome visualizzato<input id="onboardingName" maxlength="60" placeholder="Come vuoi essere chiamato?"></label><label>Esperienza<select id="onboardingExperience"><option value="beginner">Sto iniziando</option><option value="intermediate">Conosco già le basi</option><option value="advanced">Uso già wallet, exchange e strumenti avanzati</option></select></label><label>Modalità iniziale<select id="onboardingMode"><option value="beginner">Principiante · più spiegazioni</option><option value="advanced">Avanzata · tutti gli strumenti</option></select></label></section><section class="onboarding-step" data-onboarding-step="1"><h3>Obiettivo e limiti</h3><label>Obiettivo principale<select id="onboardingGoal"><option value="learn">Imparare senza fretta</option><option value="manage">Gestire il portafoglio</option><option value="risk">Controllare il rischio</option><option value="tax">Preparare la fiscalità</option></select></label><label>Capitale totale investibile (€)<input id="onboardingCapital" type="number" min="0" step="100"></label><label>Orizzonte previsto (anni)<input id="onboardingHorizon" type="number" min="1" max="50" value="5"></label><label>Perdita tollerabile (%)<input id="onboardingLoss" type="number" min="0" max="100" value="25"></label></section><section class="onboarding-step" data-onboarding-step="2"><h3>Crypto da seguire</h3><p>Scegli fino a 5 crypto per la Home. Potrai cambiarle in qualsiasi momento.</p><div id="onboardingCoins" class="onboarding-coins"></div></section><section class="onboarding-step" data-onboarding-step="3"><h3>Prima configurazione pronta</h3><div id="onboardingReview" class="onboarding-review"></div><label class="check"><input id="onboardingEmergency" type="checkbox"> Confermo che il capitale indicato non serve per emergenze o spese vicine</label><p class="tax-warning">Crypto Radar offre strumenti educativi e di supporto decisionale. Non valuta l’adeguatezza personale e non fornisce raccomandazioni di investimento.</p></section></div><div class="onboarding-actions"><button id="onboardingBack" class="secondary" disabled>Indietro</button><button id="onboardingNext" class="primary">Continua</button></div></div></div>
   <script src="/app.js" defer></script>
 </body>
 </html>

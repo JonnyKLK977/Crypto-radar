@@ -41,11 +41,7 @@ FORCE_MARKET_FALLBACK = os.environ.get("CRYPTO_RADAR_FORCE_FALLBACK", "0").strip
 
 DEFAULT_PORTFOLIO = {
     "currency": "eur",
-    "holdings": [
-        {"id": "polygon-ecosystem-token", "symbol": "POL", "amount": 0, "avgCost": 0},
-        {"id": "algorand", "symbol": "ALGO", "amount": 0, "avgCost": 0},
-        {"id": "cardano", "symbol": "ADA", "amount": 0, "avgCost": 0},
-    ],
+    "holdings": [],
 }
 
 DEFAULT_PLAN = {
@@ -57,13 +53,7 @@ DEFAULT_PLAN = {
     "maxSingleCoin": 30,
     "maxSpeculative": 10,
     "allowLeverage": False,
-    "targets": [
-        {"id": "bitcoin", "symbol": "BTC", "target": 0},
-        {"id": "ethereum", "symbol": "ETH", "target": 0},
-        {"id": "polygon-ecosystem-token", "symbol": "POL", "target": 0},
-        {"id": "algorand", "symbol": "ALGO", "target": 0},
-        {"id": "cardano", "symbol": "ADA", "target": 0},
-    ],
+    "targets": [],
 }
 
 _cache: dict[str, tuple[float, object]] = {}
@@ -81,10 +71,6 @@ def load_portfolio() -> dict:
         data = json.loads(PORTFOLIO_FILE.read_text(encoding="utf-8"))
         if not isinstance(data.get("holdings"), list):
             raise ValueError("holdings non valido")
-        existing = {item.get("id") for item in data["holdings"]}
-        for required in DEFAULT_PORTFOLIO["holdings"]:
-            if required["id"] not in existing:
-                data["holdings"].append(required.copy())
         return data
     except (OSError, ValueError, json.JSONDecodeError):
         return DEFAULT_PORTFOLIO.copy()
@@ -118,10 +104,6 @@ def load_plan() -> dict:
             raise ValueError("targets non valido")
     except (OSError, ValueError, json.JSONDecodeError):
         return json.loads(json.dumps(DEFAULT_PLAN))
-    existing = {item.get("id") for item in data["targets"]}
-    for required in DEFAULT_PLAN["targets"]:
-        if required["id"] not in existing:
-            data["targets"].append(required.copy())
     return data
 
 
@@ -143,20 +125,20 @@ def save_plan(payload: dict) -> dict:
             value = float(DEFAULT_PLAN[field])
         cleaned[field] = min(maximum, max(minimum, value))
     cleaned["allowLeverage"] = bool(payload.get("allowLeverage", False))
-    allowed = {item["id"]: item["symbol"] for item in DEFAULT_PLAN["targets"]}
-    target_values = {}
+    targets = []
+    seen = set()
     for item in payload.get("targets", []):
-        coin_id = str(item.get("id", ""))
-        if coin_id not in allowed:
+        coin_id = str(item.get("id", "")).strip()[:100]
+        symbol = str(item.get("symbol", "")).strip().upper()[:15]
+        if not coin_id or not symbol or coin_id in seen:
             continue
         try:
-            target_values[coin_id] = min(100.0, max(0.0, float(item.get("target", 0))))
+            target = min(100.0, max(0.0, float(item.get("target", 0))))
         except (TypeError, ValueError):
-            target_values[coin_id] = 0.0
-    cleaned["targets"] = [
-        {"id": coin_id, "symbol": symbol, "target": target_values.get(coin_id, 0.0)}
-        for coin_id, symbol in allowed.items()
-    ]
+            target = 0.0
+        targets.append({"id": coin_id, "symbol": symbol, "target": target})
+        seen.add(coin_id)
+    cleaned["targets"] = targets[:30]
     DATA_DIR.mkdir(exist_ok=True)
     temp = PLAN_FILE.with_suffix(".tmp")
     temp.write_text(json.dumps(cleaned, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -669,9 +651,8 @@ class Handler(BaseHTTPRequestHandler):
             if parsed.path == "/api/dca":
                 query = urllib.parse.parse_qs(parsed.query)
                 coin_id = query.get("id", [""])[0]
-                allowed_ids = {item["id"] for item in DEFAULT_PLAN["targets"]}
-                if coin_id not in allowed_ids:
-                    return self.send_json({"error": "Crypto non supportata dal simulatore."}, 400)
+                if not coin_id or not all(ch.isalnum() or ch in "-_" for ch in coin_id):
+                    return self.send_json({"error": "Crypto non valida per il simulatore."}, 400)
                 try:
                     months = min(12, max(3, int(query.get("months", ["12"])[0])))
                     monthly = min(1_000_000, max(1, float(query.get("monthly", ["100"])[0])))

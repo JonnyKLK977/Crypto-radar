@@ -4,6 +4,8 @@ Dashboard per seguire fino a cinque crypto personali e individuare altre opportu
 
 Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’utente può aggiungere e rimuovere fino a 5 crypto tra le 200 monitorate. La selezione è distinta dal portafoglio e non viene inviata al server.
 
+La pagina **Il mio portafoglio** parte vuota: POL, ALGO, ADA o altre crypto non vengono assegnate automaticamente. L'utente può aggiungere e rimuovere liberamente fino a 30 asset dal catalogo di mercato, quindi compilare quantità e costo medio. Nella demo pubblica portafoglio e piano vengono salvati soltanto nel browser utilizzato.
+
 ## Avvio
 
 Da PowerShell, nella cartella del progetto:
@@ -112,6 +114,8 @@ La pagina **Guide per principianti** contiene un percorso educativo in quattordi
 Include un glossario ricercabile e una checklist pre-acquisto. L'avanzamento viene memorizzato nel browser e non viene inviato al server.
 
 I moduli contengono anche esempi numerici, confronto fra pagamenti blockchain e tradizionali, differenza fra crypto e NFT, procedura di ricerca, rischi distinti per categoria, lettura delle notizie, custodia e controllo delle transazioni.
+
+Le funzioni locali includono inoltre onboarding iniziale, modalità Principiante/Avanzata, pausa anti-FOMO, report mensile del comportamento, Centro qualità dati e installazione PWA quando supportata dal browser.
 
 ## Score 0–100
 
