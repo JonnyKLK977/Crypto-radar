@@ -96,7 +96,7 @@ Il **Decision Lab** aggiunge:
 
 Il diario viene salvato in `data/decision_journal.json`.
 
-La pagina **Guide & Manuali** contiene un percorso educativo in quattordici moduli:
+La pagina **Guide & Manuali** contiene un percorso educativo in quindici moduli:
 
 - basi di crypto, token, exchange e wallet;
 - budget, rischio e piano personale;
@@ -110,8 +110,23 @@ La pagina **Guide & Manuali** contiene un percorso educativo in quattordici modu
 - manuale completo di Decision Lab e Centro operativo;
 - flusso di News, Metodo e guida fiscale.
 - manuale completo del Copilota 360, della condivisione e del Centro privacy.
+- manuale di Execution Lab, Risk Engine e verifica degli operatori nel registro MiCA.
 
 Include un glossario ricercabile e una checklist pre-acquisto. L'avanzamento viene memorizzato nel browser e non viene inviato al server.
+
+## Strumenti avanzati
+
+La modalità Avanzata include tre strumenti con fonti e limiti dichiarati:
+
+- **Execution Lab** confronta gli order book pubblici BTC/altcoin-EUR di Coinbase, Kraken e Bitvavo e mostra spread, VWAP, slippage, fill e profondità osservata;
+- **Risk Engine** combina le posizioni del portafoglio usando serie orarie Kraken e calcola volatilità annualizzata, beta BTC, numero effettivo di posizioni, proxy storica di perdita, correlazioni e contributi al rischio;
+- **Verifica MiCA** cerca nome, dominio o LEI nei CSV ufficiali ESMA dei CASP autorizzati e delle entità non conformi.
+
+Sono strumenti informativi: non eseguono ordini, non certificano operatori e non stimano la perdita massima futura.
+
+## Lingue
+
+Il selettore nell'intestazione permette di usare l'interfaccia in **italiano, inglese o spagnolo**. La preferenza resta nel browser. I dizionari locali inclusi in `web/i18n-en.json` e `web/i18n-es.json` coprono pagine, guide, moduli, attributi accessibili e messaggi dinamici; il cambio lingua non invia dati personali a servizi di traduzione. Le notizie mantengono sempre il titolo originale e possono richiedere una traduzione automatica separata.
 
 I moduli contengono anche esempi numerici, confronto fra pagamenti blockchain e tradizionali, differenza fra crypto e NFT, procedura di ricerca, rischi distinti per categoria, lettura delle notizie, custodia e controllo delle transazioni.
 

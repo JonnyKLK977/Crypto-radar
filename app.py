@@ -10,6 +10,7 @@ import io
 import mimetypes
 import os
 import time
+import threading
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -34,6 +35,8 @@ MARKET_FALLBACK_FILE = ROOT / "market_fallback.json"
 COINGECKO = "https://api.coingecko.com/api/v3"
 COINDESK_RSS = "https://www.coindesk.com/arc/outboundfeeds/rss/"
 CRIPTOVALUTA_RSS = "https://www.criptovaluta.it/feed/"
+ESMA_CASP_CSV = "https://www.esma.europa.eu/sites/default/files/2024-12/CASPS.csv"
+ESMA_NCASP_CSV = "https://www.esma.europa.eu/sites/default/files/2024-12/NCASP.csv"
 PORT = int(os.environ.get("PORT", os.environ.get("CRYPTO_RADAR_PORT", "8765")))
 HOST = os.environ.get("CRYPTO_RADAR_HOST", "127.0.0.1")
 DEMO_MODE = os.environ.get("CRYPTO_RADAR_DEMO", "0").strip().lower() in {"1", "true", "yes", "on"}
@@ -58,6 +61,7 @@ DEFAULT_PLAN = {
 
 _cache: dict[str, tuple[float, object]] = {}
 _import_previews: dict[str, dict] = {}
+_translation_locks = {language: threading.Lock() for language in ("it", "en", "es")}
 
 
 def json_bytes(value: object) -> bytes:
@@ -533,16 +537,20 @@ def load_news() -> list[dict]:
     return articles[:70]
 
 
-def load_translation_cache() -> dict[str, str]:
+def news_translation_file(language: str) -> Path:
+    return TRANSLATIONS_FILE if language == "it" else DATA_DIR / f"news_translations_{language}.json"
+
+
+def load_translation_cache(language: str = "it") -> dict[str, str]:
     try:
-        data = json.loads(TRANSLATIONS_FILE.read_text(encoding="utf-8"))
+        data = json.loads(news_translation_file(language).read_text(encoding="utf-8"))
         return data if isinstance(data, dict) else {}
     except (OSError, ValueError, json.JSONDecodeError):
         return {}
 
 
-def translate_title(title: str) -> str:
-    params = urllib.parse.urlencode({"q": title[:450], "langpair": "en|it", "mt": "1"})
+def translate_title(title: str, source: str = "en", target: str = "it") -> str:
+    params = urllib.parse.urlencode({"q": title[:450], "langpair": f"{source}|{target}", "mt": "1"})
     url = f"https://api.mymemory.translated.net/get?{params}"
     request = urllib.request.Request(url, headers={"User-Agent": "CryptoRadar/0.2"})
     try:
@@ -554,14 +562,16 @@ def translate_title(title: str) -> str:
         return title
 
 
-def translate_news() -> dict[str, str]:
+def _translate_news_unlocked(language: str = "it") -> dict[str, str]:
+    language = language if language in {"it", "en", "es"} else "it"
     articles = load_news()[:25]
-    cache = load_translation_cache()
-    english_titles = [article["title"] for article in articles if article.get("sourceLanguage") == "en"]
-    missing = [title for title in english_titles if title not in cache]
+    cache = load_translation_cache(language)
+    translated_articles = [article for article in articles if article.get("sourceLanguage") != language]
+    titles = [article["title"] for article in translated_articles]
+    missing = [article for article in translated_articles if article["title"] not in cache]
     if missing:
         with ThreadPoolExecutor(max_workers=4) as executor:
-            jobs = {executor.submit(translate_title, title): title for title in missing}
+            jobs = {executor.submit(translate_title, article["title"], str(article.get("sourceLanguage", "en")), language): article["title"] for article in missing}
             for job in as_completed(jobs):
                 title = jobs[job]
                 try:
@@ -569,10 +579,178 @@ def translate_news() -> dict[str, str]:
                 except Exception:
                     cache[title] = title
         DATA_DIR.mkdir(exist_ok=True)
-        temp = TRANSLATIONS_FILE.with_suffix(".tmp")
+        destination = news_translation_file(language)
+        temp = destination.with_suffix(".tmp")
         temp.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
-        temp.replace(TRANSLATIONS_FILE)
-    return {title: cache.get(title, title) for title in english_titles}
+        temp.replace(destination)
+    return {title: cache.get(title, title) for title in titles}
+
+
+def translate_news(language: str = "it") -> dict[str, str]:
+    language = language if language in _translation_locks else "it"
+    with _translation_locks[language]:
+        return _translate_news_unlocked(language)
+
+
+def public_json(url: str, ttl: int = 30) -> object:
+    now = time.time()
+    cached = _cache.get(url)
+    if cached and now - cached[0] < ttl:
+        return cached[1]
+    request = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "CryptoRadar/0.5 market-research"})
+    try:
+        with urllib.request.urlopen(request, timeout=12) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        _cache[url] = (now, data)
+        return data
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError) as exc:
+        if cached:
+            return cached[1]
+        raise RuntimeError("Fonte di mercato temporaneamente non disponibile.") from exc
+
+
+def normalize_book(source: str, bids: list, asks: list, amount_eur: float, side: str) -> dict:
+    clean_bids = sorted([(float(x[0]), float(x[1])) for x in bids if float(x[0]) > 0 and float(x[1]) > 0], reverse=True)
+    clean_asks = sorted([(float(x[0]), float(x[1])) for x in asks if float(x[0]) > 0 and float(x[1]) > 0])
+    if not clean_bids or not clean_asks:
+        raise RuntimeError("Order book vuoto.")
+    best_bid, best_ask = clean_bids[0][0], clean_asks[0][0]
+    midpoint = (best_bid + best_ask) / 2
+    levels = clean_asks if side == "buy" else clean_bids
+    target_base = amount_eur / midpoint
+    remaining_base = target_base
+    gross_eur = 0.0
+    filled_base = 0.0
+    levels_used = 0
+    for price, size in levels:
+        take = min(remaining_base, size)
+        if take <= 0:
+            continue
+        gross_eur += take * price
+        filled_base += take
+        remaining_base -= take
+        levels_used += 1
+        if remaining_base <= 1e-12:
+            break
+    fill_pct = min(100.0, filled_base / target_base * 100) if target_base else 0.0
+    vwap = gross_eur / filled_base if filled_base else 0.0
+    slippage_bps = ((vwap / midpoint - 1) if side == "buy" else (1 - vwap / midpoint)) * 10_000 if vwap else 0.0
+    return {
+        "source": source,
+        "bestBid": best_bid,
+        "bestAsk": best_ask,
+        "midpoint": midpoint,
+        "spreadBps": (best_ask - best_bid) / midpoint * 10_000,
+        "vwap": vwap,
+        "slippageBps": slippage_bps,
+        "fillPct": fill_pct,
+        "levelsUsed": levels_used,
+        "depthEur": sum(price * size for price, size in levels),
+    }
+
+
+def execution_comparison(symbol: str, amount_eur: float, side: str) -> dict:
+    symbol = symbol.upper()
+    sources = {
+        "Coinbase": f"https://api.exchange.coinbase.com/products/{symbol}-EUR/book?level=2",
+        "Kraken": f"https://api.kraken.com/0/public/Depth?pair={symbol}EUR&count=100",
+        "Bitvavo": f"https://api.bitvavo.com/v2/{symbol}-EUR/book?depth=100",
+    }
+
+    def fetch_book(name: str, url: str) -> dict:
+        data = public_json(url)
+        if name == "Kraken":
+            result = data.get("result", {}) if isinstance(data, dict) else {}
+            book = next(iter(result.values())) if result else {}
+        else:
+            book = data if isinstance(data, dict) else {}
+        return normalize_book(name, book.get("bids", []), book.get("asks", []), amount_eur, side)
+
+    books, errors = [], []
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        jobs = {executor.submit(fetch_book, name, url): name for name, url in sources.items()}
+        for job in as_completed(jobs):
+            name = jobs[job]
+            try:
+                books.append(job.result())
+            except Exception as exc:
+                errors.append({"source": name, "error": str(exc)})
+    books.sort(key=lambda item: item["vwap"] if side == "buy" else -item["vwap"])
+    return {"symbol": symbol, "amountEur": amount_eur, "side": side, "asOf": int(time.time()), "books": books, "errors": errors}
+
+
+def risk_price_series(symbols: list[str]) -> dict:
+    cleaned = list(dict.fromkeys(symbol.upper() for symbol in symbols if symbol and len(symbol) <= 12 and symbol.replace("-", "").isalnum()))[:15]
+
+    def fetch(symbol: str) -> tuple[str, list[float]]:
+        data = public_json(f"https://api.kraken.com/0/public/OHLC?pair={symbol}EUR&interval=60", ttl=300)
+        result = data.get("result", {}) if isinstance(data, dict) else {}
+        key = next((item for item in result if item != "last"), "")
+        rows = result.get(key, []) if key else []
+        prices = [float(row[4]) for row in rows if len(row) > 4 and float(row[4]) > 0]
+        if len(prices) < 24:
+            raise RuntimeError("Storico insufficiente")
+        return symbol, prices[-720:]
+
+    series, errors = {}, []
+    with ThreadPoolExecutor(max_workers=min(6, max(1, len(cleaned)))) as executor:
+        jobs = {executor.submit(fetch, symbol): symbol for symbol in cleaned}
+        for job in as_completed(jobs):
+            symbol = jobs[job]
+            try:
+                key, prices = job.result()
+                series[key] = prices
+            except Exception as exc:
+                errors.append({"symbol": symbol, "error": str(exc)})
+    return {"series": series, "errors": errors, "source": "Kraken public OHLC", "interval": "1h", "asOf": int(time.time())}
+
+
+def load_esma_csv(url: str) -> list[dict]:
+    now = time.time()
+    key = f"csv:{url}"
+    cached = _cache.get(key)
+    if cached and now - cached[0] < 21_600:
+        return cached[1]  # type: ignore[return-value]
+    request = urllib.request.Request(url, headers={"Accept": "text/csv", "User-Agent": "CryptoRadar/0.5 regulatory-check"})
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            raw = response.read().decode("utf-8-sig", errors="replace")
+        rows = list(csv.DictReader(io.StringIO(raw)))
+        _cache[key] = (now, rows)
+        return rows
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, csv.Error) as exc:
+        if cached:
+            return cached[1]  # type: ignore[return-value]
+        raise RuntimeError("Registro ESMA temporaneamente non disponibile.") from exc
+
+
+def mica_search(query: str) -> dict:
+    needle = query.strip().lower()[:120]
+    authorized = load_esma_csv(ESMA_CASP_CSV)
+    non_compliant = load_esma_csv(ESMA_NCASP_CSV)
+
+    def matches(row: dict) -> bool:
+        return not needle or needle in " ".join(str(value) for value in row.values()).lower()
+
+    def project(row: dict, status: str) -> dict:
+        return {
+            "status": status,
+            "legalName": row.get("ae_lei_name", ""),
+            "commercialName": row.get("ae_commercial_name", ""),
+            "country": row.get("ae_homeMemberState", ""),
+            "authority": row.get("ae_competentAuthority", ""),
+            "website": row.get("ae_website", ""),
+            "authorisedAt": row.get("ac_authorisationNotificationDate", ""),
+            "authorisationEnd": row.get("ac_authorisationEndDate", ""),
+            "services": row.get("ac_serviceCode", ""),
+            "reason": row.get("ae_reason", ""),
+            "decisionDate": row.get("ae_decision_date", ""),
+            "lastUpdate": row.get("ac_lastupdate", row.get("ae_lastupdate", "")),
+        }
+
+    good = [project(row, "authorised") for row in authorized if matches(row)][:40]
+    bad = [project(row, "non-compliant") for row in non_compliant if matches(row)][:40]
+    return {"query": query, "authorised": good, "nonCompliant": bad, "counts": {"authorised": len(authorized), "nonCompliant": len(non_compliant)}, "source": "ESMA Interim MiCA Register", "sourceUrl": "https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica", "asOf": int(time.time())}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -585,7 +763,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
+            pass
 
     def do_GET(self) -> None:  # noqa: N802
         parsed = urllib.parse.urlparse(self.path)
@@ -636,7 +817,29 @@ class Handler(BaseHTTPRequestHandler):
             if parsed.path == "/api/news":
                 return self.send_json({"articles": load_news(), "asOf": int(time.time())})
             if parsed.path == "/api/news-translations":
-                return self.send_json({"translations": translate_news(), "language": "it"})
+                language = urllib.parse.parse_qs(parsed.query).get("lang", ["it"])[0]
+                language = language if language in {"it", "en", "es"} else "it"
+                return self.send_json({"translations": translate_news(language), "language": language})
+            if parsed.path == "/api/execution":
+                query = urllib.parse.parse_qs(parsed.query)
+                symbol = query.get("symbol", [""])[0].strip().upper()
+                side = query.get("side", ["buy"])[0]
+                if not symbol or len(symbol) > 12 or not symbol.replace("-", "").isalnum() or side not in {"buy", "sell"}:
+                    return self.send_json({"error": "Parametri Execution Lab non validi."}, 400)
+                try:
+                    amount = min(5_000_000, max(10, float(query.get("amount", ["1000"])[0])))
+                except (TypeError, ValueError):
+                    return self.send_json({"error": "Importo non valido."}, 400)
+                return self.send_json(execution_comparison(symbol, amount, side))
+            if parsed.path == "/api/risk-series":
+                raw = urllib.parse.parse_qs(parsed.query).get("symbols", [""])[0]
+                symbols = [symbol.strip() for symbol in raw.split(",") if symbol.strip()]
+                if not symbols:
+                    return self.send_json({"error": "Indica almeno una crypto per il Risk Engine."}, 400)
+                return self.send_json(risk_price_series(symbols))
+            if parsed.path == "/api/mica-search":
+                query = urllib.parse.parse_qs(parsed.query).get("q", [""])[0]
+                return self.send_json(mica_search(query))
             if parsed.path == "/api/history":
                 query = urllib.parse.parse_qs(parsed.query)
                 coin_id = query.get("id", [""])[0]

@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/phase12.css">
   <link rel="stylesheet" href="/phase13.css">
   <link rel="stylesheet" href="/phase14.css">
+  <link rel="stylesheet" href="/phase15.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -36,6 +37,7 @@
         <button class="nav" data-target="copilot">Copilota 360</button>
         <button class="nav" data-target="decision">Decision Lab</button>
         <button class="nav" data-target="operations">Centro operativo</button>
+        <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
         <button class="nav" data-target="news">News & trend</button>
         <button class="nav" data-target="tax">730 & fiscalità crypto</button>
         <button class="nav" data-target="method">Metodo & rischio</button>
@@ -47,7 +49,7 @@
     <main>
       <header>
         <div><p class="eyebrow">MERCATO CRYPTO · EUR</p><h1 id="pageTitle">Panoramica</h1></div>
-        <div class="header-actions"><button id="dataQualityBadge" class="data-quality-badge" data-go="copilot">Qualità dati: —</button><button id="refreshBtn" class="secondary">Aggiorna dati</button></div>
+        <div class="header-actions"><label class="language-control"><span>Lingua</span><select id="languageSelect" aria-label="Lingua dell'interfaccia"><option value="it">Italiano</option><option value="en">English</option><option value="es">Español</option></select></label><button id="dataQualityBadge" class="data-quality-badge" data-go="copilot">Qualità dati: —</button><button id="refreshBtn" class="secondary">Aggiorna dati</button></div>
       </header>
 
       <div id="notice" class="notice hidden"></div>
@@ -119,6 +121,8 @@
           <button class="card guide-jump" data-guide-open="app-start"><b>08–09 · Iniziare con l’app</b><span>Panoramica, screener, portafoglio e importazioni</span></button>
           <button class="card guide-jump" data-guide-open="decision-manual"><b>10–12 · Decidere e controllare</b><span>Piano, Decision Lab e Centro operativo</span></button>
           <button class="card guide-jump" data-guide-open="news-manual"><b>13 · Informazione e metodo</b><span>News, punteggi, limiti e routine consigliata</span></button>
+          <button class="card guide-jump" data-guide-open="copilot-manual"><b>14 · Copilota 360</b><span>Controlli, passaporti, fisco, sicurezza e privacy</span></button>
+          <button class="card guide-jump" data-guide-open="advanced-manual"><b>15 · Strumenti avanzati</b><span>Esecuzione, rischio congiunto e verifica MiCA</span></button>
         </div>
 
         <div class="academy-layout">
@@ -329,6 +333,19 @@
                 <h3>Procedura consigliata</h3><ol class="learning-steps"><li>Compila prima Portafoglio e Piano personale.</li><li>Ricerca progetto, tokenomics, sicurezza e fonti.</li><li>Esegui il controllo 360 senza spuntare verifiche non effettuate.</li><li>Se il semaforo segnala lacune, correggi il processo e ripeti.</li><li>Salva il Passaporto anche quando decidi di non agire.</li><li>Rivedi i Passaporti nel report settimanale e salva periodicamente gli score.</li><li>Aggiorna il fisco continuo ogni volta che importi nuove operazioni.</li><li>Effettua un backup locale prima di cambiare browser o cancellare dati.</li></ol>
                 <button class="secondary" data-go="copilot">Apri Copilota 360</button>
                 <label class="lesson-done"><input type="checkbox" data-complete="copilot-manual"> So interpretare il semaforo e usare tutti i pannelli senza scambiarli per consulenza</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="advanced-manual">
+              <summary><span class="lesson-number">15</span><div><b>Come usare gli Strumenti avanzati</b><small>Execution Lab, Risk Engine e Verifica MiCA</small></div><span class="lesson-time">35 min</span></summary>
+              <div class="lesson-content">
+                <h3>Execution Lab: dal prezzo teorico al prezzo eseguibile</h3><p>Scegli crypto, acquisto o vendita e controvalore. Lo strumento legge una fotografia degli order book pubblici di Coinbase, Kraken e Bitvavo. Confronta prima il fill: un risultato incompleto non è direttamente confrontabile con uno completo. Poi osserva VWAP, spread e slippage; aggiungi la tua commissione reale, che dipende da exchange, volume e tipo di ordine.</p>
+                <div class="screen-map"><div><b>Spread</b><p>Misura la distanza fra migliore proposta in acquisto e in vendita. Può cambiare in pochi istanti e tende ad allargarsi nei mercati meno liquidi.</p></div><div><b>VWAP</b><p>È il prezzo medio ponderato ottenuto attraversando i livelli necessari del book. Per importi grandi può divergere molto dal prezzo mostrato nella Home.</p></div><div><b>Slippage</b><p>Confronta il VWAP con il punto medio del book. Non include la variazione che può avvenire fra analisi e ordine reale.</p></div><div><b>Profondità</b><p>È il controvalore visibile sul lato utilizzato. Non garantisce che gli ordini restino disponibili o siano eseguiti.</p></div></div>
+                <h3>Risk Engine: il rischio nasce dalle relazioni</h3><p>Inserisci quantità e costo medio nel portafoglio. Il motore usa serie orarie pubbliche e calcola volatilità, beta rispetto a BTC, posizioni effettive, proxy di perdita storica, correlazioni e contributo al rischio. Una correlazione alta indica che token diversi possono comportarsi come una sola esposizione. La proxy al 95% non è una perdita massima e non copre eventi mai osservati, illiquidità o fallimento del progetto.</p>
+                <h3>Verifica MiCA: procedura corretta</h3><ol class="learning-steps"><li>Cerca sia il nome commerciale sia la ragione sociale.</li><li>Ripeti la ricerca usando il dominio ufficiale, senza prefissi pubblicitari.</li><li>Confronta paese, autorità competente, LEI e servizi autorizzati.</li><li>Controlla eventuale data di fine autorizzazione.</li><li>Cerca lo stesso soggetto anche nella lista dei non conformi.</li><li>Apri il registro ESMA originale e verifica il record.</li><li>Se il risultato è ambiguo, non trasferire fondi finché l’identità non è chiarita.</li></ol>
+                <div class="risk-box"><b>Tre limiti essenziali</b><p>Un operatore autorizzato non rende sicuro ogni prodotto. Un nome assente non dimostra automaticamente abuso. Un omonimo non prova che sito, app o dominio appartengano al soggetto registrato.</p></div>
+                <button class="secondary" data-go="advanced">Apri Strumenti avanzati</button>
+                <label class="lesson-done"><input type="checkbox" data-complete="advanced-manual"> So confrontare l’esecuzione, leggere il rischio congiunto e verificare un operatore nelle fonti ufficiali</label>
               </div>
             </details>
           </div>
@@ -740,6 +757,37 @@
         <div id="detailMetrics" class="summary-grid"></div>
       </section>
 
+      <section id="advanced" class="page advanced-page">
+        <article class="card advanced-hero"><div><p class="eyebrow">ANALISI PROFESSIONALE, FONTI VISIBILI</p><h2>Strumenti avanzati</h2><p>Confronta l’esecuzione reale, misura il rischio congiunto del portafoglio e verifica gli operatori nei registri europei. Nessun indicatore genera automaticamente un ordine.</p></div><div class="advanced-trust"><span>NO TRADING</span><span>NO CUSTODIA</span><span>FONTI UFFICIALI</span></div></article>
+        <div class="advanced-tabs" role="tablist"><button class="chip active" data-advanced-tab="execution">Execution Lab</button><button class="chip" data-advanced-tab="risk">Risk Engine</button><button class="chip" data-advanced-tab="mica">Verifica MiCA</button></div>
+
+        <div id="advanced-execution" class="advanced-panel active">
+          <div class="section-title topless"><div><p class="eyebrow">QUANTO COSTA DAVVERO L’OPERAZIONE?</p><h2>Execution Lab multi-exchange</h2></div><span class="muted">Order book pubblici · nessuna operazione eseguita</span></div>
+          <div class="advanced-two-columns">
+            <article class="card advanced-form"><label>Crypto<select id="executionCoin"></select></label><label>Operazione<select id="executionSide"><option value="buy">Acquisto</option><option value="sell">Vendita</option></select></label><label>Controvalore indicativo (€)<input id="executionAmount" type="number" min="10" max="5000000" step="10" value="1000"></label><label>Commissione personale stimata (%)<input id="executionFee" type="number" min="0" max="10" step="0.01" value="0.50"></label><button id="runExecution" class="primary">Confronta l’esecuzione</button><p class="simulation-note">Il risultato usa una fotografia del book. L’ordine reale può ricevere prezzi diversi per latenza, volatilità, limiti e livello commissionale personale.</p></article>
+            <article class="card advanced-explainer"><p class="eyebrow">LETTURA CORRETTA</p><h2>Prezzo non significa esecuzione</h2><div class="risk-insights"><div class="risk-item"><b>Spread</b><span>Distanza tra miglior acquisto e vendita.</span></div><div class="risk-item"><b>VWAP</b><span>Prezzo medio dopo aver attraversato più livelli del book.</span></div><div class="risk-item"><b>Slippage</b><span>Scostamento del VWAP dal prezzo centrale.</span></div><div class="risk-item"><b>Fill</b><span>Quota dell’importo coperta dalla profondità osservata.</span></div></div></article>
+          </div>
+          <div id="executionMeta" class="filter-warning">Seleziona crypto e importo per interrogare Coinbase, Kraken e Bitvavo.</div><div id="executionResults" class="execution-grid"></div>
+        </div>
+
+        <div id="advanced-risk" class="advanced-panel">
+          <div class="section-title topless"><div><p class="eyebrow">NON SOLO VOLATILITÀ DELLE SINGOLE CRYPTO</p><h2>Risk Engine di portafoglio</h2></div><button id="refreshRiskEngine" class="secondary">Ricalcola</button></div>
+          <p class="filter-warning">Il modello usa le serie orarie disponibili negli sparkline a 7 giorni. Misura la struttura recente del rischio, non la perdita futura massima.</p>
+          <div id="advancedRiskMetrics" class="summary-grid"></div>
+          <div class="advanced-two-columns"><article class="card risk-matrix-card"><p class="eyebrow">DIVERSIFICAZIONE REALE</p><h2>Correlazioni fra posizioni</h2><div id="riskCorrelationMatrix" class="risk-matrix"></div></article><article class="card"><p class="eyebrow">CONTRIBUTO AL RISCHIO</p><h2>Chi muove il portafoglio?</h2><div id="riskContribution" class="behavior-breakdown"></div></article></div>
+          <div id="advancedRiskWarnings" class="risk-insights"></div>
+        </div>
+
+        <div id="advanced-mica" class="advanced-panel">
+          <div class="section-title topless"><div><p class="eyebrow">CONTROLLO EUROPEO DEGLI OPERATORI</p><h2>Verifica MiCA</h2></div><a class="secondary source-link" href="https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica" target="_blank" rel="noopener noreferrer">Apri registro ESMA ↗</a></div>
+          <div class="advanced-two-columns">
+            <article class="card mica-search-card"><label>Nome, società, dominio o LEI<input id="micaQuery" maxlength="120" placeholder="Es. nome exchange o dominio ufficiale"></label><button id="runMicaSearch" class="primary">Cerca nei registri</button><div id="micaRegistryStats" class="mica-stats"></div></article>
+            <article class="card"><p class="eyebrow">COME INTERPRETARE</p><h2>Una corrispondenza non basta</h2><div class="risk-insights"><div class="risk-item">Confronta ragione sociale, dominio, paese e autorità.</div><div class="risk-item">Controlla data di fine autorizzazione e servizi consentiti.</div><div class="risk-item">Un nome assente non dimostra automaticamente irregolarità.</div><div class="risk-item danger">Se compare tra i non conformi, apri la fonte ufficiale prima di agire.</div></div></article>
+          </div>
+          <div id="micaSearchMeta" class="filter-warning">Il registro ESMA viene consultato direttamente e può aggiornarsi in ritardo rispetto alle autorità nazionali.</div><div id="micaResults" class="mica-results"></div>
+        </div>
+      </section>
+
       <section id="method" class="page">
         <article class="card prose">
           <p class="eyebrow">VERSIONE 0.1</p><h2>Come viene calcolato lo score</h2>
@@ -758,6 +806,7 @@
   <button id="tutorToggle" class="tutor-toggle" aria-label="Apri tutor contestuale">?</button>
   <aside id="tutorDrawer" class="tutor-drawer" aria-hidden="true"><div class="tutor-head"><div><p class="eyebrow">TUTOR CONTESTUALE</p><h2 id="tutorTitle">Come posso aiutarti?</h2></div><button id="tutorClose" aria-label="Chiudi">×</button></div><div id="tutorBody" class="tutor-body"></div><div id="tutorActions" class="tutor-actions"></div></aside>
   <div id="onboardingOverlay" class="onboarding-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle"><div class="card onboarding-modal"><div class="onboarding-head"><div><p class="eyebrow">CONFIGURAZIONE GUIDATA</p><h2 id="onboardingTitle">Prepara Crypto Radar per te</h2></div><button id="closeOnboarding" aria-label="Chiudi">×</button></div><div class="onboarding-progress"><span id="onboardingStepLabel">Passaggio 1 di 4</span><div class="bar-track"><div id="onboardingBar" class="bar-fill"></div></div></div><div id="onboardingSteps"><section class="onboarding-step active" data-onboarding-step="0"><h3>Da dove parti?</h3><p>Serve a scegliere il livello di dettaglio, non a valutare la tua competenza.</p><label>Nome visualizzato<input id="onboardingName" maxlength="60" placeholder="Come vuoi essere chiamato?"></label><label>Esperienza<select id="onboardingExperience"><option value="beginner">Sto iniziando</option><option value="intermediate">Conosco già le basi</option><option value="advanced">Uso già wallet, exchange e strumenti avanzati</option></select></label><label>Modalità iniziale<select id="onboardingMode"><option value="beginner">Principiante · più spiegazioni</option><option value="advanced">Avanzata · tutti gli strumenti</option></select></label></section><section class="onboarding-step" data-onboarding-step="1"><h3>Obiettivo e limiti</h3><label>Obiettivo principale<select id="onboardingGoal"><option value="learn">Imparare senza fretta</option><option value="manage">Gestire il portafoglio</option><option value="risk">Controllare il rischio</option><option value="tax">Preparare la fiscalità</option></select></label><label>Capitale totale investibile (€)<input id="onboardingCapital" type="number" min="0" step="100"></label><label>Orizzonte previsto (anni)<input id="onboardingHorizon" type="number" min="1" max="50" value="5"></label><label>Perdita tollerabile (%)<input id="onboardingLoss" type="number" min="0" max="100" value="25"></label></section><section class="onboarding-step" data-onboarding-step="2"><h3>Crypto da seguire</h3><p>Scegli fino a 5 crypto per la Home. Potrai cambiarle in qualsiasi momento.</p><div id="onboardingCoins" class="onboarding-coins"></div></section><section class="onboarding-step" data-onboarding-step="3"><h3>Prima configurazione pronta</h3><div id="onboardingReview" class="onboarding-review"></div><label class="check"><input id="onboardingEmergency" type="checkbox"> Confermo che il capitale indicato non serve per emergenze o spese vicine</label><p class="tax-warning">Crypto Radar offre strumenti educativi e di supporto decisionale. Non valuta l’adeguatezza personale e non fornisce raccomandazioni di investimento.</p></section></div><div class="onboarding-actions"><button id="onboardingBack" class="secondary" disabled>Indietro</button><button id="onboardingNext" class="primary">Continua</button></div></div></div>
+  <script src="/i18n.js" defer></script>
   <script src="/app.js" defer></script>
 </body>
 </html>
