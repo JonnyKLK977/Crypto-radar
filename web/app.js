@@ -682,7 +682,7 @@ function buildSmartAlerts(){
 }
 function renderAlerts(){
   const s=alertSettings();$("alertDailyMove").value=s.dailyMove;$("alertWeeklyMove").value=s.weeklyMove;$("alertConcentration").value=s.concentration;$("alertTargetGap").value=s.targetGap;$("alertNews").checked=s.news;
-  const alerts=buildSmartAlerts();$("alertCount").textContent=`${alerts.length} controlli attivi`;$("smartAlerts").innerHTML=alerts.map(a=>`<article class="smart-alert ${a.level}"><div></div><div><b>${esc(a.title)}</b><span>${esc(a.text)}</span><small>${esc(a.why)}</small></div></article>`).join("");
+  const alerts=buildSmartAlerts();$("alertCount").textContent=`${alerts.length} controlli attivi`;$("smartAlerts").innerHTML=alerts.map(a=>`<article class="smart-alert ${a.level}"><div><b>${esc(a.title)}</b><span>${esc(a.text)}</span><small>${esc(a.why)}</small></div></article>`).join("");
 }
 function saveAlertSettings(){saveLocalData("cryptoRadarAlertSettings",{dailyMove:clamp(num($("alertDailyMove").value),1,100),weeklyMove:clamp(num($("alertWeeklyMove").value),1,200),concentration:clamp(num($("alertConcentration").value),1,100),targetGap:clamp(num($("alertTargetGap").value),1,100),news:$("alertNews").checked});renderAlerts()}
 
