@@ -1127,6 +1127,95 @@ def coinmarketcap_market_movers() -> dict:
     }
 
 
+def coinmarketcap_catalog(query: str = "", sort_mode: str = "rank", selected_ids: set[str] | None = None) -> dict:
+    cache_key = "coinmarketcap-catalog-normalized"
+    now = time.time()
+    cached = _cache.get(cache_key)
+    if cached and now - cached[0] < 1800:
+        catalog = cached[1]
+    else:
+        params = urllib.parse.urlencode({"start": "1", "limit": "5000", "convert": "EUR"})
+        try:
+            payload = public_json(f"{COINMARKETCAP_PUBLIC}/v3/cryptocurrency/listings/latest?{params}", ttl=1800)
+            if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+                raise RuntimeError("CoinMarketCap non ha restituito un catalogo valido.")
+            status = payload.get("status") if isinstance(payload.get("status"), dict) else {}
+            if str(status.get("error_code", "0")) != "0":
+                raise RuntimeError(str(status.get("error_message") or "Catalogo CoinMarketCap non disponibile."))
+
+            assets = []
+            for item in payload["data"]:
+                if not isinstance(item, dict):
+                    continue
+                raw_quote = item.get("quote")
+                if isinstance(raw_quote, list):
+                    quote = next((entry for entry in raw_quote if isinstance(entry, dict) and entry.get("symbol") == "EUR"), None)
+                elif isinstance(raw_quote, dict):
+                    quote = raw_quote.get("EUR")
+                else:
+                    quote = None
+                if not isinstance(quote, dict):
+                    continue
+                try:
+                    cmc_id = int(item.get("id"))
+                    rank = int(item.get("cmc_rank"))
+                except (TypeError, ValueError):
+                    continue
+                name = str(item.get("name", "")).strip()
+                symbol = str(item.get("symbol", "")).strip().lower()
+                slug = str(item.get("slug", "")).strip()
+                if not name or not symbol or not slug or rank < 1:
+                    continue
+                assets.append({
+                    "id": f"cmc-{cmc_id}",
+                    "cmc_id": cmc_id,
+                    "cmc_slug": slug,
+                    "catalog_source": "coinmarketcap",
+                    "name": name,
+                    "symbol": symbol,
+                    "image": f"https://s2.coinmarketcap.com/static/img/coins/64x64/{cmc_id}.png",
+                    "current_price": quote.get("price"),
+                    "market_cap": quote.get("market_cap"),
+                    "market_cap_rank": rank,
+                    "fully_diluted_valuation": quote.get("fully_diluted_market_cap"),
+                    "total_volume": quote.get("volume_24h"),
+                    "price_change_percentage_1h_in_currency": quote.get("percent_change_1h"),
+                    "price_change_percentage_24h_in_currency": quote.get("percent_change_24h"),
+                    "price_change_percentage_7d_in_currency": quote.get("percent_change_7d"),
+                    "price_change_percentage_30d_in_currency": quote.get("percent_change_30d"),
+                    "price_change_percentage_1y_in_currency": None,
+                    "sparkline_in_7d": {"price": []},
+                })
+            if not assets:
+                raise RuntimeError("Il catalogo CoinMarketCap è vuoto.")
+            catalog = {"data": assets, "source": "coinmarketcap", "asOf": str(status.get("timestamp") or "")}
+        except RuntimeError:
+            fallback = json.loads(MARKET_FALLBACK_FILE.read_text(encoding="utf-8"))
+            catalog = {"data": fallback["data"], "source": "fallback", "asOf": fallback["generatedAt"]}
+        _cache[cache_key] = (now, catalog)
+
+    assets = catalog["data"]
+    needle = query.strip().casefold()
+    matches = [
+        asset for asset in assets
+        if not needle or needle in f"{asset.get('name', '')} {asset.get('symbol', '')} {asset.get('cmc_slug', '')} #{asset.get('market_cap_rank', '')}".casefold()
+    ]
+    if sort_mode == "name":
+        matches.sort(key=lambda asset: (str(asset.get("name", "")).casefold(), int(asset.get("market_cap_rank") or 999999)))
+    else:
+        matches.sort(key=lambda asset: (int(asset.get("market_cap_rank") or 999999), str(asset.get("name", "")).casefold()))
+    selected_ids = selected_ids or set()
+    selected = [asset for asset in assets if str(asset.get("id", "")) in selected_ids]
+    visible = selected + [asset for asset in matches if str(asset.get("id", "")) not in selected_ids][:100]
+    return {
+        "data": visible,
+        "total": len(assets),
+        "matched": len(matches),
+        "source": catalog["source"],
+        "asOf": catalog["asOf"],
+    }
+
+
 def coinmarketcap_market_intelligence() -> dict:
     endpoints = {
         "fear": f"{COINMARKETCAP_PUBLIC}/v3/fear-and-greed/latest",
@@ -1426,6 +1515,12 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json({"data": fallback["data"], "asOf": fallback["generatedAt"], "source": "fallback", "stale": True})
             if parsed.path == "/api/market-movers":
                 return self.send_json(coinmarketcap_market_movers())
+            if parsed.path == "/api/market-catalog":
+                query = urllib.parse.parse_qs(parsed.query)
+                search = query.get("q", [""])[0][:120]
+                sort_mode = query.get("sort", ["rank"])[0]
+                selected_ids = {value for value in query.get("ids", [""])[0].split(",") if value.startswith("cmc-")}
+                return self.send_json(coinmarketcap_catalog(search, sort_mode, selected_ids))
             if parsed.path == "/api/market-intelligence":
                 return self.send_json(coinmarketcap_market_intelligence())
             if parsed.path == "/api/trending":
