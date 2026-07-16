@@ -1,0 +1,66 @@
+.sidebar{
+  font-family:"Segoe UI Variable Text","Aptos",Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  letter-spacing:0;
+}
+.brand{gap:12px;padding-bottom:23px}
+.brand b{font-size:17px;font-weight:700;line-height:1.2;letter-spacing:0}
+.brand small{margin-top:4px;font-size:12px;line-height:1.3;letter-spacing:0}
+.sidebar-nav-head{padding-bottom:12px}
+.sidebar-nav-head span{font-size:9px;line-height:1.2;letter-spacing:0}
+.sidebar-nav-head b{margin-top:4px;font-size:15px;font-weight:700;line-height:1.25;letter-spacing:0}
+.sidebar-nav-head button{padding:8px 10px;font-size:10.5px;line-height:1.2;letter-spacing:0}
+.sidebar-group{margin-bottom:6px}
+.sidebar-group-toggle{
+  grid-template-columns:3px minmax(0,1fr) 20px;
+  gap:11px;
+  min-height:50px;
+  padding:8px 7px;
+}
+.sidebar-group-toggle::before{
+  content:"";
+  align-self:stretch;
+  width:3px;
+  min-height:30px;
+  border-radius:3px;
+  background:var(--group-color);
+  opacity:.85;
+}
+.sidebar-group-toggle b{
+  color:#d7dde6;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.25;
+  letter-spacing:0;
+}
+.sidebar-group-toggle small{
+  margin-top:3px;
+  color:#778295;
+  font-size:10px;
+  line-height:1.3;
+  letter-spacing:0;
+}
+.sidebar-group-toggle i{font-size:18px}
+.sidebar-group-items{gap:2px;padding:1px 0 5px 14px}
+.sidebar .nav{
+  padding:9px 12px;
+  font-size:12.5px;
+  font-weight:500;
+  line-height:1.35;
+  letter-spacing:0;
+}
+.sidebar .nav.active{font-weight:650}
+.sidebar-profile button{padding:9px 10px;font-size:11.5px;line-height:1.25;letter-spacing:0}
+.side-note{font-size:12.5px;line-height:1.55;letter-spacing:0}
+.sidebar-density-compact .sidebar-group{margin-bottom:3px}
+.sidebar-density-compact .sidebar-group-toggle{min-height:40px;padding-top:6px;padding-bottom:6px}
+.sidebar-density-compact .sidebar-group-toggle::before{min-height:24px}
+.sidebar-density-compact .sidebar-group-toggle b{font-size:12.5px}
+.sidebar-density-compact .sidebar-group-items{padding-left:14px;padding-bottom:3px}
+.sidebar-density-compact .nav{padding-top:7px;padding-bottom:7px;font-size:11.5px}
+@media(max-width:760px){
+  .brand b{font-size:16px}
+  .brand small{font-size:11.5px}
+  .sidebar-nav-head button{font-size:11.5px}
+  .sidebar-group-items,.sidebar-group.collapsed .sidebar-group-items{padding-left:0}
+  .sidebar .nav,.sidebar-density-compact .nav{padding:9px 12px;font-size:12px;line-height:1.3}
+}
