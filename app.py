@@ -39,6 +39,8 @@ COINGECKO = "https://api.coingecko.com/api/v3"
 COINMARKETCAP_PUBLIC = "https://pro-api.coinmarketcap.com/public-api"
 COINDESK_RSS = "https://www.coindesk.com/arc/outboundfeeds/rss/"
 CRIPTOVALUTA_RSS = "https://www.criptovaluta.it/feed/"
+BEINCRYPTO_IT_RSS = "https://it.beincrypto.com/feed/"
+CRYPTO_GATEWAY_RSS = "https://thecryptogateway.it/feed/"
 ESMA_CASP_CSV = "https://www.esma.europa.eu/sites/default/files/2024-12/CASPS.csv"
 ESMA_NCASP_CSV = "https://www.esma.europa.eu/sites/default/files/2024-12/NCASP.csv"
 PORT = int(os.environ.get("PORT", os.environ.get("CRYPTO_RADAR_PORT", "8765")))
@@ -973,6 +975,8 @@ def load_news() -> list[dict]:
     for url, source, language in (
         (COINDESK_RSS, "CoinDesk", "en"),
         (CRIPTOVALUTA_RSS, "Criptovaluta.it", "it"),
+        (BEINCRYPTO_IT_RSS, "BeInCrypto Italia", "it"),
+        (CRYPTO_GATEWAY_RSS, "The Crypto Gateway", "it"),
     ):
         try:
             articles.extend(load_rss_feed(url, source, language))

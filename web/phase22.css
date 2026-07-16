@@ -1,0 +1,11 @@
+/* Aggregated Italian news sources */
+.italian-news-heading{align-items:flex-end}
+.news-source-links{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.news-source-link{--source-color:#35b777;display:inline-flex;align-items:center;min-height:31px;padding:7px 9px;border:1px solid color-mix(in srgb,var(--source-color) 42%,var(--line));border-left:3px solid var(--source-color);border-radius:6px;background:rgba(255,255,255,.018);color:var(--text);font-size:10px;font-weight:800;text-decoration:none}
+.news-source-link:hover{border-color:var(--source-color);background:rgba(255,255,255,.035)}
+.source-criptovaluta{--source-color:#35b777}
+.source-beincrypto{--source-color:#45aef2}
+.source-crypto-gateway{--source-color:#e5b95d}
+.italian-news-card{border-left-color:var(--source-color,#35b777)}
+.italian-news-card .news-meta{color:color-mix(in srgb,var(--source-color,#35b777) 55%,var(--muted))}
+@media(max-width:800px){.italian-news-heading{align-items:flex-start}.news-source-links{justify-content:flex-start}}
