@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="/phase24.css">
   <link rel="stylesheet" href="/phase25.css">
   <link rel="stylesheet" href="/phase26.css">
+  <link rel="stylesheet" href="/phase27.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -52,6 +53,7 @@
         <section class="sidebar-group" data-sidebar-group="market">
           <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="market" aria-expanded="true"><span class="sidebar-group-number">01</span><span><b>Mercato</b><small>Contesto e ricerca</small></span><i aria-hidden="true">⌄</i></button>
           <div class="sidebar-group-items">
+            <button class="nav" data-target="purpose">A cosa serve</button>
             <button class="nav active" data-target="overview">Panoramica</button>
             <button class="nav" data-target="screener">Potenziali Crypto</button>
           </div>
@@ -216,6 +218,116 @@
         <div id="homeItalianNewsList" class="home-news-grid"></div>
         </div>
         </div>
+      </section>
+
+      <section id="purpose" class="page purpose-page">
+        <article class="purpose-hero">
+          <div>
+            <p class="eyebrow">CRYPTO RADAR IN PAROLE SEMPLICI</p>
+            <h2>Capire meglio prima di decidere</h2>
+            <p>Crypto Radar serve a trasformare prezzi, notizie, portafoglio, rischio e documenti sparsi in un percorso ordinato. Non ti dice che cosa comprare: ti aiuta a capire che cosa stai guardando, quali rischi stai assumendo e quali controlli mancano prima di una decisione.</p>
+          </div>
+          <div class="purpose-promise" aria-label="Principi del progetto">
+            <span>DATI LEGGIBILI</span>
+            <span>RISCHI VISIBILI</span>
+            <span>DECISIONI DOCUMENTATE</span>
+          </div>
+        </article>
+
+        <section class="purpose-definition" aria-labelledby="purposeDefinitionTitle">
+          <div class="section-title topless"><div><p class="eyebrow">IN 30 SECONDI</p><h2 id="purposeDefinitionTitle">Che cos'è e che cosa non è</h2></div></div>
+          <div class="purpose-definition-grid">
+            <article class="purpose-definition-item positive">
+              <span>SÌ</span>
+              <h3>Uno strumento di supporto</h3>
+              <p>Raccoglie informazioni pubbliche e dati inseriti dall'utente, li organizza e li presenta con spiegazioni, confronti, simulazioni e controlli.</p>
+            </article>
+            <article class="purpose-definition-item positive">
+              <span>SÌ</span>
+              <h3>Un metodo per non agire alla cieca</h3>
+              <p>Ti spinge a verificare fonti, obiettivo, dimensione della posizione, costi, concentrazione, scenario negativo e conseguenze fiscali.</p>
+            </article>
+            <article class="purpose-definition-item negative">
+              <span>NO</span>
+              <h3>Non è un consulente finanziario</h3>
+              <p>Score, classifiche e simulazioni non sono raccomandazioni personalizzate, previsioni certe o promesse di rendimento.</p>
+            </article>
+            <article class="purpose-definition-item negative">
+              <span>NO</span>
+              <h3>Non custodisce né sposta denaro</h3>
+              <p>Non è un exchange o un wallet, non riceve seed phrase e non esegue automaticamente acquisti, vendite o copie di strategie.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="purpose-outcomes" aria-labelledby="purposeOutcomesTitle">
+          <div class="section-title"><div><p class="eyebrow">A CHE COSA SERVE DAVVERO</p><h2 id="purposeOutcomesTitle">Quattro risultati concreti</h2></div><span class="muted">Dall'informazione al controllo</span></div>
+          <div class="purpose-outcome-grid">
+            <article class="card purpose-outcome"><span>01</span><h3>Orientarti nel mercato</h3><p>Vedi temperatura generale, movimenti, notizie e principali crypto senza confondere una variazione di prezzo con una buona opportunità.</p></article>
+            <article class="card purpose-outcome"><span>02</span><h3>Studiare una crypto</h3><p>Confronti rank, liquidità, andamento, capitalizzazione, diluizione, rischio e motivazione dello score per decidere che cosa approfondire.</p></article>
+            <article class="card purpose-outcome"><span>03</span><h3>Collegare l'idea alla tua situazione</h3><p>Controlli peso nel portafoglio, limiti personali, costi, concentrazione e perdita possibile invece di valutare l'asset in isolamento.</p></article>
+            <article class="card purpose-outcome"><span>04</span><h3>Lasciare una traccia verificabile</h3><p>Conservi tesi, fonti, motivi di invalidazione, operazioni, report e preparazione fiscale per riesaminare le decisioni nel tempo.</p></article>
+          </div>
+        </section>
+
+        <section class="purpose-flow" aria-labelledby="purposeFlowTitle">
+          <div class="section-title"><div><p class="eyebrow">COME FUNZIONA</p><h2 id="purposeFlowTitle">Un processo in sei passaggi</h2></div></div>
+          <ol class="purpose-steps">
+            <li><span>1</span><div><b>Osserva il contesto</b><p>Parti da Panoramica, Intelligence Hub e News. Prima capisci il mercato generale, poi guardi la singola crypto.</p></div><button class="secondary" data-go="overview">Apri Panoramica</button></li>
+            <li><span>2</span><div><b>Seleziona che cosa studiare</b><p>Potenziali Crypto ordina gli asset con uno score comparativo. Lo score restringe la ricerca, non decide al posto tuo.</p></div><button class="secondary" data-go="screener">Apri Potenziali Crypto</button></li>
+            <li><span>3</span><div><b>Controlla il tuo punto di partenza</b><p>Inserisci quantità, costo medio e limiti del Piano personale per vedere esposizione e spazio disponibile.</p></div><button class="secondary" data-go="portfolio">Apri Portafoglio</button></li>
+            <li><span>4</span><div><b>Prova lo scenario prima dell'azione</b><p>Laboratorio, Costo operazione e Risk Engine mostrano peso, costi indicativi, correlazioni e possibili perdite.</p></div><button class="secondary" data-go="decision">Apri Laboratorio</button></li>
+            <li><span>5</span><div><b>Documenta la decisione</b><p>L'Assistente Personale registra tesi, fonti, invalidazione, stato emotivo e controlli completati in un Passaporto.</p></div><button class="secondary" data-go="copilot">Apri Assistente</button></li>
+            <li><span>6</span><div><b>Rivedi e archivia</b><p>Centro operativo, Exchange & wallet e fiscalità aiutano a conservare cronologia, report, documenti e attività ancora da chiarire.</p></div><button class="secondary" data-go="operations">Apri Centro operativo</button></li>
+          </ol>
+        </section>
+
+        <section class="purpose-paths" aria-labelledby="purposePathsTitle">
+          <div class="section-title"><div><p class="eyebrow">SCEGLI IL TUO PERCORSO</p><h2 id="purposePathsTitle">Utile dal primo accesso all'analisi avanzata</h2></div></div>
+          <div class="purpose-path-grid">
+            <article class="purpose-path beginner">
+              <div><span>PRIMA VOLTA</span><h3>Non conosco ancora bene il mondo crypto</h3><p>Inizia dalle parole e dal processo, senza inserire subito denaro o inseguire la classifica del momento.</p></div>
+              <ol><li>Leggi le guide di base e il glossario.</li><li>Osserva Panoramica e una sola crypto.</li><li>Impara differenza tra prezzo, progetto e rischio.</li><li>Crea un Piano personale con limiti semplici.</li><li>Usa simulazioni e portafoglio con dati di prova.</li></ol>
+              <div class="purpose-path-actions"><button class="primary" data-go="academy">Inizia dalle Guide</button><button class="secondary" data-go="plan">Crea il Piano</button></div>
+            </article>
+            <article class="purpose-path expert">
+              <div><span>UTENTE ESPERTO</span><h3>Voglio un processo più completo e controllabile</h3><p>Usa il progetto come livello di sintesi, verifica e documentazione sopra dati, exchange e analisi già esistenti.</p></div>
+              <ol><li>Importa e riconcilia i movimenti disponibili.</li><li>Misura esposizioni, correlazioni e stress.</li><li>Confronta liquidità e costo indicativo tra exchange.</li><li>Registra fonti, tesi e condizioni d'invalidazione.</li><li>Esporta report e prepara il fascicolo fiscale.</li></ol>
+              <div class="purpose-path-actions"><button class="primary" data-go="intelligence">Apri Intelligence Hub</button><button class="secondary" data-go="advanced">Strumenti avanzati</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="purpose-map" aria-labelledby="purposeMapTitle">
+          <div class="section-title"><div><p class="eyebrow">MAPPA DEL PROGETTO</p><h2 id="purposeMapTitle">La domanda a cui risponde ogni sezione</h2></div></div>
+          <div class="purpose-map-list">
+            <button data-go="overview"><b>Panoramica</b><span>Che cosa sta succedendo nel mercato?</span><i>Contesto</i></button>
+            <button data-go="screener"><b>Potenziali Crypto</b><span>Quali crypto meritano un approfondimento?</span><i>Ricerca</i></button>
+            <button data-go="portfolio"><b>Il mio portafoglio</b><span>Dove sono esposto e con quale risultato indicativo?</span><i>Posizioni</i></button>
+            <button data-go="connections"><b>Exchange & wallet</b><span>Come organizzo e riconcilio i movimenti?</span><i>Dati</i></button>
+            <button data-go="plan"><b>Piano personale</b><span>Quali limiti voglio rispettare?</span><i>Regole</i></button>
+            <button data-go="copilot"><b>Assistente Personale</b><span>La mia decisione è completa e documentata?</span><i>Controllo</i></button>
+            <button data-go="decision"><b>Laboratorio</b><span>Che cosa cambia se modifico importo o scenario?</span><i>Simulazione</i></button>
+            <button data-go="operations"><b>Centro operativo</b><span>Come seguo attività, revisioni e report?</span><i>Routine</i></button>
+            <button data-go="advanced"><b>Strumenti avanzati</b><span>Quanto può costare l'esecuzione e come si muove il rischio?</span><i>Analisi</i></button>
+            <button data-go="intelligence"><b>Intelligence Hub</b><span>Quali eventi, esposizioni e anomalie devo collegare?</span><i>Sintesi</i></button>
+            <button data-go="community"><b>Chat Community</b><span>Come confronto idee e strategie con altre persone?</span><i>Confronto</i></button>
+            <button data-go="news"><b>News & trend</b><span>Quali informazioni recenti devo verificare?</span><i>Fonti</i></button>
+            <button data-go="tax"><b>730 & fiscalità crypto</b><span>Quali documenti e controlli fiscali devo preparare?</span><i>Archivio</i></button>
+            <button data-go="method"><b>Metodo & rischio</b><span>Come viene calcolato lo score e quali limiti ha?</span><i>Trasparenza</i></button>
+          </div>
+        </section>
+
+        <section class="purpose-data" aria-labelledby="purposeDataTitle">
+          <div class="section-title"><div><p class="eyebrow">DATI, PRIVACY E RESPONSABILITÀ</p><h2 id="purposeDataTitle">Che cosa succede alle informazioni</h2></div></div>
+          <div class="purpose-data-grid">
+            <article><b>Dati di mercato</b><p>Arrivano da fonti pubbliche indicate nell'app e possono essere incompleti, ritardati o temporaneamente non disponibili.</p></article>
+            <article><b>Dati personali</b><p>Molte preferenze e funzioni personali restano nel browser. Il Centro privacy mostra che cosa è salvato e permette backup o cancellazione.</p></article>
+            <article><b>Demo pubblica</b><p>Le scritture personali sul server sono disattivate. Non caricare chiavi API, seed phrase, documenti fiscali reali o export sensibili.</p></article>
+            <article><b>Community</b><p>Ciò che pubblichi è destinato alla condivisione. Non inserire dati identificativi, saldi privati, credenziali o promesse di rendimento.</p></article>
+          </div>
+          <div class="purpose-final-rule"><b>La regola centrale</b><p>Crypto Radar migliora la qualità del processo, non elimina l'incertezza. Il risultato corretto non è “avere sempre ragione”, ma sapere perché hai deciso, quanto puoi perdere, quali dati hai usato e quando riesaminare la scelta.</p></div>
+        </section>
       </section>
 
       <section id="connections" class="page">
