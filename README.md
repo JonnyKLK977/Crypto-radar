@@ -140,7 +140,7 @@ La modalità Avanzata include un centro di controllo costruito con funzioni che 
 
 - **Temperatura di mercato** combina Fear & Greed, Altcoin Season, dominanza BTC/ETH, metriche globali e benchmark CMC100, con storico a 30 giorni;
 - **Radar eventi verificabile** salva eventi personali con data, impatto, categoria, fonte e livello di verifica. Un evento dichiarato ufficiale o confermato richiede un URL HTTPS;
-- **Esposizioni nascoste** raggruppa il portafoglio per ecosistema e settore usando metadati CoinMarketCap e segnala concentrazioni qualitative;
+- **Esposizioni** pesa il valore corrente del portafoglio per rete/piattaforma e tema/settore, mostra la copertura dei metadati CoinMarketCap e trasforma le concentrazioni in controlli da approfondire;
 - **Stress Studio** applica scenari separati a BTC, ETH, altcoin e stablecoin, mostra il contributo di ogni posizione e confronta la perdita col Piano personale;
 - **Integrità fiscale** controlla tipi sconosciuti, campi mancanti, costi non documentati e possibili trasferimenti non abbinati negli import CSV;
 - **Brief quotidiano** raccoglie mercato, posizioni, eventi, notizie collegate, anomalie documentali e limiti personali in un testo copiabile o esportabile.
@@ -194,6 +194,6 @@ Il contenuto è educativo e non sostituisce le istruzioni annuali, un CAF o un p
 - La API pubblica CoinGecko può applicare limiti temporanei.
 - Il rischio è una stima quantitativa basata su volatilità, dimensione e classifica, non un'analisi completa del progetto.
 - Gli unlock non vengono importati automaticamente: il Radar eventi privilegia fonti registrate e provenienza visibile rispetto a dati non verificabili.
-- La classificazione delle esposizioni copre i metadati disponibili nelle prime 100 crypto CoinMarketCap; gli asset non mappati richiedono verifica manuale.
+- La classificazione delle esposizioni copre i metadati disponibili nelle prime 100 crypto CoinMarketCap; la percentuale di copertura è calcolata sul valore corrente e gli asset non mappati richiedono verifica manuale.
 - Le notizie forniscono contesto, ma non vengono analizzate automaticamente come positive o negative.
 - Le simulazioni DCA non includono commissioni, spread, staking o fiscalità.

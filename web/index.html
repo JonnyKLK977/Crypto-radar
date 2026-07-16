@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="/phase21.css">
   <link rel="stylesheet" href="/phase22.css">
   <link rel="stylesheet" href="/phase23.css">
+  <link rel="stylesheet" href="/phase24.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -496,7 +497,9 @@
                 <h3>Prima il contesto, poi la singola crypto</h3><p>Il pannello Temperatura riunisce Fear &amp; Greed, Altcoin Season, dominanza di BTC ed ETH, mercato globale e CMC100. Leggili insieme: un valore estremo descrive il posizionamento recente, non stabilisce quando il mercato invertirà. Confronta il dato corrente con i 30 giorni e annota cosa è cambiato.</p>
                 <div class="screen-map"><div><b>Fear &amp; Greed</b><p>Riassume la propensione al rischio del mercato. Estrema paura non equivale a “prezzo minimo”; estrema avidità non impone una vendita. Serve a riconoscere il contesto emotivo.</p></div><div><b>Altcoin Season</b><p>Misura quanto il mercato recente favorisce le altcoin rispetto a Bitcoin. Non valuta qualità, liquidità o sopravvivenza delle singole crypto.</p></div><div><b>Dominanza</b><p>Mostra quale quota della capitalizzazione appartiene a BTC o ETH. Può cambiare sia per rialzi sia per ribassi relativi: verifica sempre i prezzi.</p></div><div><b>CMC100</b><p>È un benchmark aggregato delle principali crypto. Il peso dei costituenti aiuta a capire se il “mercato” è guidato da pochi asset.</p></div></div>
                 <h3>Radar eventi con provenienza visibile</h3><p>Inserisci unlock, aggiornamenti, governance, regolazione o incidenti soltanto dopo aver aperto una fonte. Per marcare un evento come ufficiale o confermato è obbligatorio un collegamento HTTPS. La data resta una voce di ricerca dell’utente: Crypto Radar non certifica che l’evento avverrà né ne stima l’effetto.</p>
-                <h3>Esposizioni nascoste</h3><p>Il portafoglio viene raggruppato per ecosistema e settore usando i metadati disponibili. Cinque token possono sembrare diversificati ma dipendere dalla stessa chain, dallo stesso tema o dalla stessa propensione al rischio. “Non classificato” significa che servono ricerche manuali, non che il rischio sia assente.</p>
+                <h3>Esposizioni: dove si concentra davvero il portafoglio</h3><p>Il modulo usa il valore corrente di ogni posizione, calcolato come quantità per prezzo disponibile, e raggruppa il portafoglio per rete o piattaforma e per tema economico. Non conta semplicemente quanti token possiedi: una posizione grande pesa più di molte posizioni piccole.</p>
+                <ol class="learning-steps"><li>Compila almeno una quantità nel portafoglio; il costo medio non è necessario per questa mappa.</li><li>Controlla il valore analizzato e la copertura dei metadati. Gli asset fuori dal campione disponibile richiedono classificazione manuale.</li><li>Leggi <b>Reti e piattaforme</b> per individuare dipendenze tecniche comuni, come token costruiti sullo stesso ecosistema.</li><li>Leggi <b>Temi e settori</b> per capire se nomi diversi rappresentano in realtà la stessa idea, ad esempio DeFi, Layer 1, AI o meme.</li><li>Usa <b>Cosa approfondire</b> come checklist di ricerca, non come ordine di vendita o giudizio definitivo.</li></ol>
+                <div class="screen-map"><div><b>Peso percentuale</b><p>Quota del valore corrente attribuita al gruppo. Cambia quando cambiano prezzi o quantità.</p></div><div><b>Rete o piattaforma</b><p>Dipendenza tecnica principale indicata dai metadati. Una rete condivisa può creare rischio comune.</p></div><div><b>Tema o settore</b><p>Categoria economica ricavata dai tag disponibili. È una classificazione orientativa, non un’analisi completa.</p></div><div><b>Copertura dati</b><p>Parte del valore per cui sono disponibili metadati nel campione CoinMarketCap usato dal modulo.</p></div><div><b>Da verificare</b><p>Il dato non basta per classificare l’asset: serve controllare documentazione, rete, bridge e utilizzo.</p></div><div><b>Soglie interne</b><p>Gli avvisi scattano oltre 50% su una rete, 55% su un settore, 35% su una posizione o 70% complessivo in altcoin.</p></div></div>
                 <h3>Stress Studio</h3><ol class="learning-steps"><li>Scegli uno scenario oppure inserisci shock personalizzati per BTC, ETH e altcoin.</li><li>Leggi perdita in euro e percentuale, quindi il contributo di ogni posizione.</li><li>Confronta il risultato con la perdita tollerabile del Piano personale.</li><li>Modifica pesi o limiti nel piano, senza trattare lo scenario come previsione.</li></ol><p>Gli shock sono ipotesi deterministiche, non probabilità, VaR certificato o worst case. Non includono slippage, blocco dei prelievi, tasse o perdita totale per bug e frodi.</p>
                 <h3>Integrità fiscale e brief quotidiano</h3><p>Il controllo fiscale cerca campi mancanti, tipi sconosciuti e trasferimenti potenzialmente non abbinati negli import CSV. Non determina imponibile o correttezza legale: serve a preparare il fascicolo da verificare con istruzioni annuali e professionista. Il Brief riunisce mercato, portafoglio, eventi, anomalie e limiti in una pagina copiabile, senza generare ordini o suggerimenti.</p>
                 <div class="risk-box"><b>Routine di 10 minuti</b><p>Controlla la temperatura, leggi solo gli eventi con fonte, osserva le esposizioni, esegui uno stress test quando cambiano i pesi e chiudi con il brief. Se un dato non è disponibile, non sostituirlo con un’ipotesi silenziosa.</p></div>
@@ -1104,10 +1107,35 @@
         </div>
 
         <div id="intelligence-exposure" class="intelligence-panel">
-          <div class="section-title topless"><div><p class="eyebrow">TOKEN DIVERSI, RISCHI UGUALI</p><h2>Mappa delle esposizioni nascoste</h2></div><button class="secondary" data-go="portfolio">Modifica portafoglio</button></div>
-          <div id="exposureHeadline" class="filter-warning">Aggiungi posizioni valorizzate per analizzare ecosistemi e temi.</div>
-          <div class="advanced-two-columns"><article class="card"><p class="eyebrow">ECOSISTEMI E PIATTAFORME</p><h2>Dove dipendono i token</h2><div id="platformExposure" class="behavior-breakdown"></div></article><article class="card"><p class="eyebrow">SETTORI ECONOMICI</p><h2>Quali tesi stai duplicando</h2><div id="sectorExposure" class="behavior-breakdown"></div></article></div>
-          <div class="section-title"><div><p class="eyebrow">RISCHI DA INDAGARE</p><h2>Segnalazioni qualitative</h2></div><span class="muted">Metadati CoinMarketCap + portafoglio locale</span></div><div id="hiddenExposureWarnings" class="risk-insights"></div>
+          <div class="section-title topless"><div><p class="eyebrow">DIVERSIFICAZIONE O RISCHIO RIPETUTO?</p><h2>Dove si concentra davvero il portafoglio</h2></div><button class="secondary" data-go="portfolio">Modifica portafoglio</button></div>
+          <details class="card exposure-quick-guide" open>
+            <summary><div><p class="eyebrow">GUIDA RAPIDA</p><b>Come leggere Esposizioni</b></div><span>Apri o nascondi la guida</span></summary>
+            <div class="exposure-guide-body">
+              <p>Questa mappa cerca dipendenze comuni tra crypto diverse. Ogni percentuale è calcolata sul valore corrente delle posizioni: <b>quantità × prezzo disponibile</b>. Non misura il capitale inizialmente investito e non dimostra che due asset si muoveranno sempre insieme.</p>
+              <ol class="exposure-steps">
+                <li><b>1 · Compila il portafoglio</b><span>Inserisci almeno la quantità posseduta. Le posizioni senza valore corrente non entrano nella mappa.</span></li>
+                <li><b>2 · Controlla la copertura</b><span>Più è alta, più valore è stato associato ai metadati disponibili. Il resto va verificato manualmente.</span></li>
+                <li><b>3 · Guarda le reti</b><span>Scopri quanta parte dipende dalla stessa blockchain, piattaforma o infrastruttura tecnica.</span></li>
+                <li><b>4 · Guarda i temi</b><span>Verifica se token diversi ripetono la stessa idea economica, come DeFi, Layer 1, AI o meme.</span></li>
+                <li><b>5 · Apri i controlli</b><span>Usa gli avvisi per decidere cosa approfondire nel progetto, non cosa comprare o vendere.</span></li>
+              </ol>
+              <div class="exposure-legend-grid">
+                <div><b>Peso %</b><span><strong>Quanto conta il gruppo?</strong> È la quota del valore attuale, non il numero di token e non il capitale investito.</span></div>
+                <div><b>Rete o piattaforma</b><span><strong>Dove poggia tecnicamente?</strong> Token sulla stessa rete possono condividere congestione, bridge e rischi infrastrutturali.</span></div>
+                <div><b>Tema o settore</b><span><strong>Quale idea stai ripetendo?</strong> Più asset DeFi o AI possono reagire agli stessi eventi anche se hanno nomi diversi.</span></div>
+                <div><b>Copertura dati</b><span><strong>Quanto è stato classificato?</strong> Misura il valore associato ai metadati CoinMarketCap disponibili nel campione.</span></div>
+                <div><b>Da verificare</b><span><strong>Cosa manca?</strong> L’asset richiede una ricerca manuale su rete, funzione, bridge, custodia e dipendenze.</span></div>
+                <div><b>Controlli automatici</b><span><strong>Quando compare un avviso?</strong> Rete &gt;50%, settore &gt;55%, singola posizione &gt;35% o altcoin &gt;70%.</span></div>
+              </div>
+              <div class="exposure-guide-note"><b>Regola semplice</b><span>Avere cinque crypto non significa essere diversificati. La diversificazione migliora solo quando cambiano davvero dipendenze, fonti di rischio e comportamento nei periodi difficili.</span></div>
+            </div>
+          </details>
+          <div id="exposureHeadline" class="exposure-summary" aria-live="polite"></div>
+          <div class="advanced-two-columns exposure-map-grid">
+            <article class="card exposure-map-card"><p class="eyebrow">DIPENDENZA TECNICA</p><h2>Reti e piattaforme comuni</h2><p class="exposure-card-copy">Mostra dove poggiano le crypto e quale ecosistema pesa di più sul valore attuale.</p><div id="platformExposure" class="behavior-breakdown"></div></article>
+            <article class="card exposure-map-card"><p class="eyebrow">IDEA ECONOMICA</p><h2>Temi e settori ripetuti</h2><p class="exposure-card-copy">Raggruppa i token per funzione o narrativa per evidenziare idee già presenti più volte.</p><div id="sectorExposure" class="behavior-breakdown"></div></article>
+          </div>
+          <div class="section-title exposure-check-heading"><div><p class="eyebrow">PROSSIMI CONTROLLI</p><h2>Cosa approfondire</h2></div><span class="muted">Regole interne · metadati CoinMarketCap · portafoglio locale</span></div><div id="hiddenExposureWarnings" class="risk-insights exposure-warnings"></div>
         </div>
 
         <div id="intelligence-stress" class="intelligence-panel">
