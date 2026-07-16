@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="/phase18.css">
   <link rel="stylesheet" href="/phase19.css">
   <link rel="stylesheet" href="/phase20.css">
+  <link rel="stylesheet" href="/phase21.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -126,7 +127,22 @@
         <div class="section-title pinned-heading"><div><p class="eyebrow">POSIZIONI FISSATE</p><h2 id="pinnedTitle">Le tue crypto</h2></div><div class="pinned-heading-actions"><span id="pinnedCount" class="muted">0/5 selezionate</span><button id="managePinned" class="secondary">Gestisci</button></div></div>
         <article id="pinnedManager" class="card pinned-manager hidden">
           <div><h3>Personalizza la Home</h3><p>Scegli fino a 5 crypto tra quelle monitorate. La selezione viene salvata soltanto su questo browser.</p></div>
-          <div class="pinned-picker"><label>Aggiungi una crypto<select id="pinnedCoinSelect" aria-label="Crypto da fissare"></select></label><button id="addPinned" class="primary">Aggiungi</button></div>
+          <div class="pinned-picker">
+            <label class="pinned-search-field">Cerca una crypto
+              <div class="pinned-combobox">
+                <input id="pinnedCoinSearch" type="search" placeholder="Scrivi nome, simbolo o rank…" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="pinnedCoinOptions" aria-expanded="false">
+                <input id="pinnedCoinSelect" type="hidden">
+                <div id="pinnedCoinOptions" class="pinned-options hidden" role="listbox" aria-label="Crypto disponibili"></div>
+              </div>
+            </label>
+            <label class="pinned-sort-field">Ordina elenco
+              <select id="pinnedCoinSort" aria-label="Ordina crypto">
+                <option value="rank">Per rank</option>
+                <option value="name">Alfabetico</option>
+              </select>
+            </label>
+            <button id="addPinned" class="primary">Aggiungi</button>
+          </div>
           <div id="pinnedSelection" class="pinned-selection"></div>
           <div class="pinned-manager-footer"><span id="pinnedMessage" class="muted">Le schede non modificano il tuo portafoglio.</span><button id="closePinned" class="secondary">Chiudi</button></div>
         </article>
