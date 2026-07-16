@@ -778,8 +778,10 @@ function renderNews(){
   $("homeItalianNewsList").innerHTML=italian.slice(0,4).map(article=>newsCard(article,true)).join("")||`<div class="card insight-card home-news-unavailable"><p class="muted">${tr("Le notizie dalle fonti italiane sono momentaneamente non disponibili.")}</p></div>`;
 }
 
-const detailChartState={coin:null,range:"365",rows:[],currency:"EUR",requestId:0,width:1000,height:420};
-const detailRangeLabels={"1":"24 ore","7":"7 giorni","30":"1 mese","90":"3 mesi","365":"1 anno",max:"storico massimo"};
+function preferredChartType(){try{return localStorage.getItem("cryptoRadarChartType")==="candles"?"candles":"line"}catch{return"line"}}
+const detailChartState={coin:null,range:"365",type:preferredChartType(),history:null,rows:[],currency:"EUR",requestId:0,width:1000,height:420};
+const detailRangeLabels={"1h":"1 ora","2h":"2 ore","4h":"4 ore","1":"24 ore","7":"7 giorni","30":"1 mese","90":"3 mesi","365":"1 anno",max:"storico massimo"};
+const detailCandleBuckets={"1h":10*60e3,"2h":15*60e3,"4h":30*60e3,"1":60*60e3,"7":6*60*60e3,"30":24*60*60e3,"90":3*24*60*60e3,"365":7*24*60*60e3};
 function chartMoney(value,currency=detailChartState.currency,compact=false){
   const amount=num(value),absolute=Math.abs(amount),digits=absolute>=1000?2:absolute>=1?4:absolute>=.01?6:8;
   return new Intl.NumberFormat(uiLocale(),{style:"currency",currency:currency||"EUR",notation:compact?"compact":"standard",maximumFractionDigits:compact?2:digits}).format(amount);
@@ -791,7 +793,8 @@ function chartPercent(value){
 }
 function chartDate(timestamp,range=detailChartState.range,full=false){
   const date=new Date(num(timestamp));
-  const options=range==="1"?{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}:range==="7"?{weekday:full?"short":undefined,day:"2-digit",month:"short",hour:full?"2-digit":undefined,minute:full?"2-digit":undefined}:range==="30"||range==="90"?{day:"2-digit",month:"short",year:full?"numeric":undefined}:{month:"short",year:"numeric",day:full?"2-digit":undefined};
+  const intraday=["1h","2h","4h","1"].includes(range);
+  const options=intraday?{day:full?"2-digit":undefined,month:full?"short":undefined,hour:"2-digit",minute:"2-digit"}:range==="7"?{weekday:full?"short":undefined,day:"2-digit",month:"short",hour:full?"2-digit":undefined,minute:full?"2-digit":undefined}:range==="30"||range==="90"?{day:"2-digit",month:"short",year:full?"numeric":undefined}:{month:"short",year:"numeric",day:full?"2-digit":undefined};
   return new Intl.DateTimeFormat(uiLocale(),options).format(date);
 }
 function chartSeriesValue(series,timestamp){
@@ -805,9 +808,27 @@ function normalizeChartRows(history){
   const step=Math.max(1,Math.ceil(prices.length/700)),sampled=prices.filter((_,index)=>index%step===0||index===prices.length-1);
   return sampled.map(([timestamp,price])=>({timestamp,price,volume:chartSeriesValue(history.total_volumes,timestamp),marketCap:chartSeriesValue(history.market_caps,timestamp)}));
 }
+function normalizeCandleRows(history){
+  const prices=(history.prices||[]).map(item=>[num(item?.[0]),num(item?.[1])]).filter(item=>item[0]>0&&item[1]>0).sort((a,b)=>a[0]-b[0]);
+  if(prices.length<2)return[];
+  const span=prices.at(-1)[0]-prices[0][0],bucketMs=detailCandleBuckets[detailChartState.range]||Math.max(24*60*60e3,Math.ceil(span/80/(24*60*60e3))*24*60*60e3);
+  const candles=[];
+  for(const [timestamp,price] of prices){
+    const bucket=Math.floor(timestamp/bucketMs);
+    let candle=candles.at(-1);
+    if(!candle||candle.bucket!==bucket){
+      candle={bucket,timestamp,open:price,high:price,low:price,close:price};
+      candles.push(candle);
+    }else{
+      candle.timestamp=timestamp;candle.high=Math.max(candle.high,price);candle.low=Math.min(candle.low,price);candle.close=price;
+    }
+  }
+  return candles.map(candle=>({...candle,price:candle.close,volume:chartSeriesValue(history.total_volumes,candle.timestamp),marketCap:chartSeriesValue(history.market_caps,candle.timestamp)}));
+}
+function chartStartPrice(){const first=detailChartState.rows[0];return num(first?.open||first?.price)}
 function setChartQuote(row,index=detailChartState.rows.length-1){
   if(!row)return;
-  const first=detailChartState.rows[0],changePct=first?.price?(row.price/first.price-1)*100:0;
+  const firstPrice=chartStartPrice(),changePct=firstPrice?(row.price/firstPrice-1)*100:0;
   $("detailChartPrice").textContent=chartMoney(row.price);
   $("detailChartChange").textContent=chartPercent(changePct);
   $("detailChartChange").className=changePct>=0?"positive":"negative";
@@ -824,8 +845,9 @@ function showChartPoint(index){
   const x=num(row.x),y=num(row.y),hover=$("detailChartHover"),crosshair=$("detailChartCrosshair"),dot=$("detailChartDot");
   hover?.setAttribute("visibility","visible");crosshair?.setAttribute("x1",x);crosshair?.setAttribute("x2",x);
   dot?.setAttribute("cx",x);dot?.setAttribute("cy",y);
-  const periodChange=detailChartState.rows[0]?.price?(row.price/detailChartState.rows[0].price-1)*100:0;
-  tooltip.innerHTML=`<b>${chartMoney(row.price)}</b><span>${esc(chartDate(row.timestamp,detailChartState.range,true))}</span><small>${tr("Variazione periodo")}: ${chartPercent(periodChange)}${row.volume?` · ${tr("Volume 24h")}: ${chartMoney(row.volume,detailChartState.currency,true)}`:""}</small>`;
+  const firstPrice=chartStartPrice(),periodChange=firstPrice?(row.price/firstPrice-1)*100:0;
+  const candleValues=row.open?`<div class="market-chart-ohlc"><div><span>${tr("Apertura")}</span><b>${chartMoney(row.open)}</b></div><div><span>${tr("Massimo")}</span><b>${chartMoney(row.high)}</b></div><div><span>${tr("Minimo")}</span><b>${chartMoney(row.low)}</b></div><div><span>${tr("Chiusura")}</span><b>${chartMoney(row.close)}</b></div></div>`:"";
+  tooltip.innerHTML=`<b>${chartMoney(row.price)}</b><span>${esc(chartDate(row.timestamp,detailChartState.range,true))}</span>${candleValues}<small class="market-chart-tooltip-meta">${tr("Variazione periodo")}: ${chartPercent(periodChange)}${row.volume?` · ${tr("Volume 24h")}: ${chartMoney(row.volume,detailChartState.currency,true)}`:""}</small>`;
   tooltip.classList.remove("hidden");
   const stageRect=stage.getBoundingClientRect(),left=x/detailChartState.width*stageRect.width+12,top=y/detailChartState.height*stageRect.height-18;
   tooltip.style.left=`${clamp(left,8,Math.max(8,stageRect.width-tooltip.offsetWidth-8))}px`;
@@ -833,28 +855,44 @@ function showChartPoint(index){
   setChartQuote(row,index);
 }
 function drawChart(history){
-  const svg=$("priceChart"),rows=normalizeChartRows(history);
+  const svg=$("priceChart"),candles=detailChartState.type==="candles",rows=candles?normalizeCandleRows(history):normalizeChartRows(history);
   detailChartState.rows=rows;detailChartState.currency=history.currency||"EUR";
   if(rows.length<2){svg.innerHTML="";throw new Error("Lo storico disponibile non contiene abbastanza punti per disegnare il grafico.")}
   const width=Math.max(320,Math.round(svg.clientWidth||1000)),height=Math.max(300,Math.round(svg.clientHeight||420)),compact=width<600,left=compact?9:20,right=width-(compact?47:88),top=24,priceBottom=height-104,volumeTop=height-78,volumeBottom=height-40,axisBottom=height-12;
   detailChartState.width=width;detailChartState.height=height;svg.setAttribute("viewBox",`0 0 ${width} ${height}`);
-  const values=rows.map(row=>row.price),rawMin=Math.min(...values),rawMax=Math.max(...values),rawRange=rawMax-rawMin||Math.max(rawMax*.02,1),min=Math.max(0,rawMin-rawRange*.08),max=rawMax+rawRange*.08,priceRange=max-min||1;
+  const minimums=rows.map(row=>candles?row.low:row.price),maximums=rows.map(row=>candles?row.high:row.price),rawMin=Math.min(...minimums),rawMax=Math.max(...maximums),rawRange=rawMax-rawMin||Math.max(rawMax*.02,1),min=Math.max(0,rawMin-rawRange*.08),max=rawMax+rawRange*.08,priceRange=max-min||1;
   const volumes=rows.map(row=>row.volume),maxVolume=Math.max(...volumes,1),xFor=index=>left+index/(rows.length-1)*(right-left),yFor=value=>top+(max-value)/priceRange*(priceBottom-top);
   rows.forEach((row,index)=>{row.x=xFor(index);row.y=yFor(row.price)});
   const line=rows.map((row,index)=>`${index?"L":"M"}${row.x.toFixed(2)},${row.y.toFixed(2)}`).join(" "),area=`${line} L${right},${priceBottom} L${left},${priceBottom} Z`,positive=rows.at(-1).price>=rows[0].price,color=positive?"#62ddb0":"#ff7185";
   const horizontal=Array.from({length:5},(_,index)=>{const ratio=index/4,y=top+ratio*(priceBottom-top),value=max-ratio*priceRange;return `<line class="market-chart-grid" x1="${left}" y1="${y}" x2="${right}" y2="${y}"/><text class="market-chart-axis" x="${right+12}" y="${y+4}">${esc(chartMoney(value,detailChartState.currency,true))}</text>`}).join("");
   const labelIndexes=[0,.25,.5,.75,1].map(ratio=>Math.round((rows.length-1)*ratio)),vertical=labelIndexes.map((rowIndex,index)=>{const row=rows[rowIndex],anchor=index===0?"start":index===labelIndexes.length-1?"end":"middle";return `<line class="market-chart-grid" x1="${row.x}" y1="${top}" x2="${row.x}" y2="${volumeBottom}"/><text class="market-chart-axis" x="${row.x}" y="${axisBottom}" text-anchor="${anchor}">${esc(chartDate(row.timestamp))}</text>`}).join("");
   const barWidth=Math.max(1,Math.min(5,(right-left)/rows.length*.62)),volumeBars=rows.map(row=>{const barHeight=row.volume/maxVolume*(volumeBottom-volumeTop);return `<rect class="market-chart-volume" x="${(row.x-barWidth/2).toFixed(2)}" y="${(volumeBottom-barHeight).toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}"/>`}).join("");
+  const candleWidth=Math.max(3,Math.min(14,(right-left)/rows.length*.58)),candleShapes=candles?rows.map(row=>{const openY=yFor(row.open),closeY=yFor(row.close),highY=yFor(row.high),lowY=yFor(row.low),direction=row.close>=row.open?"up":"down",bodyHeight=Math.max(1,Math.abs(closeY-openY)),bodyY=Math.min(openY,closeY)-(bodyHeight===1?.5:0);return `<line class="market-chart-candle-wick ${direction}" x1="${row.x.toFixed(2)}" y1="${highY.toFixed(2)}" x2="${row.x.toFixed(2)}" y2="${lowY.toFixed(2)}"/><rect class="market-chart-candle-body ${direction}" x="${(row.x-candleWidth/2).toFixed(2)}" y="${bodyY.toFixed(2)}" width="${candleWidth.toFixed(2)}" height="${bodyHeight.toFixed(2)}" rx="1"/>`}).join(""):"";
+  const priceVisual=candles?`<g>${candleShapes}</g>`:`<path class="market-chart-area" fill="url(#detailChartGradient)" d="${area}"/><path class="market-chart-line" stroke="${color}" d="${line}"/>`,hoverDot=candles?"":`<circle id="detailChartDot" class="market-chart-dot" cx="${right}" cy="${rows.at(-1).y}" r="5" fill="${color}"/>`;
   svg.style.color=color;
-  svg.innerHTML=`<defs><linearGradient id="detailChartGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".55"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>${horizontal}${vertical}<g style="color:${color}">${volumeBars}</g><path class="market-chart-area" fill="url(#detailChartGradient)" d="${area}"/><path class="market-chart-line" stroke="${color}" d="${line}"/><g id="detailChartHover" visibility="hidden"><line id="detailChartCrosshair" class="market-chart-crosshair" x1="${right}" y1="${top}" x2="${right}" y2="${volumeBottom}"/><circle id="detailChartDot" class="market-chart-dot" cx="${right}" cy="${rows.at(-1).y}" r="5" fill="${color}"/></g><rect class="market-chart-hit" x="${left}" y="${top}" width="${right-left}" height="${volumeBottom-top}"/>`;
+  svg.innerHTML=`<defs><linearGradient id="detailChartGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".55"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>${horizontal}${vertical}<g style="color:${color}">${volumeBars}</g>${priceVisual}<g id="detailChartHover" visibility="hidden"><line id="detailChartCrosshair" class="market-chart-crosshair" x1="${right}" y1="${top}" x2="${right}" y2="${volumeBottom}"/>${hoverDot}</g><rect class="market-chart-hit" x="${left}" y="${top}" width="${right-left}" height="${volumeBottom-top}"/>`;
   svg.onpointermove=event=>{const rect=svg.getBoundingClientRect(),chartX=(event.clientX-rect.left)/rect.width*width,index=Math.round(clamp((chartX-left)/(right-left),0,1)*(rows.length-1));showChartPoint(index)};
   svg.onpointerleave=resetChartHover;
   svg.onpointerdown=event=>{event.preventDefault();svg.setPointerCapture?.(event.pointerId)};
   const latest=rows.at(-1),latestVolume=latest.volume,conversion=history.conversion==="current-rate"?` · ${tr("conversione EUR indicativa al cambio corrente")}`:"";
-  $("detailChartSummary").textContent=`${tr("Min")}: ${chartMoney(rawMin)} · ${tr("Max")}: ${chartMoney(rawMax)}${latestVolume?` · ${tr("Volume 24h")}: ${chartMoney(latestVolume,detailChartState.currency,true)}`:""}${conversion}`;
+  const candleNote=candles?`${tr("Candele aggregate dai punti di mercato")} · `:"";
+  $("detailChartSummary").textContent=`${candleNote}${tr("Min")}: ${chartMoney(rawMin)} · ${tr("Max")}: ${chartMoney(rawMax)}${latestVolume?` · ${tr("Volume 24h")}: ${chartMoney(latestVolume,detailChartState.currency,true)}`:""}${conversion}`;
   $("detailChartSource").textContent=`${tr("Fonte")} ${history.source||"mercato"} ↗`;
   $("detailChartSource").href=String(history.sourceUrl||"https://coinmarketcap.com/").startsWith("https://")?history.sourceUrl:"https://coinmarketcap.com/";
   setChartQuote(latest);
+}
+function syncDetailChartType(){
+  document.querySelectorAll("[data-chart-type]").forEach(button=>{const active=button.dataset.chartType===detailChartState.type;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active))});
+}
+function setDetailChartType(type){
+  if(!["line","candles"].includes(type))return;
+  detailChartState.type=type;syncDetailChartType();
+  try{localStorage.setItem("cryptoRadarChartType",type)}catch{/* La preferenza resta valida per la sessione. */}
+  if(detailChartState.history)drawChart(detailChartState.history);
+}
+let detailChartResizeTimer=0;
+if(window.ResizeObserver){
+  new ResizeObserver(()=>{if(!detailChartState.history)return;clearTimeout(detailChartResizeTimer);detailChartResizeTimer=setTimeout(()=>drawChart(detailChartState.history),120)}).observe($("priceChartStage"));
 }
 async function loadDetailHistory(range=detailChartState.range){
   const coin=detailChartState.coin;if(!coin)return;
@@ -866,17 +904,17 @@ async function loadDetailHistory(range=detailChartState.range){
     const cmcId=(coin.cmcId||String(coin.id).startsWith("cmc-"))?String(coin.cmcId||coin.id.slice(4)):"";
     const history=await api(`/api/history?id=${encodeURIComponent(coin.id)}&range=${encodeURIComponent(range)}${cmcId?`&cmcId=${encodeURIComponent(cmcId)}`:""}`);
     if(requestId!==detailChartState.requestId)return;
-    drawChart(history);loading.classList.add("hidden");
+    detailChartState.history=history;drawChart(history);loading.classList.add("hidden");
   }catch(error){
     if(requestId!==detailChartState.requestId)return;
-    $("priceChart").innerHTML="";detailChartState.rows=[];$("detailChartPrice").textContent="—";$("detailChartChange").textContent="—";$("detailChartTimestamp").textContent=tr("Storico non disponibile");
+    $("priceChart").innerHTML="";detailChartState.history=null;detailChartState.rows=[];$("detailChartPrice").textContent="—";$("detailChartChange").textContent="—";$("detailChartTimestamp").textContent=tr("Storico non disponibile");
     $("detailChartSummary").textContent=tr("Prova un altro intervallo o ripeti più tardi.");
     loading.textContent=error.message||tr("Grafico non disponibile per questa crypto.");
   }
 }
 async function openDetail(id){
   const c=coinById(id);if(!c)return;
-  detailChartState.coin=c;showPage("detail",c.name);$("detailTitle").textContent=`${c.name} (${c.symbol.toUpperCase()})`;$("detailScore").textContent=c._score;
+  detailChartState.coin=c;detailChartState.history=null;syncDetailChartType();showPage("detail",c.name);$("detailTitle").textContent=`${c.name} (${c.symbol.toUpperCase()})`;$("detailScore").textContent=c._score;
   $("detailIdentity").textContent=`Rank #${num(c.market_cap_rank)||"—"} · ${tr("Prezzo attuale")} ${fmtEur(c.current_price)} · ${tr("Capitalizzazione")} ${fmtEur(c.market_cap,true)}`;
   $("detailMetrics").innerHTML=[['Momentum',c._momentum+'/100'],['Liquidità',c._liquidity+'/100'],['Tokenomics',c._tokenomics+'/100'],['Rischio',c._risk]].map(x=>`<article class="card metric"><span>${x[0]}</span><strong>${x[1]}</strong><small>Indicatore quantitativo</small></article>`).join('');
   await loadDetailHistory("365");window.CryptoRadarI18n?.translateDocument();
@@ -1395,6 +1433,8 @@ async function loadImportHistory(){
 async function undoImport(batchId){if(!confirm("Annullare questa importazione e rimuovere tutte le sue operazioni?"))return;try{await api(`/api/import?batchId=${encodeURIComponent(batchId)}`,{method:"DELETE"});await loadImportHistory()}catch(error){showError(error.message)}}
 document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>showPage(n.dataset.target));
 document.querySelectorAll("[data-chart-range]").forEach(button=>button.onclick=()=>loadDetailHistory(button.dataset.chartRange));
+document.querySelectorAll("[data-chart-type]").forEach(button=>button.onclick=()=>setDetailChartType(button.dataset.chartType));
+syncDetailChartType();
 document.querySelectorAll("[data-sidebar-group-toggle]").forEach(button=>button.onclick=()=>toggleSidebarGroup(button.dataset.sidebarGroupToggle));
 document.querySelectorAll('[data-go]').forEach(n=>n.onclick=()=>showPage(n.dataset.go));
 document.querySelectorAll('[data-community-tab]').forEach(button=>button.onclick=()=>setCommunityTab(button.dataset.communityTab));

@@ -942,6 +942,9 @@ def simulate_dca(coin_id: str, months: int, monthly: float) -> dict:
 
 
 HISTORY_RANGES = {
+    "1h": ("1", "1D"),
+    "2h": ("1", "1D"),
+    "4h": ("1", "1D"),
     "1": ("1", "1D"),
     "7": ("7", "7D"),
     "30": ("30", "1M"),
@@ -949,6 +952,7 @@ HISTORY_RANGES = {
     "365": ("365", "1Y"),
     "max": ("max", "ALL"),
 }
+HISTORY_WINDOW_HOURS = {"1h": 1, "2h": 2, "4h": 4}
 
 
 def valid_history_rows(values: object) -> list[list[float]]:
@@ -964,6 +968,25 @@ def valid_history_rows(values: object) -> list[list[float]]:
         if timestamp > 0 and value >= 0:
             rows.append([timestamp, value])
     return rows
+
+
+def trim_history_window(history: dict, range_key: str) -> dict:
+    hours = HISTORY_WINDOW_HOURS.get(range_key)
+    if not hours:
+        return history
+    prices = history.get("prices", [])
+    if len(prices) < 2:
+        raise RuntimeError("Storico intraday insufficiente per il periodo selezionato.")
+    cutoff = prices[-1][0] - hours * 60 * 60 * 1000
+    result = dict(history)
+    for key in ("prices", "market_caps", "total_volumes"):
+        rows = history.get(key, [])
+        result[key] = [row for row in rows if row[0] >= cutoff]
+    if len(result["prices"]) < 2:
+        raise RuntimeError("Storico intraday insufficiente per il periodo selezionato.")
+    result["windowHours"] = hours
+    result["asOf"] = int(result["prices"][-1][0] / 1000)
+    return result
 
 
 def coingecko_history(coin_id: str, days: str) -> dict:
@@ -1045,7 +1068,7 @@ def market_history(coin_id: str, range_key: str, cmc_id: int | None = None) -> d
             resolved_id, resolution = resolve_dca_coin_id(coin_id)
             result = coingecko_history(resolved_id, days)
             result["resolution"] = resolution
-            return result
+            return trim_history_window(result, range_key)
         except RuntimeError as exc:
             errors.append(str(exc))
 
@@ -1061,7 +1084,7 @@ def market_history(coin_id: str, range_key: str, cmc_id: int | None = None) -> d
         try:
             result = coinmarketcap_history(cmc_id, chart_range)
             result["resolution"] = "coinmarketcap"
-            return result
+            return trim_history_window(result, range_key)
         except RuntimeError as exc:
             errors.append(str(exc))
 
