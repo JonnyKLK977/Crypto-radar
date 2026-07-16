@@ -37,6 +37,7 @@ COMMUNITY_FILE = DATA_DIR / "community.json"
 MARKET_FALLBACK_FILE = ROOT / "market_fallback.json"
 COINGECKO = "https://api.coingecko.com/api/v3"
 COINMARKETCAP_PUBLIC = "https://pro-api.coinmarketcap.com/public-api"
+COINMARKETCAP_DATA = "https://api.coinmarketcap.com/data-api"
 COINDESK_RSS = "https://www.coindesk.com/arc/outboundfeeds/rss/"
 CRIPTOVALUTA_RSS = "https://www.criptovaluta.it/feed/"
 BEINCRYPTO_IT_RSS = "https://it.beincrypto.com/feed/"
@@ -940,6 +941,133 @@ def simulate_dca(coin_id: str, months: int, monthly: float) -> dict:
     }
 
 
+HISTORY_RANGES = {
+    "1": ("1", "1D"),
+    "7": ("7", "7D"),
+    "30": ("30", "1M"),
+    "90": ("90", "3M"),
+    "365": ("365", "1Y"),
+    "max": ("max", "ALL"),
+}
+
+
+def valid_history_rows(values: object) -> list[list[float]]:
+    rows = []
+    for item in values if isinstance(values, list) else []:
+        if not isinstance(item, list) or len(item) < 2:
+            continue
+        try:
+            timestamp = float(item[0])
+            value = float(item[1])
+        except (TypeError, ValueError):
+            continue
+        if timestamp > 0 and value >= 0:
+            rows.append([timestamp, value])
+    return rows
+
+
+def coingecko_history(coin_id: str, days: str) -> dict:
+    data = coingecko_get(
+        f"/coins/{coin_id}/market_chart",
+        {"vs_currency": "eur", "days": days},
+        ttl=300 if days in {"1", "7"} else 900,
+    )
+    prices = valid_history_rows(data.get("prices", []) if isinstance(data, dict) else [])
+    if len(prices) < 2:
+        raise RuntimeError("Storico CoinGecko insufficiente per il periodo selezionato.")
+    return {
+        "prices": prices,
+        "market_caps": valid_history_rows(data.get("market_caps", [])),
+        "total_volumes": valid_history_rows(data.get("total_volumes", [])),
+        "source": "CoinGecko",
+        "sourceUrl": f"https://www.coingecko.com/en/coins/{urllib.parse.quote(coin_id)}",
+        "currency": "EUR",
+        "conversion": "native",
+        "asOf": int(prices[-1][0] / 1000),
+    }
+
+
+def coinmarketcap_history(cmc_id: int, chart_range: str) -> dict:
+    params = urllib.parse.urlencode({"id": str(cmc_id), "range": chart_range})
+    payload = public_json(
+        f"{COINMARKETCAP_DATA}/v3/cryptocurrency/detail/chart?{params}",
+        ttl=300 if chart_range in {"1D", "7D"} else 900,
+    )
+    status = payload.get("status", {}) if isinstance(payload, dict) else {}
+    data = payload.get("data", {}) if isinstance(payload, dict) else {}
+    points = data.get("points", {}) if isinstance(data, dict) else {}
+    if str(status.get("error_code", "0")) != "0" or not isinstance(points, dict):
+        raise RuntimeError(str(status.get("error_message") or "Storico CoinMarketCap non disponibile."))
+
+    rows = []
+    for raw_timestamp, point in points.items():
+        values = point.get("v", []) if isinstance(point, dict) else []
+        if not isinstance(values, list) or len(values) < 3:
+            continue
+        try:
+            timestamp = int(raw_timestamp) * 1000
+            price = float(values[0])
+            volume = float(values[1])
+            market_cap = float(values[2])
+        except (TypeError, ValueError):
+            continue
+        if timestamp > 0 and price > 0:
+            rows.append((timestamp, price, max(0.0, market_cap), max(0.0, volume)))
+    rows.sort(key=lambda item: item[0])
+    if len(rows) < 2:
+        raise RuntimeError("Storico CoinMarketCap insufficiente per il periodo selezionato.")
+
+    catalog_id = f"cmc-{cmc_id}"
+    catalog = coinmarketcap_catalog("", "rank", {catalog_id})
+    asset = next((item for item in catalog.get("data", []) if item.get("id") == catalog_id), {})
+    current_eur = float(asset.get("current_price") or 0)
+    scale = current_eur / rows[-1][1] if current_eur > 0 and rows[-1][1] > 0 else 1.0
+    currency = "EUR" if scale != 1.0 else "USD"
+    slug = str(asset.get("cmc_slug") or "")
+    source_url = f"https://coinmarketcap.com/currencies/{urllib.parse.quote(slug)}/" if slug else "https://coinmarketcap.com/"
+    return {
+        "prices": [[timestamp, price * scale] for timestamp, price, _, _ in rows],
+        "market_caps": [[timestamp, market_cap * scale] for timestamp, _, market_cap, _ in rows],
+        "total_volumes": [[timestamp, volume * scale] for timestamp, _, _, volume in rows],
+        "source": "CoinMarketCap",
+        "sourceUrl": source_url,
+        "currency": currency,
+        "conversion": "current-rate" if scale != 1.0 else "native",
+        "asOf": int(rows[-1][0] / 1000),
+    }
+
+
+def market_history(coin_id: str, range_key: str, cmc_id: int | None = None) -> dict:
+    days, chart_range = HISTORY_RANGES[range_key]
+    errors = []
+    if range_key != "max":
+        try:
+            resolved_id, resolution = resolve_dca_coin_id(coin_id)
+            result = coingecko_history(resolved_id, days)
+            result["resolution"] = resolution
+            return result
+        except RuntimeError as exc:
+            errors.append(str(exc))
+
+    if not cmc_id:
+        try:
+            catalog = coinmarketcap_catalog(coin_id, "rank")
+            asset = next((item for item in catalog.get("data", []) if item.get("cmc_slug") == coin_id), None)
+            cmc_id = int(asset.get("cmc_id")) if asset else None
+        except (RuntimeError, TypeError, ValueError):
+            cmc_id = None
+
+    if cmc_id:
+        try:
+            result = coinmarketcap_history(cmc_id, chart_range)
+            result["resolution"] = "coinmarketcap"
+            return result
+        except RuntimeError as exc:
+            errors.append(str(exc))
+
+    raise RuntimeError(errors[-1] if errors else "Storico non disponibile per questa crypto.")
+
+
 def coingecko_get(path: str, params: dict[str, str], ttl: int) -> object:
     query = urllib.parse.urlencode(params)
     url = f"{COINGECKO}{path}?{query}"
@@ -1603,13 +1731,20 @@ class Handler(BaseHTTPRequestHandler):
             if parsed.path == "/api/history":
                 query = urllib.parse.parse_qs(parsed.query)
                 coin_id = query.get("id", [""])[0]
+                range_key = query.get("range", ["365"])[0]
                 if not coin_id or not all(ch.isalnum() or ch in "-_" for ch in coin_id):
                     return self.send_json({"error": "ID crypto non valido."}, 400)
-                data = coingecko_get(
-                    f"/coins/{coin_id}/market_chart",
-                    {"vs_currency": "eur", "days": "365"},
-                    ttl=900,
-                )
+                if range_key not in HISTORY_RANGES:
+                    return self.send_json({"error": "Intervallo storico non valido."}, 400)
+                raw_cmc_id = query.get("cmcId", [""])[0]
+                try:
+                    cmc_id = int(raw_cmc_id) if raw_cmc_id else int(coin_id[4:]) if coin_id.startswith("cmc-") else None
+                except ValueError:
+                    return self.send_json({"error": "ID CoinMarketCap non valido."}, 400)
+                if cmc_id is not None and cmc_id < 1:
+                    return self.send_json({"error": "ID CoinMarketCap non valido."}, 400)
+                data = market_history(coin_id, range_key, cmc_id)
+                data["range"] = range_key
                 return self.send_json(data)
             if parsed.path == "/api/dca":
                 query = urllib.parse.parse_qs(parsed.query)

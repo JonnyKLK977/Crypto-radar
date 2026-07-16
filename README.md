@@ -4,6 +4,8 @@ Dashboard per seguire fino a cinque crypto personali e individuare altre opportu
 
 Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’utente può cercare per nome, simbolo o rank nel catalogo delle prime 5.000 crypto CoinMarketCap, ordinare i risultati per posizione o alfabeticamente e aggiungere o rimuovere fino a 5 asset. La selezione è distinta dal portafoglio e non viene inviata al server. La stessa pagina include il cambio lingua rapido, i cinque maggiori rialzi e ribassi settimanali ricavati dall’API ufficiale CoinMarketCap tra le prime 100 crypto idonee e una selezione bilanciata degli ultimi articoli di Criptovaluta.it, BeInCrypto Italia e The Crypto Gateway.
 
+La scheda di ogni crypto include un grafico interattivo in stile CoinMarketCap con prezzo, variazione, volume, minimo e massimo. Gli intervalli vanno da 24 ore allo storico massimo; CoinGecko fornisce lo storico principale in euro e CoinMarketCap amplia la copertura quando il catalogo esteso non dispone di una corrispondenza CoinGecko.
+
 L’intera Home è componibile: ogni browser conserva ordine e visibilità dei sette moduli disponibili. Il pannello consente trascinamento, spostamento accessibile con frecce, mostra/nascondi e ripristino. Oltre ai moduli di mercato sono disponibili una sintesi personale del portafoglio e scorciatoie verso Assistente Personale, Laboratorio, guide e fiscalità.
 
 Anche la navigazione laterale è modulare: le voci mantengono i nomi originali ma sono raccolte in gruppi richiudibili. Ogni browser può nascondere le sezioni non utilizzate, scegliere una densità comoda o compatta e ripristinare la configurazione iniziale; Panoramica resta sempre disponibile.

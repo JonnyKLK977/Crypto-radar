@@ -521,10 +521,10 @@ function renderOverview(){
   renderWeeklyMovers();
   const selectedPinned=pinnedIds(),pinned=selectedPinned.map(pinnedCoinById).filter(Boolean);
   $("pinnedCards").classList.remove("skeleton-grid");
-  $("pinnedCards").innerHTML=pinned.length?pinned.map(c=>`<article class="card coin-card" data-id="${c.id}" ${c._catalogOnly?`data-cmc-slug="${esc(c.cmcSlug||"")}" title="Apri su CoinMarketCap"`:""}><div class="coin-top"><div class="coin-id"><img src="${c.image}" alt=""><div><b>${c.name}</b><span>${c.symbol.toUpperCase()} · rank #${c.market_cap_rank}</span></div></div><div class="score ${scoreColor(c._score)}">${c._score}<small>SCORE</small></div></div><div class="coin-stats"><div><span>PREZZO</span><b>${fmtEur(c.current_price)}</b></div><div><span>7 GIORNI</span><b class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</b></div><div><span>30 GIORNI</span><b class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</b></div><div><span>RISCHIO</span><b class="${c._risk==='alto'?'negative':c._risk==='medio'?'neutral':'positive'}">${c._risk}</b></div></div></article>`).join(""):`<article class="card pinned-empty"><b>La Home è pronta per essere personalizzata</b><p>Premi “Gestisci” e aggiungi da 1 a 5 crypto che vuoi seguire.</p><button class="primary" data-open-pinned>Configura le posizioni fissate</button></article>`;
+  $("pinnedCards").innerHTML=pinned.length?pinned.map(c=>`<article class="card coin-card" data-id="${c.id}" title="Apri analisi e grafico"><div class="coin-top"><div class="coin-id"><img src="${c.image}" alt=""><div><b>${c.name}</b><span>${c.symbol.toUpperCase()} · rank #${c.market_cap_rank}</span></div></div><div class="score ${scoreColor(c._score)}">${c._score}<small>SCORE</small></div></div><div class="coin-stats"><div><span>PREZZO</span><b>${fmtEur(c.current_price)}</b></div><div><span>7 GIORNI</span><b class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</b></div><div><span>30 GIORNI</span><b class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</b></div><div><span>RISCHIO</span><b class="${c._risk==='alto'?'negative':c._risk==='medio'?'neutral':'positive'}">${c._risk}</b></div></div></article>`).join(""):`<article class="card pinned-empty"><b>La Home è pronta per essere personalizzata</b><p>Premi “Gestisci” e aggiungi da 1 a 5 crypto che vuoi seguire.</p><button class="primary" data-open-pinned>Configura le posizioni fissate</button></article>`;
   renderPinnedManager();
   document.querySelectorAll("[data-open-pinned]").forEach(button=>button.onclick=()=>{$("pinnedManager").classList.remove("hidden");$("pinnedCoinSearch").focus();renderPinnedOptions(true)});
-  document.querySelectorAll(".coin-card").forEach(el=>el.onclick=()=>el.dataset.cmcSlug?window.open(`https://coinmarketcap.com/currencies/${encodeURIComponent(el.dataset.cmcSlug)}/`,"_blank","noopener,noreferrer"):openDetail(el.dataset.id));
+  document.querySelectorAll(".coin-card").forEach(el=>el.onclick=()=>openDetail(el.dataset.id));
   const candidates=state.scored.filter(eligible).filter(c=>![...selectedPinned,"bitcoin","ethereum"].includes(c.id)).slice(0,6);
   $("topCandidates").innerHTML=candidates.map(c=>`<tr data-id="${c.id}"><td>${coinCell(c)}</td><td class="${scoreColor(c._score)}"><b>${c._score}</b></td><td class="reason">${reasons(c)}</td><td>${fmtEur(c.current_price)}</td><td class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</td><td class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</td><td><span class="badge ${c._risk}">${c._risk}</span></td></tr>`).join("");
   bindRows($("topCandidates"));
@@ -716,16 +716,103 @@ function renderNews(){
   $("homeItalianNewsList").innerHTML=italian.slice(0,4).map(article=>newsCard(article,true)).join("")||`<div class="card insight-card home-news-unavailable"><p class="muted">${tr("Le notizie dalle fonti italiane sono momentaneamente non disponibili.")}</p></div>`;
 }
 
-async function openDetail(id){
-  const c=coinById(id);if(!c)return; showPage("detail",c.name);$("detailTitle").textContent=`${c.name} (${c.symbol.toUpperCase()})`;$("detailScore").textContent=c._score;
-  $("detailMetrics").innerHTML=[['Momentum',c._momentum+'/100'],['Liquidità',c._liquidity+'/100'],['Tokenomics',c._tokenomics+'/100'],['Rischio',c._risk]].map(x=>`<article class="card metric"><span>${x[0]}</span><strong>${x[1]}</strong><small>Indicatore quantitativo</small></article>`).join('');
-  try{const history=await api(`/api/history?id=${encodeURIComponent(id)}`);drawChart(history.prices||[])}catch(e){showError(e.message)}
+const detailChartState={coin:null,range:"365",rows:[],currency:"EUR",requestId:0,width:1000,height:420};
+const detailRangeLabels={"1":"24 ore","7":"7 giorni","30":"1 mese","90":"3 mesi","365":"1 anno",max:"storico massimo"};
+function chartMoney(value,currency=detailChartState.currency,compact=false){
+  const amount=num(value),absolute=Math.abs(amount),digits=absolute>=1000?2:absolute>=1?4:absolute>=.01?6:8;
+  return new Intl.NumberFormat(uiLocale(),{style:"currency",currency:currency||"EUR",notation:compact?"compact":"standard",maximumFractionDigits:compact?2:digits}).format(amount);
 }
-function drawChart(points){
-  const svg=$("priceChart");if(points.length<2){svg.innerHTML="";return}const values=points.map(p=>p[1]),min=Math.min(...values),max=Math.max(...values),range=max-min||1,pad=20;
-  const coords=values.map((v,i)=>[pad+i/(values.length-1)*(1000-pad*2),310-(v-min)/range*270]);
-  const line=coords.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');const area=`${line} L980,320 L20,320 Z`;
-  svg.innerHTML=`<defs><linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#79a9ff" stop-opacity=".28"/><stop offset="1" stop-color="#79a9ff" stop-opacity="0"/></linearGradient></defs>${[40,130,220,310].map(y=>`<line class="grid-line" x1="20" y1="${y}" x2="980" y2="${y}"/>`).join('')}<path class="chart-area" d="${area}"/><path class="chart-line" d="${line}"/><text class="chart-label" x="22" y="25">${fmtEur(max)}</text><text class="chart-label" x="22" y="333">${fmtEur(min)}</text>`;
+function chartDate(timestamp,range=detailChartState.range,full=false){
+  const date=new Date(num(timestamp));
+  const options=range==="1"?{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}:range==="7"?{weekday:full?"short":undefined,day:"2-digit",month:"short",hour:full?"2-digit":undefined,minute:full?"2-digit":undefined}:range==="30"||range==="90"?{day:"2-digit",month:"short",year:full?"numeric":undefined}:{month:"short",year:"numeric",day:full?"2-digit":undefined};
+  return new Intl.DateTimeFormat(uiLocale(),options).format(date);
+}
+function chartSeriesValue(series,timestamp){
+  if(!Array.isArray(series)||!series.length)return 0;
+  let closest=series[0],distance=Math.abs(num(closest[0])-timestamp);
+  for(const item of series){const next=Math.abs(num(item?.[0])-timestamp);if(next>=distance)continue;closest=item;distance=next}
+  return num(closest?.[1]);
+}
+function normalizeChartRows(history){
+  const prices=(history.prices||[]).map(item=>[num(item?.[0]),num(item?.[1])]).filter(item=>item[0]>0&&item[1]>0).sort((a,b)=>a[0]-b[0]);
+  const step=Math.max(1,Math.ceil(prices.length/700)),sampled=prices.filter((_,index)=>index%step===0||index===prices.length-1);
+  return sampled.map(([timestamp,price])=>({timestamp,price,volume:chartSeriesValue(history.total_volumes,timestamp),marketCap:chartSeriesValue(history.market_caps,timestamp)}));
+}
+function setChartQuote(row,index=detailChartState.rows.length-1){
+  if(!row)return;
+  const first=detailChartState.rows[0],changePct=first?.price?(row.price/first.price-1)*100:0;
+  $("detailChartPrice").textContent=chartMoney(row.price);
+  $("detailChartChange").textContent=fmtPct(changePct);
+  $("detailChartChange").className=changePct>=0?"positive":"negative";
+  $("detailChartTimestamp").textContent=`${chartDate(row.timestamp,detailChartState.range,true)} · ${tr(detailRangeLabels[detailChartState.range])}`;
+}
+function resetChartHover(){
+  $("detailChartHover")?.setAttribute("visibility","hidden");
+  $("detailChartTooltip").classList.add("hidden");
+  setChartQuote(detailChartState.rows.at(-1));
+}
+function showChartPoint(index){
+  const row=detailChartState.rows[index],svg=$("priceChart"),stage=$("priceChartStage"),tooltip=$("detailChartTooltip");
+  if(!row||!svg||!stage)return;
+  const x=num(row.x),y=num(row.y),hover=$("detailChartHover"),crosshair=$("detailChartCrosshair"),dot=$("detailChartDot");
+  hover?.setAttribute("visibility","visible");crosshair?.setAttribute("x1",x);crosshair?.setAttribute("x2",x);
+  dot?.setAttribute("cx",x);dot?.setAttribute("cy",y);
+  const periodChange=detailChartState.rows[0]?.price?(row.price/detailChartState.rows[0].price-1)*100:0;
+  tooltip.innerHTML=`<b>${chartMoney(row.price)}</b><span>${esc(chartDate(row.timestamp,detailChartState.range,true))}</span><small>${tr("Variazione periodo")}: ${fmtPct(periodChange)}${row.volume?` · ${tr("Volume 24h")}: ${chartMoney(row.volume,detailChartState.currency,true)}`:""}</small>`;
+  tooltip.classList.remove("hidden");
+  const stageRect=stage.getBoundingClientRect(),left=x/detailChartState.width*stageRect.width+12,top=y/detailChartState.height*stageRect.height-18;
+  tooltip.style.left=`${clamp(left,8,Math.max(8,stageRect.width-tooltip.offsetWidth-8))}px`;
+  tooltip.style.top=`${clamp(top,8,Math.max(8,stageRect.height-tooltip.offsetHeight-8))}px`;
+  setChartQuote(row,index);
+}
+function drawChart(history){
+  const svg=$("priceChart"),rows=normalizeChartRows(history);
+  detailChartState.rows=rows;detailChartState.currency=history.currency||"EUR";
+  if(rows.length<2){svg.innerHTML="";throw new Error("Lo storico disponibile non contiene abbastanza punti per disegnare il grafico.")}
+  const width=Math.max(320,Math.round(svg.clientWidth||1000)),height=Math.max(300,Math.round(svg.clientHeight||420)),compact=width<600,left=compact?9:20,right=width-(compact?47:88),top=24,priceBottom=height-104,volumeTop=height-78,volumeBottom=height-40,axisBottom=height-12;
+  detailChartState.width=width;detailChartState.height=height;svg.setAttribute("viewBox",`0 0 ${width} ${height}`);
+  const values=rows.map(row=>row.price),rawMin=Math.min(...values),rawMax=Math.max(...values),rawRange=rawMax-rawMin||Math.max(rawMax*.02,1),min=Math.max(0,rawMin-rawRange*.08),max=rawMax+rawRange*.08,priceRange=max-min||1;
+  const volumes=rows.map(row=>row.volume),maxVolume=Math.max(...volumes,1),xFor=index=>left+index/(rows.length-1)*(right-left),yFor=value=>top+(max-value)/priceRange*(priceBottom-top);
+  rows.forEach((row,index)=>{row.x=xFor(index);row.y=yFor(row.price)});
+  const line=rows.map((row,index)=>`${index?"L":"M"}${row.x.toFixed(2)},${row.y.toFixed(2)}`).join(" "),area=`${line} L${right},${priceBottom} L${left},${priceBottom} Z`,positive=rows.at(-1).price>=rows[0].price,color=positive?"#62ddb0":"#ff7185";
+  const horizontal=Array.from({length:5},(_,index)=>{const ratio=index/4,y=top+ratio*(priceBottom-top),value=max-ratio*priceRange;return `<line class="market-chart-grid" x1="${left}" y1="${y}" x2="${right}" y2="${y}"/><text class="market-chart-axis" x="${right+12}" y="${y+4}">${esc(chartMoney(value,detailChartState.currency,true))}</text>`}).join("");
+  const labelIndexes=[0,.25,.5,.75,1].map(ratio=>Math.round((rows.length-1)*ratio)),vertical=labelIndexes.map((rowIndex,index)=>{const row=rows[rowIndex],anchor=index===0?"start":index===labelIndexes.length-1?"end":"middle";return `<line class="market-chart-grid" x1="${row.x}" y1="${top}" x2="${row.x}" y2="${volumeBottom}"/><text class="market-chart-axis" x="${row.x}" y="${axisBottom}" text-anchor="${anchor}">${esc(chartDate(row.timestamp))}</text>`}).join("");
+  const barWidth=Math.max(1,Math.min(5,(right-left)/rows.length*.62)),volumeBars=rows.map(row=>{const barHeight=row.volume/maxVolume*(volumeBottom-volumeTop);return `<rect class="market-chart-volume" x="${(row.x-barWidth/2).toFixed(2)}" y="${(volumeBottom-barHeight).toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}"/>`}).join("");
+  svg.style.color=color;
+  svg.innerHTML=`<defs><linearGradient id="detailChartGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".55"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>${horizontal}${vertical}<g style="color:${color}">${volumeBars}</g><path class="market-chart-area" fill="url(#detailChartGradient)" d="${area}"/><path class="market-chart-line" stroke="${color}" d="${line}"/><g id="detailChartHover" visibility="hidden"><line id="detailChartCrosshair" class="market-chart-crosshair" x1="${right}" y1="${top}" x2="${right}" y2="${volumeBottom}"/><circle id="detailChartDot" class="market-chart-dot" cx="${right}" cy="${rows.at(-1).y}" r="5" fill="${color}"/></g><rect class="market-chart-hit" x="${left}" y="${top}" width="${right-left}" height="${volumeBottom-top}"/>`;
+  svg.onpointermove=event=>{const rect=svg.getBoundingClientRect(),chartX=(event.clientX-rect.left)/rect.width*width,index=Math.round(clamp((chartX-left)/(right-left),0,1)*(rows.length-1));showChartPoint(index)};
+  svg.onpointerleave=resetChartHover;
+  svg.onpointerdown=event=>{event.preventDefault();svg.setPointerCapture?.(event.pointerId)};
+  const latest=rows.at(-1),latestVolume=latest.volume,conversion=history.conversion==="current-rate"?` · ${tr("conversione EUR indicativa al cambio corrente")}`:"";
+  $("detailChartSummary").textContent=`${tr("Min")}: ${chartMoney(rawMin)} · ${tr("Max")}: ${chartMoney(rawMax)}${latestVolume?` · ${tr("Volume 24h")}: ${chartMoney(latestVolume,detailChartState.currency,true)}`:""}${conversion}`;
+  $("detailChartSource").textContent=`${tr("Fonte")} ${history.source||"mercato"} ↗`;
+  $("detailChartSource").href=String(history.sourceUrl||"https://coinmarketcap.com/").startsWith("https://")?history.sourceUrl:"https://coinmarketcap.com/";
+  setChartQuote(latest);
+}
+async function loadDetailHistory(range=detailChartState.range){
+  const coin=detailChartState.coin;if(!coin)return;
+  detailChartState.range=range;
+  document.querySelectorAll("[data-chart-range]").forEach(button=>button.classList.toggle("active",button.dataset.chartRange===range));
+  const requestId=++detailChartState.requestId,loading=$("detailChartLoading");
+  loading.textContent=tr("Caricamento del grafico…");loading.classList.remove("hidden");$("detailChartTooltip").classList.add("hidden");
+  try{
+    const cmcId=(coin.cmcId||String(coin.id).startsWith("cmc-"))?String(coin.cmcId||coin.id.slice(4)):"";
+    const history=await api(`/api/history?id=${encodeURIComponent(coin.id)}&range=${encodeURIComponent(range)}${cmcId?`&cmcId=${encodeURIComponent(cmcId)}`:""}`);
+    if(requestId!==detailChartState.requestId)return;
+    drawChart(history);loading.classList.add("hidden");
+  }catch(error){
+    if(requestId!==detailChartState.requestId)return;
+    $("priceChart").innerHTML="";detailChartState.rows=[];$("detailChartPrice").textContent="—";$("detailChartChange").textContent="—";$("detailChartTimestamp").textContent=tr("Storico non disponibile");
+    $("detailChartSummary").textContent=tr("Prova un altro intervallo o ripeti più tardi.");
+    loading.textContent=error.message||tr("Grafico non disponibile per questa crypto.");
+  }
+}
+async function openDetail(id){
+  const c=coinById(id);if(!c)return;
+  detailChartState.coin=c;showPage("detail",c.name);$("detailTitle").textContent=`${c.name} (${c.symbol.toUpperCase()})`;$("detailScore").textContent=c._score;
+  $("detailIdentity").textContent=`Rank #${num(c.market_cap_rank)||"—"} · ${tr("Prezzo attuale")} ${fmtEur(c.current_price)} · ${tr("Capitalizzazione")} ${fmtEur(c.market_cap,true)}`;
+  $("detailMetrics").innerHTML=[['Momentum',c._momentum+'/100'],['Liquidità',c._liquidity+'/100'],['Tokenomics',c._tokenomics+'/100'],['Rischio',c._risk]].map(x=>`<article class="card metric"><span>${x[0]}</span><strong>${x[1]}</strong><small>Indicatore quantitativo</small></article>`).join('');
+  await loadDetailHistory("365");window.CryptoRadarI18n?.translateDocument();
 }
 function localData(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}}
 function saveLocalData(key,value){localStorage.setItem(key,JSON.stringify(value))}
@@ -1211,6 +1298,7 @@ async function loadImportHistory(){
 }
 async function undoImport(batchId){if(!confirm("Annullare questa importazione e rimuovere tutte le sue operazioni?"))return;try{await api(`/api/import?batchId=${encodeURIComponent(batchId)}`,{method:"DELETE"});await loadImportHistory()}catch(error){showError(error.message)}}
 document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>showPage(n.dataset.target));
+document.querySelectorAll("[data-chart-range]").forEach(button=>button.onclick=()=>loadDetailHistory(button.dataset.chartRange));
 document.querySelectorAll("[data-sidebar-group-toggle]").forEach(button=>button.onclick=()=>toggleSidebarGroup(button.dataset.sidebarGroupToggle));
 document.querySelectorAll('[data-go]').forEach(n=>n.onclick=()=>showPage(n.dataset.go));
 document.querySelectorAll('[data-community-tab]').forEach(button=>button.onclick=()=>setCommunityTab(button.dataset.communityTab));
