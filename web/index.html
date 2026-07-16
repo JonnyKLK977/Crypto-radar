@@ -42,6 +42,7 @@
   <link rel="stylesheet" href="/phase31.css">
   <link rel="stylesheet" href="/phase32.css">
   <link rel="stylesheet" href="/phase33.css">
+  <link rel="stylesheet" href="/phase34.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -77,10 +78,14 @@
         <div class="sidebar-layout-manager-footer"><button id="resetSidebarLayout" type="button">Ripristina</button><span id="sidebarLayoutStatus">Salvato in questo browser</span></div>
       </div>
       <nav id="sidebarNav" aria-label="Navigazione principale">
+        <section class="sidebar-group sidebar-group-single" data-sidebar-group="purpose">
+          <div class="sidebar-group-items">
+            <button class="nav" data-target="purpose">A cosa serve</button>
+          </div>
+        </section>
         <section class="sidebar-group" data-sidebar-group="market">
           <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="market" aria-expanded="true"><span><b>Mercato</b><small>Contesto e ricerca</small></span><i aria-hidden="true">⌄</i></button>
           <div class="sidebar-group-items">
-            <button class="nav" data-target="purpose">A cosa serve</button>
             <button class="nav active" data-target="overview">Panoramica</button>
             <button class="nav" data-target="screener">Potenziali Crypto</button>
           </div>

@@ -469,12 +469,14 @@ function normalizedSidebarOrder(value,defaults){
 }
 function sidebarLayout(){
   const saved=localData(sidebarLayoutStore,{}),knownTargets=new Set(sidebarDefaultTargets),knownGroups=new Set(sidebarDefaultGroups);
+  const normalizedGroups=normalizedSidebarOrder(saved.groupOrder,sidebarDefaultGroups);
+  const groupOrder=Array.isArray(saved.groupOrder)&&!saved.groupOrder.includes("purpose")?["purpose",...normalizedGroups.filter(group=>group!=="purpose")]:normalizedGroups;
   return {
     hidden:Array.isArray(saved.hidden)?[...new Set(saved.hidden.filter(target=>knownTargets.has(target)&&target!=="overview"))]:[],
     collapsed:Array.isArray(saved.collapsed)?[...new Set(saved.collapsed.filter(group=>knownGroups.has(group)))]:[],
     density:saved.density==="compact"?"compact":"comfortable",
     order:normalizedSidebarOrder(saved.order,sidebarDefaultTargets),
-    groupOrder:normalizedSidebarOrder(saved.groupOrder,sidebarDefaultGroups)
+    groupOrder
   };
 }
 function sidebarPreset(layout=sidebarLayout()){
@@ -518,14 +520,14 @@ function alignMobileSidebarTarget(target){
 function renderSidebarLayoutManager(){
   const list=$("sidebarModuleManagerList");if(!list)return;const layout=sidebarLayout(),groups=layout.groupOrder.map(groupId=>document.querySelector(`[data-sidebar-group="${groupId}"]`)).filter(Boolean);
   list.innerHTML=groups.map((group,groupIndex)=>{
-    const groupId=group.dataset.sidebarGroup,groupLabel=group.querySelector(".sidebar-group-toggle b")?.textContent.trim()||"Sezioni";
+    const groupId=group.dataset.sidebarGroup,single=group.classList.contains("sidebar-group-single"),groupLabel=(single?group.querySelector(".nav"):group.querySelector(".sidebar-group-toggle b"))?.textContent.trim()||"Sezioni";
     const buttons=layout.order.map(target=>group.querySelector(`.nav[data-target="${target}"]`)).filter(Boolean);
     const toggleable=buttons.filter(button=>button.dataset.target!=="overview"),visibleCount=toggleable.filter(button=>!layout.hidden.includes(button.dataset.target)).length;
     const rows=buttons.map((button,index)=>{
       const target=button.dataset.target,pinned=target==="overview",advanced=button.classList.contains("advanced-only"),inputId=`sidebar-visible-${target}`;
       return `<div class="sidebar-module-manager-row"><span class="sidebar-manager-dot" data-sidebar-manager-color="${esc(groupId)}"></span><label class="sidebar-module-manager-copy" for="${esc(inputId)}"><b>${esc(button.textContent.trim())}</b><small>${pinned?"Sempre visibile":advanced?"Modalità avanzata":esc(groupLabel)}</small></label><div class="sidebar-manager-row-actions"><button class="sidebar-order-button" type="button" data-sidebar-move="${esc(target)}" data-sidebar-move-direction="-1" aria-label="Sposta su" title="Sposta su" ${index===0?"disabled":""}>↑</button><button class="sidebar-order-button" type="button" data-sidebar-move="${esc(target)}" data-sidebar-move-direction="1" aria-label="Sposta giù" title="Sposta giù" ${index===buttons.length-1?"disabled":""}>↓</button><label class="sidebar-visibility-switch" title="${pinned?"Sempre visibile":"Mostra o nascondi"}"><input id="${esc(inputId)}" type="checkbox" data-sidebar-visible="${esc(target)}" ${layout.hidden.includes(target)?"":"checked"} ${pinned?"disabled":""}></label></div></div>`;
     }).join("");
-    return `<div class="sidebar-manager-group"><div class="sidebar-manager-group-head"><div class="sidebar-manager-group-title"><span class="sidebar-manager-dot" data-sidebar-manager-color="${esc(groupId)}"></span><b>${esc(groupLabel)}</b></div><div class="sidebar-manager-group-actions"><button class="sidebar-order-button" type="button" data-sidebar-group-move="${esc(groupId)}" data-sidebar-move-direction="-1" aria-label="Sposta gruppo su" title="Sposta gruppo su" ${groupIndex===0?"disabled":""}>↑</button><button class="sidebar-order-button" type="button" data-sidebar-group-move="${esc(groupId)}" data-sidebar-move-direction="1" aria-label="Sposta gruppo giù" title="Sposta gruppo giù" ${groupIndex===groups.length-1?"disabled":""}>↓</button><label class="sidebar-visibility-switch" title="Mostra o nascondi il gruppo"><input type="checkbox" data-sidebar-group-visible="${esc(groupId)}" ${visibleCount?"checked":""}></label></div></div>${rows}</div>`;
+    return `<div class="sidebar-manager-group${single?" sidebar-manager-group-single":""}"><div class="sidebar-manager-group-head"><div class="sidebar-manager-group-title"><span class="sidebar-manager-dot" data-sidebar-manager-color="${esc(groupId)}"></span><b>${esc(groupLabel)}</b></div><div class="sidebar-manager-group-actions"><button class="sidebar-order-button" type="button" data-sidebar-group-move="${esc(groupId)}" data-sidebar-move-direction="-1" aria-label="Sposta gruppo su" title="Sposta gruppo su" ${groupIndex===0?"disabled":""}>↑</button><button class="sidebar-order-button" type="button" data-sidebar-group-move="${esc(groupId)}" data-sidebar-move-direction="1" aria-label="Sposta gruppo giù" title="Sposta gruppo giù" ${groupIndex===groups.length-1?"disabled":""}>↓</button><label class="sidebar-visibility-switch" title="Mostra o nascondi il gruppo"><input type="checkbox" data-sidebar-group-visible="${esc(groupId)}" ${visibleCount?"checked":""}></label></div></div>${single?"":rows}</div>`;
   }).join("");
   list.querySelectorAll("[data-sidebar-group-visible]").forEach(input=>{
     const group=document.querySelector(`[data-sidebar-group="${input.dataset.sidebarGroupVisible}"]`),targets=[...group.querySelectorAll(".nav")].map(button=>button.dataset.target).filter(target=>target!=="overview"),visible=targets.filter(target=>!layout.hidden.includes(target)).length;
