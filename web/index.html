@@ -7,7 +7,7 @@
   <meta id="themeColor" name="theme-color" content="#0b0d12">
   <title>Crypto Radar</title>
   <script>
-    (()=>{try{const preference=localStorage.getItem("cryptoRadarTheme")||"dark",resolved=preference==="system"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):preference;document.documentElement.dataset.theme=resolved;document.documentElement.dataset.themePreference=preference}catch{document.documentElement.dataset.theme="dark"}})();
+    (()=>{try{const preference=localStorage.getItem("cryptoRadarTheme")||"dark",resolved=preference==="system"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):preference,contentView=localStorage.getItem("cryptoRadarContentView")==="complete"?"complete":"essential";document.documentElement.dataset.theme=resolved;document.documentElement.dataset.themePreference=preference;document.documentElement.dataset.contentView=contentView}catch{document.documentElement.dataset.theme="dark";document.documentElement.dataset.contentView="essential"}})();
   </script>
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/phase2.css">
@@ -43,6 +43,7 @@
   <link rel="stylesheet" href="/phase32.css">
   <link rel="stylesheet" href="/phase33.css">
   <link rel="stylesheet" href="/phase34.css">
+  <link rel="stylesheet" href="/phase35.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -68,13 +69,14 @@
           </div>
         </div>
         <div class="sidebar-personalization-controls">
+          <div class="sidebar-content-control" role="group" aria-label="Quantità di contenuti"><span>Contenuti</span><button type="button" data-content-view="essential">Essenziale</button><button type="button" data-content-view="complete">Completa</button></div>
           <div class="sidebar-density-control" role="group" aria-label="Densità del menu"><span>Densità</span><button type="button" data-sidebar-density="comfortable">Comoda</button><button type="button" data-sidebar-density="compact">Compatta</button></div>
           <div class="sidebar-interface-control" role="group" aria-label="Modalità dell'interfaccia"><span>Interfaccia</span><button type="button" data-sidebar-interface="beginner">Principiante</button><button type="button" data-sidebar-interface="advanced">Avanzata</button></div>
           <div class="sidebar-theme-control" role="group" aria-label="Tema dell'interfaccia"><span>Tema</span><button type="button" data-theme-preference="dark">Scuro</button><button type="button" data-theme-preference="light">Chiaro</button><button type="button" data-theme-preference="system">Sistema</button></div>
         </div>
         <div class="sidebar-manager-list-head"><span>Sezioni visibili</span><small>Usa le frecce per cambiare ordine</small></div>
         <div id="sidebarModuleManagerList" class="sidebar-module-manager-list"></div>
-        <button id="openSidebarProfile" class="sidebar-profile-shortcut" type="button">Configura profilo</button>
+        <div class="sidebar-manager-shortcuts"><button id="openSidebarHomeLayout" class="sidebar-profile-shortcut" type="button">Personalizza Home</button><button id="openSidebarProfile" class="sidebar-profile-shortcut" type="button">Configura profilo</button></div>
         <div class="sidebar-layout-manager-footer"><button id="resetSidebarLayout" type="button">Ripristina</button><span id="sidebarLayoutStatus">Salvato in questo browser</span></div>
       </div>
       <nav id="sidebarNav" aria-label="Navigazione principale">
@@ -90,8 +92,8 @@
             <button class="nav" data-target="screener">Potenziali Crypto</button>
           </div>
         </section>
-        <section class="sidebar-group" data-sidebar-group="portfolio">
-          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="portfolio" aria-expanded="true"><span><b>Portafoglio e piano</b><small>Gestione personale</small></span><i aria-hidden="true">⌄</i></button>
+        <section class="sidebar-group collapsed" data-sidebar-group="portfolio">
+          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="portfolio" aria-expanded="false"><span><b>Portafoglio e piano</b><small>Gestione personale</small></span><i aria-hidden="true">⌄</i></button>
           <div class="sidebar-group-items">
             <button class="nav" data-target="portfolio">Il mio portafoglio</button>
             <button class="nav" data-target="connections">Exchange & wallet</button>
@@ -101,16 +103,16 @@
             <button class="nav" data-target="decision">Laboratorio</button>
           </div>
         </section>
-        <section class="sidebar-group" data-sidebar-group="tools">
-          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="tools" aria-expanded="true"><span><b>Strumenti</b><small>Analisi e controllo</small></span><i aria-hidden="true">⌄</i></button>
+        <section class="sidebar-group collapsed" data-sidebar-group="tools">
+          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="tools" aria-expanded="false"><span><b>Strumenti</b><small>Analisi e controllo</small></span><i aria-hidden="true">⌄</i></button>
           <div class="sidebar-group-items">
             <button class="nav" data-target="operations">Centro operativo</button>
             <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
             <button class="nav advanced-only" data-target="intelligence">Intelligence Hub</button>
           </div>
         </section>
-        <section class="sidebar-group" data-sidebar-group="community">
-          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="community" aria-expanded="true"><span><b>Community e fonti</b><small>Confronto e conoscenza</small></span><i aria-hidden="true">⌄</i></button>
+        <section class="sidebar-group collapsed" data-sidebar-group="community">
+          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="community" aria-expanded="false"><span><b>Community e fonti</b><small>Confronto e conoscenza</small></span><i aria-hidden="true">⌄</i></button>
           <div class="sidebar-group-items">
             <button class="nav" data-target="community">Chat Community</button>
             <button class="nav" data-target="news">News & trend</button>
@@ -166,7 +168,7 @@
         </div>
         </div>
 
-        <div class="home-widget" data-home-widget="market-temperature">
+        <div class="home-widget" data-home-widget="market-temperature" data-content-tier="secondary">
           <div class="section-title"><div><p class="eyebrow">TEMPERATURA DEL MERCATO</p><h2>Contesto prima delle singole crypto</h2></div><button class="link-button" data-go="intelligence">Apri Intelligence Hub →</button></div>
           <div class="home-temperature-grid">
             <article class="card temperature-metric"><span>PAURA &amp; AVIDITÀ</span><strong id="homeFearGreed">—</strong><small id="homeFearGreedLabel">Caricamento…</small></article>
@@ -177,7 +179,7 @@
           <p class="market-scope-note">Questi indici descrivono il contesto e il comportamento aggregato: non prevedono il mercato e non costituiscono segnali di acquisto o vendita.</p>
         </div>
 
-        <div class="home-widget" data-home-widget="movers">
+        <div class="home-widget" data-home-widget="movers" data-content-tier="secondary">
         <div class="section-title weekly-movers-heading"><div><p class="eyebrow">MOVIMENTI SETTIMANALI</p><h2>Chi è salito e chi è sceso di più</h2></div><div class="weekly-source"><a href="https://coinmarketcap.com/" target="_blank" rel="noopener noreferrer">Fonte CoinMarketCap ↗</a><span id="weeklyMoversMeta" class="muted">In attesa dei dati</span></div></div>
         <p class="market-scope-note">Dati ufficiali CoinMarketCap sulle prime 100 crypto per capitalizzazione nelle ultime 7 giornate. Stablecoin, versioni wrapped/staked e asset senza variazione settimanale valida sono esclusi. La classifica descrive il movimento passato: non è una previsione né un invito all’acquisto.</p>
         <div class="weekly-movers-grid">
@@ -229,12 +231,12 @@
           </div>
         </div>
 
-        <div class="home-widget" data-home-widget="candidates">
+        <div class="home-widget" data-home-widget="candidates" data-content-tier="secondary">
         <div class="section-title"><div><p class="eyebrow">SEGNALI MIGLIORI</p><h2>Candidate emerse oggi</h2></div><button class="link-button" data-go="screener">Apri Potenziali Crypto →</button></div>
         <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>Crypto</th><th>Score</th><th>Perché emerge</th><th>Prezzo</th><th>7g</th><th>30g</th><th>Rischio</th></tr></thead><tbody id="topCandidates"></tbody></table></div></div>
         </div>
 
-        <div class="home-widget" data-home-widget="quick-actions">
+        <div class="home-widget" data-home-widget="quick-actions" data-content-tier="secondary">
           <div class="section-title"><div><p class="eyebrow">PROSSIMO PASSO</p><h2>Azioni rapide e consapevoli</h2></div><span class="muted">Prima il processo, poi la decisione</span></div>
           <div class="home-quick-grid">
             <button class="card home-quick-action" data-go="copilot"><span>01</span><div><b>Controlla una decisione</b><small>Usa l’Assistente Personale prima di agire</small></div><i>→</i></button>
@@ -244,7 +246,7 @@
           </div>
         </div>
 
-        <div class="home-widget" data-home-widget="italian-news">
+        <div class="home-widget" data-home-widget="italian-news" data-content-tier="secondary">
         <div class="section-title home-news-heading"><div><p class="eyebrow">NOTIZIE</p><h2>Ultime dalle fonti italiane</h2></div><div class="home-news-actions"><button class="link-button" data-go="news">Tutte le notizie →</button></div></div>
         <p class="market-scope-note">I titoli sono mostrati per informazione e restano separati da score e classifiche. Apri l’articolo e verifica sempre fonte, data e contesto.</p>
         <div id="homeItalianNewsList" class="home-news-grid"></div>
