@@ -85,11 +85,13 @@ La pagina **Piano personale** permette di salvare limiti di rischio, orizzonte, 
 
 - controllo della concentrazione rispetto ai limiti personali;
 - proposta di distribuzione del prossimo versamento verso le posizioni sotto obiettivo;
-- simulazione DCA storica su BTC, ETH, POL, ALGO e ADA;
+- ricerca nel catalogo CoinMarketCap esteso con ordinamento per rank o alfabetico;
+- simulazione DCA storica sulle crypto per cui CoinGecko rende disponibile uno storico compatibile;
 - confronto fra acquisti mensili e investimento immediato dello stesso capitale.
 
 Il **Laboratorio** aggiunge:
 
+- ricerca per nome o simbolo nel catalogo CoinMarketCap esteso;
 - controllo dell'impatto di un acquisto, vendita o ribilanciamento prima dell'esecuzione;
 - confronto con limite per posizione e allocazione obiettivo;
 - avvisi su concentrazione, FOMO e assenza di una tesi verificabile;
@@ -129,6 +131,8 @@ La modalità Avanzata include tre strumenti con fonti e limiti dichiarati:
 - **Verifica MiCA** cerca nome, dominio o LEI nei CSV ufficiali ESMA dei CASP autorizzati e delle entità non conformi.
 
 Sono strumenti informativi: non eseguono ordini, non certificano operatori e non stimano la perdita massima futura.
+
+I selettori crypto di Home, Portafoglio, Piano DCA, Assistente Personale, Laboratorio, Paper Trading ed Execution Lab permettono di scrivere nome o simbolo e ordinare il catalogo per rank o alfabeticamente. Il catalogo di scelta include fino a 5.000 asset CoinMarketCap; la disponibilità di storico CoinGecko, score completo o coppie EUR viene verificata separatamente e può essere più limitata.
 
 ## Intelligence Hub personale
 
