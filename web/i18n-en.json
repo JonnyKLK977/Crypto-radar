@@ -2666,5 +2666,10 @@
   "medium": "medium",
   "low": "low",
   "impatto": "impact",
-  "punti": "points"
+  "punti": "points",
+  "Tipo di grafico": "Chart type",
+  "Candele aggregate dai punti di mercato": "Candles aggregated from market data points",
+  "1 ora": "1 hour",
+  "2 ore": "2 hours",
+  "4 ore": "4 hours"
 }

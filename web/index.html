@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="/phase29.css">
   <link rel="stylesheet" href="/phase30.css">
   <link rel="stylesheet" href="/phase31.css">
+  <link rel="stylesheet" href="/phase32.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -1328,13 +1329,22 @@
               <div><strong id="detailChartPrice" data-no-i18n>—</strong><b id="detailChartChange" data-no-i18n>—</b></div>
               <small id="detailChartTimestamp" data-no-i18n>Seleziona un intervallo</small>
             </div>
-            <div class="chart-range-control" role="group" aria-label="Intervallo del grafico">
-              <button type="button" data-chart-range="1">24H</button>
-              <button type="button" data-chart-range="7">7G</button>
-              <button type="button" data-chart-range="30">1M</button>
-              <button type="button" data-chart-range="90">3M</button>
-              <button type="button" data-chart-range="365" class="active">1A</button>
-              <button type="button" data-chart-range="max">MAX</button>
+            <div class="market-chart-controls">
+              <div class="chart-type-control" role="group" aria-label="Tipo di grafico">
+                <button type="button" data-chart-type="line" class="active">Linea</button>
+                <button type="button" data-chart-type="candles">Candele</button>
+              </div>
+              <div class="chart-range-control" role="group" aria-label="Intervallo del grafico">
+                <button type="button" data-chart-range="1h">1H</button>
+                <button type="button" data-chart-range="2h">2H</button>
+                <button type="button" data-chart-range="4h">4H</button>
+                <button type="button" data-chart-range="1">24H</button>
+                <button type="button" data-chart-range="7">7G</button>
+                <button type="button" data-chart-range="30">1M</button>
+                <button type="button" data-chart-range="90">3M</button>
+                <button type="button" data-chart-range="365" class="active">1A</button>
+                <button type="button" data-chart-range="max">MAX</button>
+              </div>
             </div>
           </div>
           <div id="priceChartStage" class="market-chart-stage">
