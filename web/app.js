@@ -1104,6 +1104,84 @@ document.querySelectorAll('[data-help-guide]').forEach(button=>button.onclick=()
 function renderTaxChecklist(){const checks=[...document.querySelectorAll('[data-tax-check]')],saved=localData("cryptoRadarTaxChecklist",{});checks.forEach((check,index)=>check.checked=Boolean(saved[index]));const done=checks.filter(check=>check.checked).length,pct=checks.length?Math.round(done/checks.length*100):0;if($("taxCheckLabel"))$("taxCheckLabel").textContent=`${done}/${checks.length} documenti controllati`;if($("taxCheckBar"))$("taxCheckBar").style.width=`${pct}%`}
 document.querySelectorAll('[data-tax-check]').forEach((check,index)=>check.onchange=()=>{const saved=localData("cryptoRadarTaxChecklist",{});saved[index]=check.checked;saveLocalData("cryptoRadarTaxChecklist",saved);renderTaxChecklist()});
 renderTaxChecklist();
+const taxTemplateFiles={
+  inventory:{
+    filename:"crypto-radar-inventario-crypto-2025.csv",
+    type:"text/csv;charset=utf-8",
+    content:()=>"\ufeffPiattaforma_o_wallet;Tipo_custodia;Paese_o_sede;Asset;Rete;Indirizzo_wallet;Quantita_iniziale_01_01_2025;Valore_iniziale_EUR;Data_primo_possesso_2025;Quantita_finale_31_12_2025;Valore_finale_EUR;Data_cessione_se_anteriore;Giorni_possesso;Bollo_o_imposta_applicata;Documento_fonte;Note\r\n"
+  },
+  transactions:{
+    filename:"crypto-radar-registro-operazioni-fiscali-2025.csv",
+    type:"text/csv;charset=utf-8",
+    content:()=>"\ufeffData_ora;Fuso_orario;Piattaforma;Wallet;Tipo_evento;Asset_ceduto;Quantita_ceduta;Asset_ricevuto;Quantita_ricevuta;Corrispettivo_o_valore_EUR;Costo_documentato_EUR;Commissioni_EUR;Fonte_cambio;Hash_o_ID;Wallet_proprio_SI_NO;Classificazione_da_verificare;Documento_fonte;Note\r\n"
+  },
+  handover:{
+    filename:"crypto-radar-checklist-consegna-730-2026.txt",
+    type:"text/plain;charset=utf-8",
+    content:()=>`CRYPTO RADAR - CHECKLIST CONSEGNA FISCALE
+Anno dichiarazione: 2026
+Periodo d'imposta: 2025
+Documento preparatorio non ufficiale
+
+1. DATI GENERALI
+[ ] Documento di identità e codice fiscale
+[ ] CU 2026 e altri redditi 2025
+[ ] Dichiarazione, ricevuta e F24 dell'anno precedente
+[ ] Elenco di acconti, crediti e comunicazioni ricevute
+
+2. INVENTARIO CRYPTO
+[ ] Tutti gli exchange inclusi
+[ ] Tutti i wallet e indirizzi inclusi
+[ ] Saldi iniziali e finali riconciliati
+[ ] Periodi di possesso e valori in euro documentati
+[ ] Bollo o imposta applicati dai provider verificati
+
+3. OPERAZIONI
+[ ] CSV originali conservati senza modifiche
+[ ] Vendite, swap, pagamenti e commissioni registrati
+[ ] Trasferimenti fra wallet propri abbinati
+[ ] Staking, lending, airdrop, DeFi, NFT e mining separati
+[ ] Costi di acquisto e fonti cambio documentati
+[ ] Operazioni dubbie evidenziate, senza forzare una classificazione
+
+4. DOMANDE AL PROFESSIONISTA
+[ ] Il 730 è sufficiente o serve Redditi PF?
+[ ] Quali righe di W/RW e T/RT sono state compilate?
+[ ] Come sono stati trattati permute, fee e proventi?
+[ ] Come sono state gestite imposta sul valore, bollo e duplicazioni?
+[ ] Quali minusvalenze restano riportabili e fino a quando?
+[ ] Quali F24 devo pagare personalmente, con quali scadenze?
+[ ] Serve una correzione o un ravvedimento per anni precedenti?
+
+5. DOCUMENTI DA RICEVERE
+[ ] Copia completa della dichiarazione inviata
+[ ] Prospetto 730-3 o prospetto di liquidazione Redditi
+[ ] Ricevuta telematica
+[ ] F24 predisposti e relative scadenze
+[ ] Quietanze dopo il pagamento
+[ ] Prospetto dei calcoli crypto e delle fonti utilizzate
+
+FONTI UFFICIALI
+Istruzioni 730/2026:
+https://infoprecompilata.agenziaentrate.gov.it/portale/documents/d/guest/730_istruzioni_2026.pdf
+Quadro W:
+https://infoprecompilata.agenziaentrate.gov.it/portale/quadro-w
+Quadro T:
+https://infoprecompilata.agenziaentrate.gov.it/portale/quadro-t
+Redditi PF 2026 - Fascicolo 2:
+https://infoprecompilata.agenziaentrate.gov.it/portale/documents/d/guest/pf2_istruzioni_2026.pdf
+
+Nota: questo file organizza la consegna. Non certifica calcoli, classificazioni o imposte.`
+  }
+};
+document.querySelectorAll('[data-tax-template]').forEach(button=>button.onclick=()=>{
+  const template=taxTemplateFiles[button.dataset.taxTemplate];
+  if(!template)return;
+  downloadBlob(template.filename,template.content(),template.type);
+  const original=button.textContent;
+  button.textContent="File scaricato ✓";
+  setTimeout(()=>button.textContent=original,1400);
+});
 let selectedExchange="";
 let importPreviewToken="";
 document.querySelectorAll('.inspect-csv').forEach(button=>button.onclick=()=>{selectedExchange=button.dataset.exchange;$("exchangeCsv").value="";$("exchangeCsv").click()});
