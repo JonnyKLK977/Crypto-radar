@@ -431,6 +431,29 @@ function toggleHomeLayout(open){$("homeLayoutManager").classList.toggle("hidden"
 function resetHomeLayout(){localStorage.removeItem(homeLayoutStore);applyHomeLayout();$("homeLayoutStatus").textContent="Impostazione iniziale ripristinata";window.CryptoRadarI18n?.translateDocument()}
 
 const sidebarLayoutStore="cryptoRadarSidebarLayoutV1";
+const themeStore="cryptoRadarTheme";
+const themeMedia=window.matchMedia("(prefers-color-scheme: light)");
+function themePreference(){const saved=localStorage.getItem(themeStore);return ["dark","light","system"].includes(saved)?saved:"dark"}
+function resolvedTheme(preference=themePreference()){return preference==="system"?(themeMedia.matches?"light":"dark"):preference}
+function syncThemeButtons(){
+  const preference=themePreference();
+  document.querySelectorAll("button[data-theme-preference]").forEach(button=>{const active=button.dataset.themePreference===preference;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active))});
+}
+function applyTheme(preference=themePreference(),persist=false){
+  const normalized=["dark","light","system"].includes(preference)?preference:"dark",resolved=resolvedTheme(normalized);
+  if(persist)localStorage.setItem(themeStore,normalized);
+  document.documentElement.dataset.theme=resolved;
+  document.documentElement.dataset.themePreference=normalized;
+  document.documentElement.style.colorScheme=resolved;
+  const color=resolved==="light"?"#f3f6fa":"#0b0d12";
+  $("themeColor")?.setAttribute("content",color);
+  syncThemeButtons();
+}
+function setThemePreference(preference){
+  applyTheme(preference,true);
+  if($("sidebarLayoutStatus"))$("sidebarLayoutStatus").textContent="Tema aggiornato";
+}
+themeMedia.addEventListener?.("change",()=>{if(themePreference()==="system")applyTheme("system")});
 const sidebarDefaultTargets=[...document.querySelectorAll("#sidebarNav .nav")].map(button=>button.dataset.target);
 const sidebarDefaultGroups=[...document.querySelectorAll("[data-sidebar-group]")].map(group=>group.dataset.sidebarGroup);
 const sidebarPresetTargets={
@@ -519,6 +542,7 @@ function renderSidebarLayoutManager(){
   const activePreset=sidebarPreset(layout);
   document.querySelectorAll("[data-sidebar-preset]").forEach(button=>button.classList.toggle("active",button.dataset.sidebarPreset===activePreset));
   document.querySelectorAll("[data-sidebar-interface]").forEach(button=>button.classList.toggle("active",button.dataset.sidebarInterface===interfaceMode()));
+  syncThemeButtons();
   window.CryptoRadarI18n?.translateDocument();
 }
 function moveSidebarTarget(target,direction){
@@ -1432,6 +1456,7 @@ async function loadImportHistory(){
 }
 async function undoImport(batchId){if(!confirm("Annullare questa importazione e rimuovere tutte le sue operazioni?"))return;try{await api(`/api/import?batchId=${encodeURIComponent(batchId)}`,{method:"DELETE"});await loadImportHistory()}catch(error){showError(error.message)}}
 document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>showPage(n.dataset.target));
+$("brandHome").onclick=()=>{toggleSidebarLayout(false);showPage("overview")};
 document.querySelectorAll("[data-chart-range]").forEach(button=>button.onclick=()=>loadDetailHistory(button.dataset.chartRange));
 document.querySelectorAll("[data-chart-type]").forEach(button=>button.onclick=()=>setDetailChartType(button.dataset.chartType));
 syncDetailChartType();
@@ -1451,7 +1476,7 @@ setupCatalogPickers();
 ensureRestoreLocalControl();
 $("refreshBtn").onclick=()=>loadAll(true);$("applyFilters").onclick=renderScreener;$("savePortfolio").onclick=savePortfolio;$("addPortfolioCoin").onclick=addPortfolioCoin;$("savePlan").onclick=savePlan;$("runDca").onclick=runDca;$("analyzeTrade").onclick=analyzeTrade;$("saveDecision").onclick=saveDecision;$("backBtn").onclick=()=>showPage('overview');
 $("openHomeLayout").onclick=()=>toggleHomeLayout($("homeLayoutManager").classList.contains("hidden"));$("closeHomeLayout").onclick=()=>toggleHomeLayout(false);$("resetHomeLayout").onclick=resetHomeLayout;
-$("openSidebarLayout").onclick=()=>toggleSidebarLayout($("sidebarLayoutManager").classList.contains("hidden"));$("closeSidebarLayout").onclick=()=>toggleSidebarLayout(false);$("sidebarLayoutBackdrop").onclick=()=>toggleSidebarLayout(false);$("resetSidebarLayout").onclick=resetSidebarLayout;$("openSidebarProfile").onclick=()=>{toggleSidebarLayout(false);openOnboarding()};document.querySelectorAll("[data-sidebar-density]").forEach(button=>button.onclick=()=>setSidebarDensity(button.dataset.sidebarDensity));document.querySelectorAll("[data-sidebar-interface]").forEach(button=>button.onclick=()=>setSidebarInterface(button.dataset.sidebarInterface));document.querySelectorAll("[data-sidebar-preset]").forEach(button=>button.onclick=()=>setSidebarPreset(button.dataset.sidebarPreset));document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("sidebarLayoutManager").classList.contains("hidden"))toggleSidebarLayout(false)});
+$("openSidebarLayout").onclick=()=>toggleSidebarLayout($("sidebarLayoutManager").classList.contains("hidden"));$("closeSidebarLayout").onclick=()=>toggleSidebarLayout(false);$("sidebarLayoutBackdrop").onclick=()=>toggleSidebarLayout(false);$("resetSidebarLayout").onclick=resetSidebarLayout;$("openSidebarProfile").onclick=()=>{toggleSidebarLayout(false);openOnboarding()};document.querySelectorAll("[data-sidebar-density]").forEach(button=>button.onclick=()=>setSidebarDensity(button.dataset.sidebarDensity));document.querySelectorAll("[data-sidebar-interface]").forEach(button=>button.onclick=()=>setSidebarInterface(button.dataset.sidebarInterface));document.querySelectorAll("button[data-theme-preference]").forEach(button=>button.onclick=()=>setThemePreference(button.dataset.themePreference));document.querySelectorAll("[data-sidebar-preset]").forEach(button=>button.onclick=()=>setSidebarPreset(button.dataset.sidebarPreset));document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("sidebarLayoutManager").classList.contains("hidden"))toggleSidebarLayout(false)});
 $("managePinned").onclick=()=>{$("pinnedManager").classList.toggle("hidden");if(!$("pinnedManager").classList.contains("hidden")){$("pinnedCoinSearch").focus();renderPinnedOptions(true)}else closePinnedOptions()};$("closePinned").onclick=()=>{$("pinnedManager").classList.add("hidden");closePinnedOptions()};$("addPinned").onclick=addPinnedCoin;
 $("pinnedCoinSearch").onfocus=()=>state.marketCatalogLoaded?renderPinnedOptions(true):loadMarketCatalog($("pinnedCoinSearch").value,true);
 $("pinnedCoinSearch").oninput=()=>{$("pinnedCoinSelect").value="";$("addPinned").disabled=true;state.marketCatalogLoading=true;renderPinnedOptions(true);queuePinnedCatalogSearch(true)};
@@ -1465,5 +1490,6 @@ $("runExecution").onclick=runExecutionLab;$("refreshRiskEngine").onclick=renderA
 $("refreshIntelligence").onclick=()=>loadMarketIntelligence(true);$("addIntelEvent").onclick=addIntelligenceEvent;$("runIntelStress").onclick=renderIntelStress;$("runTaxIntegrity").onclick=()=>{renderTaxIntegrity();renderBrief()};$("regenerateIntelBrief").onclick=renderBrief;$("copyIntelBrief").onclick=async()=>{try{await navigator.clipboard.writeText(briefText());$("copyIntelBrief").textContent="Copiato ✓";setTimeout(()=>$("copyIntelBrief").textContent="Copia testo",1400)}catch{showError("Il browser non consente la copia automatica.")}};$("downloadIntelBrief").onclick=()=>downloadBlob(`crypto-radar-brief-${localIsoDate(new Date())}.txt`,briefText(),"text/plain;charset=utf-8");if(!$("intelEventDate").value){const next=new Date();next.setDate(next.getDate()+7);$("intelEventDate").value=localIsoDate(next)}
 document.addEventListener("crypto-radar-language",()=>{state.translations={};if(state.scored.length){renderOverview();renderScreener();renderPortfolio();renderPlan();renderDecisionLab();renderOperations();renderCopilot();renderAdvanced();renderIntelligence();renderTutor();renderNews()}renderSidebarLayoutManager();loadTranslations()});
 setupPwa();
+applyTheme();
 applySidebarLayout();
 loadAll();
