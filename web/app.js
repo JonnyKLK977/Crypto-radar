@@ -1,4 +1,4 @@
-const state = { markets: [], scored: [], marketMovers: {gainers:[],losers:[]}, marketIntelligence: null, portfolio: null, plan: null, journal: [], transactions: [], trending: [], news: [], translations: {}, newsFilter: "ALL", currentPage: "overview", intelligenceTab: "temperature", community: {profiles:[],messages:[],posts:[],following:[],followedStrategies:[],reactedPosts:[],activeNow:0}, communityTab: "live", demo: false, marketStale: false, marketAsOf: 0, marketSource: "unknown", transactionTotal: 0 };
+const state = { markets: [], scored: [], marketCatalog: [], marketCatalogCoins: new Map(), marketCatalogTotal: 0, marketCatalogMatched: 0, marketCatalogLoading: true, marketCatalogLoaded: false, marketCatalogReliable: false, marketCatalogSource: "loading", marketMovers: {gainers:[],losers:[]}, marketIntelligence: null, portfolio: null, plan: null, journal: [], transactions: [], trending: [], news: [], translations: {}, newsFilter: "ALL", currentPage: "overview", intelligenceTab: "temperature", community: {profiles:[],messages:[],posts:[],following:[],followedStrategies:[],reactedPosts:[],activeNow:0}, communityTab: "live", demo: false, marketStale: false, marketAsOf: 0, marketSource: "unknown", transactionTotal: 0 };
 const $ = (id) => document.getElementById(id);
 const clamp = (x, lo=0, hi=100) => Math.min(hi, Math.max(lo, x));
 const uiLocale = () => window.CryptoRadarI18n?.locale() || "it-IT";
@@ -75,6 +75,7 @@ async function loadAll(showFlash=false){
     state.marketAsOf=num(marketResponse.asOf);state.marketSource=marketResponse.source||"unknown";
     $("lastUpdate").textContent=state.marketStale?`Dati di riserva · ${new Date(marketResponse.asOf*1000).toLocaleDateString("it-IT")}`:`Aggiornato ${new Date(marketResponse.asOf*1000).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}`;
     syncPlanTargets();renderOverview(); renderScreener(); renderPortfolio(); renderPlan(); renderDecisionLab(); renderDiscovery(); renderDemoMode(); loadImportHistory(); renderOperations(); renderCopilot(); renderAdvanced(); renderIntelligence(); renderOnboarding(); renderDataQuality(); checkCooldown();window.CryptoRadarI18n?.translateDocument();
+    loadMarketCatalog();
     loadMarketIntelligence();
     loadTranslations();
   }catch(error){ showError(error.message); }
@@ -88,13 +89,59 @@ function renderDemoMode(){
 
 function showError(message){$("notice").textContent=message;$("notice").classList.remove("hidden")}
 function coinById(id){return state.scored.find(c=>c.id===id)}
+function pinnedCoinById(id){return coinById(id)||state.marketCatalogCoins.get(id)}
 function pinnedIds(){
   try{const value=JSON.parse(localStorage.getItem("cryptoRadarPinnedCoins")||"[]");return Array.isArray(value)?[...new Set(value.filter(id=>typeof id==="string"))].slice(0,5):[]}
   catch{return []}
 }
 function savePinnedIds(ids){localStorage.setItem("cryptoRadarPinnedCoins",JSON.stringify([...new Set(ids)].slice(0,5)))}
 function pinnedSortMode(){const value=localStorage.getItem("cryptoRadarPinnedSort");return value==="name"?"name":"rank"}
-function availablePinnedCoins(){const ids=pinnedIds();return state.scored.filter(c=>!ids.includes(c.id))}
+function availablePinnedCoins(){const ids=pinnedIds(),catalog=state.marketCatalog.length?state.marketCatalog:state.scored;return catalog.filter(c=>!ids.includes(c.id))}
+let pinnedCatalogSearchTimer=null,pinnedCatalogRequest=0;
+function queuePinnedCatalogSearch(open=true){
+  clearTimeout(pinnedCatalogSearchTimer);
+  pinnedCatalogSearchTimer=setTimeout(()=>loadMarketCatalog($("pinnedCoinSearch").value,open),180);
+}
+async function loadMarketCatalog(query="",open=false){
+  const requestId=++pinnedCatalogRequest;
+  state.marketCatalogLoading=true;
+  if($("pinnedCatalogStatus"))$("pinnedCatalogStatus").textContent=tr("Caricamento catalogo crypto…");
+  if(open)renderPinnedOptions(true);
+  try{
+    const params=new URLSearchParams({q:query,sort:pinnedSortMode(),ids:pinnedIds().filter(id=>id.startsWith("cmc-")).join(",")}),response=await api(`/api/market-catalog?${params}`),liveBySlug=new Map(state.scored.map(c=>[c.id,c])),liveByKey=new Map(state.scored.map(c=>[`${c.symbol.toLowerCase()}|${c.name.toLowerCase()}`,c])),liveBySymbol=new Map(),used=new Set();
+    if(requestId!==pinnedCatalogRequest)return;
+    state.scored.forEach(c=>{const symbol=c.symbol.toLowerCase();if(!liveBySymbol.has(symbol))liveBySymbol.set(symbol,c);else liveBySymbol.set(symbol,null)});
+    state.marketCatalog=(response.data||[]).map(item=>{
+      const exact=liveBySlug.get(item.cmc_slug)||liveByKey.get(`${item.symbol.toLowerCase()}|${item.name.toLowerCase()}`)||liveBySymbol.get(item.symbol.toLowerCase()),existing=exact&&!used.has(exact.id)?exact:null;
+      if(existing){used.add(existing.id);return {...existing,cmcId:item.cmc_id,cmcSlug:item.cmc_slug,_catalogOnly:false}}
+      return {...scoreCoin(item),cmcId:item.cmc_id,cmcSlug:item.cmc_slug,_catalogOnly:item.catalog_source==="coinmarketcap"};
+    });
+    state.marketCatalog.forEach(coin=>state.marketCatalogCoins.set(coin.id,coin));
+    state.marketCatalogTotal=num(response.total);
+    state.marketCatalogMatched=num(response.matched);
+    state.marketCatalogSource=response.source||"unknown";
+    state.marketCatalogReliable=response.source==="coinmarketcap";
+  }catch{
+    if(requestId!==pinnedCatalogRequest)return;
+    state.marketCatalog=[...state.scored];
+    state.marketCatalog.forEach(coin=>state.marketCatalogCoins.set(coin.id,coin));
+    state.marketCatalogTotal=state.scored.length;
+    state.marketCatalogMatched=state.scored.length;
+    state.marketCatalogSource="fallback";
+    state.marketCatalogReliable=false;
+  }finally{
+    if(requestId!==pinnedCatalogRequest)return;
+    state.marketCatalogLoading=false;
+    state.marketCatalogLoaded=true;
+    updatePinnedCatalogStatus();
+    renderPinnedOptions(open||$("pinnedCoinSearch").getAttribute("aria-expanded")==="true");
+    if(state.scored.length&&pinnedIds().some(id=>id.startsWith("cmc-")))renderOverview();
+  }
+}
+function updatePinnedCatalogStatus(){
+  if(!$("pinnedCatalogStatus"))return;
+  $("pinnedCatalogStatus").textContent=state.marketCatalogLoading?tr("Caricamento catalogo crypto…"):state.marketCatalogSource==="coinmarketcap"?`${state.marketCatalogTotal.toLocaleString(uiLocale())} ${tr("crypto disponibili da CoinMarketCap")}`:`${state.marketCatalogTotal||state.scored.length} ${tr("crypto disponibili · catalogo di riserva")}`;
+}
 function sortPinnedCoins(coins){
   const byName=(a,b)=>a.name.localeCompare(b.name,window.CryptoRadarI18n?.locale?.()||"it-IT",{sensitivity:"base"})||(num(a.market_cap_rank)||999999)-(num(b.market_cap_rank)||999999);
   return [...coins].sort(pinnedSortMode()==="name"?byName:(a,b)=>(num(a.market_cap_rank)||999999)-(num(b.market_cap_rank)||999999)||byName(a,b));
@@ -105,7 +152,7 @@ function closePinnedOptions(){
   $("pinnedCoinSearch").removeAttribute("aria-activedescendant");
 }
 function choosePinnedOption(id){
-  const coin=coinById(id);
+  const coin=pinnedCoinById(id);
   if(!coin)return;
   $("pinnedCoinSelect").value=coin.id;
   $("pinnedCoinSearch").value=`${coin.name} (${coin.symbol.toUpperCase()})`;
@@ -114,8 +161,13 @@ function choosePinnedOption(id){
   $("addPinned").focus();
 }
 function renderPinnedOptions(open=true){
-  const query=$("pinnedCoinSearch").value.trim().toLocaleLowerCase(),coins=sortPinnedCoins(availablePinnedCoins()).filter(c=>!query||`${c.name} ${c.symbol} ${c.id} #${c.market_cap_rank||""}`.toLocaleLowerCase().includes(query));
-  $("pinnedCoinOptions").innerHTML=coins.length?coins.map((c,index)=>`<button type="button" id="pinned-option-${index}" class="pinned-option" role="option" data-pinned-option="${esc(c.id)}" aria-selected="false"><img src="${esc(c.image)}" alt=""><span><b>${esc(c.name)}</b><small>${esc(c.symbol.toUpperCase())}</small></span><strong>#${c.market_cap_rank||"—"}</strong></button>`).join(""):`<div class="pinned-option-empty">Nessuna crypto trovata. Prova con nome o simbolo.</div>`;
+  const query=$("pinnedCoinSearch").value.trim().toLocaleLowerCase(),matches=sortPinnedCoins(availablePinnedCoins()).filter(c=>!query||`${c.name} ${c.symbol} ${c.id} ${c.cmcSlug||""} #${c.market_cap_rank||""}`.toLocaleLowerCase().includes(query)),coins=matches.slice(0,100);
+  const content=coins.map((c,index)=>`<button type="button" id="pinned-option-${index}" class="pinned-option" role="option" data-pinned-option="${esc(c.id)}" aria-selected="false"><img src="${esc(c.image)}" alt=""><span><b>${esc(c.name)}</b><small>${esc(c.symbol.toUpperCase())}</small></span><strong>#${c.market_cap_rank||"—"}</strong></button>`).join("");
+  const empty=state.marketCatalogLoading?tr("Caricamento catalogo crypto…"):tr("Nessuna crypto trovata. Prova con nome o simbolo.");
+  const totalMatches=state.marketCatalogLoaded?Math.max(matches.length,state.marketCatalogMatched):matches.length;
+  const footer=matches.length?`<div class="pinned-options-meta">${coins.length} ${tr("di")} ${totalMatches} crypto${totalMatches>coins.length?` · ${tr("scrivi per restringere la ricerca")}`:""}</div>`:"";
+  $("pinnedCoinOptions").innerHTML=content||`<div class="pinned-option-empty">${empty}</div>`;
+  $("pinnedCoinOptions").insertAdjacentHTML("beforeend",footer);
   document.querySelectorAll("[data-pinned-option]").forEach(button=>button.onclick=()=>choosePinnedOption(button.dataset.pinnedOption));
   if(open){
     $("pinnedCoinOptions").classList.remove("hidden");
@@ -133,11 +185,12 @@ function movePinnedOption(direction){
   options[index].scrollIntoView({block:"nearest"});
 }
 function renderPinnedManager(){
-  const ids=pinnedIds().filter(id=>coinById(id)),coins=ids.map(coinById).filter(Boolean);
-  if(ids.length!==pinnedIds().length)savePinnedIds(ids);
+  const storedIds=pinnedIds(),ids=storedIds.filter(id=>pinnedCoinById(id)),coins=ids.map(pinnedCoinById).filter(Boolean);
+  if(state.marketCatalogReliable&&ids.length!==storedIds.length)savePinnedIds(ids);
   $("pinnedCount").textContent=`${ids.length}/5 selezionate`;
   $("pinnedTitle").textContent=ids.length?"Le tue crypto":"Scegli le crypto da seguire";
   $("pinnedCoinSort").value=pinnedSortMode();
+  updatePinnedCatalogStatus();
   $("pinnedCoinSearch").value="";
   $("pinnedCoinSelect").value="";
   closePinnedOptions();
@@ -146,7 +199,7 @@ function renderPinnedManager(){
   $("pinnedMessage").textContent=ids.length>=5?"Hai raggiunto il massimo di 5 crypto.":"Le schede non modificano il tuo portafoglio.";
   document.querySelectorAll("[data-unpin]").forEach(button=>button.onclick=()=>{savePinnedIds(ids.filter(id=>id!==button.dataset.unpin));renderOverview()});
 }
-function addPinnedCoin(){const id=$("pinnedCoinSelect").value,ids=pinnedIds();if(!id||ids.includes(id))return;if(ids.length>=5){$("pinnedMessage").textContent="Puoi fissare al massimo 5 crypto.";return}savePinnedIds([...ids,id]);renderOverview();$("pinnedManager").classList.remove("hidden");$("pinnedCoinSearch").focus()}
+function addPinnedCoin(){const id=$("pinnedCoinSelect").value,ids=pinnedIds();if(!id||ids.includes(id))return;if(ids.length>=5){$("pinnedMessage").textContent="Puoi fissare al massimo 5 crypto.";return}savePinnedIds([...ids,id]);renderOverview();$("pinnedManager").classList.remove("hidden");$("pinnedCoinSearch").focus();loadMarketCatalog("",true)}
 function coinCell(c){return `<div class="token-cell"><img src="${c.image}" alt=""><div><b>${c.symbol.toUpperCase()}</b><span>${c.name}</span></div></div>`}
 function scoreColor(score){return score>=70?"positive":score>=52?"neutral":"negative"}
 function reasons(c){
@@ -246,12 +299,12 @@ function renderOverview(){
   const regime=regimeScore>=65?["Costruttivo","Trend e ampiezza favorevoli.","var(--accent)"]:regimeScore>=48?["Misto","Segnali contrastanti: selettività e size contenute.","var(--yellow)"]:["Difensivo","Momentum o ampiezza deboli: priorità al controllo del rischio.","var(--red)"];
   $("regimeLabel").textContent=regime[0]; $("regimeText").textContent=regime[1]; $("regimeDot").style.background=regime[2];
   renderWeeklyMovers();
-  const selectedPinned=pinnedIds(),pinned=selectedPinned.map(coinById).filter(Boolean);
+  const selectedPinned=pinnedIds(),pinned=selectedPinned.map(pinnedCoinById).filter(Boolean);
   $("pinnedCards").classList.remove("skeleton-grid");
-  $("pinnedCards").innerHTML=pinned.length?pinned.map(c=>`<article class="card coin-card" data-id="${c.id}"><div class="coin-top"><div class="coin-id"><img src="${c.image}" alt=""><div><b>${c.name}</b><span>${c.symbol.toUpperCase()} · rank #${c.market_cap_rank}</span></div></div><div class="score ${scoreColor(c._score)}">${c._score}<small>SCORE</small></div></div><div class="coin-stats"><div><span>PREZZO</span><b>${fmtEur(c.current_price)}</b></div><div><span>7 GIORNI</span><b class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</b></div><div><span>30 GIORNI</span><b class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</b></div><div><span>RISCHIO</span><b class="${c._risk==='alto'?'negative':c._risk==='medio'?'neutral':'positive'}">${c._risk}</b></div></div></article>`).join(""):`<article class="card pinned-empty"><b>La Home è pronta per essere personalizzata</b><p>Premi “Gestisci” e aggiungi da 1 a 5 crypto che vuoi seguire.</p><button class="primary" data-open-pinned>Configura le posizioni fissate</button></article>`;
+  $("pinnedCards").innerHTML=pinned.length?pinned.map(c=>`<article class="card coin-card" data-id="${c.id}" ${c._catalogOnly?`data-cmc-slug="${esc(c.cmcSlug||"")}" title="Apri su CoinMarketCap"`:""}><div class="coin-top"><div class="coin-id"><img src="${c.image}" alt=""><div><b>${c.name}</b><span>${c.symbol.toUpperCase()} · rank #${c.market_cap_rank}</span></div></div><div class="score ${scoreColor(c._score)}">${c._score}<small>SCORE</small></div></div><div class="coin-stats"><div><span>PREZZO</span><b>${fmtEur(c.current_price)}</b></div><div><span>7 GIORNI</span><b class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</b></div><div><span>30 GIORNI</span><b class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</b></div><div><span>RISCHIO</span><b class="${c._risk==='alto'?'negative':c._risk==='medio'?'neutral':'positive'}">${c._risk}</b></div></div></article>`).join(""):`<article class="card pinned-empty"><b>La Home è pronta per essere personalizzata</b><p>Premi “Gestisci” e aggiungi da 1 a 5 crypto che vuoi seguire.</p><button class="primary" data-open-pinned>Configura le posizioni fissate</button></article>`;
   renderPinnedManager();
   document.querySelectorAll("[data-open-pinned]").forEach(button=>button.onclick=()=>{$("pinnedManager").classList.remove("hidden");$("pinnedCoinSearch").focus();renderPinnedOptions(true)});
-  document.querySelectorAll(".coin-card").forEach(el=>el.onclick=()=>openDetail(el.dataset.id));
+  document.querySelectorAll(".coin-card").forEach(el=>el.onclick=()=>el.dataset.cmcSlug?window.open(`https://coinmarketcap.com/currencies/${encodeURIComponent(el.dataset.cmcSlug)}/`,"_blank","noopener,noreferrer"):openDetail(el.dataset.id));
   const candidates=state.scored.filter(eligible).filter(c=>![...selectedPinned,"bitcoin","ethereum"].includes(c.id)).slice(0,6);
   $("topCandidates").innerHTML=candidates.map(c=>`<tr data-id="${c.id}"><td>${coinCell(c)}</td><td class="${scoreColor(c._score)}"><b>${c._score}</b></td><td class="reason">${reasons(c)}</td><td>${fmtEur(c.current_price)}</td><td class="${pctClass(change(c,"7d"))}">${fmtPct(change(c,"7d"))}</td><td class="${pctClass(change(c,"30d"))}">${fmtPct(change(c,"30d"))}</td><td><span class="badge ${c._risk}">${c._risk}</span></td></tr>`).join("");
   bindRows($("topCandidates"));
@@ -820,10 +873,10 @@ ensureRestoreLocalControl();
 $("refreshBtn").onclick=()=>loadAll(true);$("applyFilters").onclick=renderScreener;$("savePortfolio").onclick=savePortfolio;$("addPortfolioCoin").onclick=addPortfolioCoin;$("savePlan").onclick=savePlan;$("runDca").onclick=runDca;$("analyzeTrade").onclick=analyzeTrade;$("saveDecision").onclick=saveDecision;$("backBtn").onclick=()=>showPage('overview');
 $("openHomeLayout").onclick=()=>toggleHomeLayout($("homeLayoutManager").classList.contains("hidden"));$("closeHomeLayout").onclick=()=>toggleHomeLayout(false);$("resetHomeLayout").onclick=resetHomeLayout;
 $("managePinned").onclick=()=>{$("pinnedManager").classList.toggle("hidden");if(!$("pinnedManager").classList.contains("hidden")){$("pinnedCoinSearch").focus();renderPinnedOptions(true)}else closePinnedOptions()};$("closePinned").onclick=()=>{$("pinnedManager").classList.add("hidden");closePinnedOptions()};$("addPinned").onclick=addPinnedCoin;
-$("pinnedCoinSearch").onfocus=()=>renderPinnedOptions(true);
-$("pinnedCoinSearch").oninput=()=>{$("pinnedCoinSelect").value="";$("addPinned").disabled=true;renderPinnedOptions(true)};
+$("pinnedCoinSearch").onfocus=()=>state.marketCatalogLoaded?renderPinnedOptions(true):loadMarketCatalog($("pinnedCoinSearch").value,true);
+$("pinnedCoinSearch").oninput=()=>{$("pinnedCoinSelect").value="";$("addPinned").disabled=true;state.marketCatalogLoading=true;renderPinnedOptions(true);queuePinnedCatalogSearch(true)};
 $("pinnedCoinSearch").onkeydown=event=>{if(event.key==="ArrowDown"){event.preventDefault();movePinnedOption(1)}else if(event.key==="ArrowUp"){event.preventDefault();movePinnedOption(-1)}else if(event.key==="Escape"){closePinnedOptions()}else if(event.key==="Enter"){event.preventDefault();const active=document.querySelector("[data-pinned-option].active"),first=document.querySelector("[data-pinned-option]");if(!$("pinnedCoinSelect").value&&(active||first))choosePinnedOption((active||first).dataset.pinnedOption);else addPinnedCoin()}};
-$("pinnedCoinSort").onchange=()=>{localStorage.setItem("cryptoRadarPinnedSort",$("pinnedCoinSort").value);$("pinnedCoinSelect").value="";$("addPinned").disabled=true;renderPinnedOptions(true);$("pinnedCoinSearch").focus()};
+$("pinnedCoinSort").onchange=()=>{localStorage.setItem("cryptoRadarPinnedSort",$("pinnedCoinSort").value);$("pinnedCoinSelect").value="";$("addPinned").disabled=true;loadMarketCatalog($("pinnedCoinSearch").value,true);$("pinnedCoinSearch").focus()};
 document.addEventListener("click",event=>{if(!event.target.closest(".pinned-picker")&&!event.target.closest("#managePinned")&&!event.target.closest("[data-open-pinned]"))closePinnedOptions()});
 $("runCopilot").onclick=runCopilotWithCooldown;$("savePassport").onclick=savePassport;$("exportMonthlyReport").onclick=exportMonthlyBehavior;$("saveFiscalReadiness").onclick=saveFiscalReadiness;$("saveScoreSnapshot").onclick=saveScoreSnapshot;$("refreshQuality").onclick=renderDataQuality;$("dataQualityBadge").onclick=()=>openCopilotTab("quality");$("runSecurityRadar").onclick=runSecurityRadar;$("saveLocalProfile").onclick=saveLocalProfile;$("generateShareReport").onclick=generateShareReport;$("exportAllLocal").onclick=downloadAllLocal;$("downloadLocalData").onclick=downloadAllLocal;$("exportPassports").onclick=()=>downloadBlob(`crypto-radar-passaporti-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(localData(copilotStore.passports,[]),null,2));$("deleteLocalData").onclick=()=>{if(!confirm("Eliminare tutti i dati locali di Crypto Radar da questo browser? L’operazione non può essere annullata senza un backup."))return;[...Array(localStorage.length)].map((_,i)=>localStorage.key(i)).filter(k=>k?.startsWith("cryptoRadar")).forEach(k=>localStorage.removeItem(k));location.reload()};$("tutorToggle").onclick=()=>toggleTutor(!$("tutorDrawer").classList.contains("open"));$("tutorClose").onclick=()=>toggleTutor(false);
 $("saveAlertSettings").onclick=saveAlertSettings;$("saveWeeklySnapshot").onclick=saveWeeklySnapshot;$("printWeeklyReport").onclick=()=>window.print();$("paperCoin").onchange=updatePaperPreview;$("paperAmount").oninput=updatePaperPreview;$("paperFee").oninput=updatePaperPreview;$("paperAction").onchange=updatePaperPreview;$("executePaper").onclick=executePaper;$("resetPaper").onclick=resetPaper;$("addCalendarEvent").onclick=addCalendarEvent;$("saveCalendarRoutines").onclick=saveCalendarRoutines;$("exportCalendar").onclick=exportCalendar;
