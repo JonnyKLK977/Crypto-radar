@@ -243,7 +243,7 @@ const homeWidgetCatalog=[
   {id:"movers",label:"Movimenti settimanali",description:"Migliori e peggiori dati CoinMarketCap a 7 giorni"},
   {id:"pinned",label:"Crypto fissate",description:"Fino a cinque asset scelti personalmente"},
   {id:"candidates",label:"Candidate emerse",description:"Risultati quantitativi dello screener"},
-  {id:"italian-news",label:"Notizie italiane",description:"Ultimi articoli pubblicati da Criptovaluta.it"},
+  {id:"italian-news",label:"Notizie",description:"Titoli da Criptovaluta.it, BeInCrypto Italia e The Crypto Gateway"},
   {id:"quick-actions",label:"Azioni rapide",description:"Collegamenti ad Assistente Personale, Laboratorio, guide e fisco"}
 ];
 const defaultHomeOrder=homeWidgetCatalog.map(widget=>widget.id);
@@ -473,11 +473,22 @@ async function loadTranslations(){
 function renderNews(){
   const portfolioTags=new Set(["POL","ALGO","ADA"]);
   const articles=state.news.filter(a=>state.newsFilter==="ALL"||(state.newsFilter==="PORTFOLIO"?a.tags?.some(t=>portfolioTags.has(t)):a.tags?.includes(state.newsFilter)));
-  const newsCard=(a,compact=false)=>{const when=new Date(a.published),validLink=String(a.link).startsWith("https://")?a.link:"#",isItalian=a.sourceLanguage==="it",translated=state.translations[a.title],displayTitle=translated||a.title,date=Number.isNaN(when.valueOf())?"data non disponibile":when.toLocaleString(uiLocale(),compact?{day:"2-digit",month:"short"}:{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});return `<a class="card news-card ${isItalian?'italian-news-card':''} ${compact?'home-news-card':''}" href="${esc(validLink)}" target="_blank" rel="noopener noreferrer"><div><h3>${esc(displayTitle)}</h3>${!compact&&translated&&translated!==a.title?`<div class="news-original">${esc(a.title)}</div>`:""}<span class="news-meta">${esc(a.source)} · ${date}${compact?"":" · "+(translated?"traduzione automatica":"titolo originale")}</span></div><div class="news-tags">${(a.tags||[]).map(t=>`<span>${esc(t)}</span>`).join("")}</div></a>`};
-  const italian=state.news.filter(a=>a.source==="Criptovaluta.it").slice(0,8);
-  $("italianNewsList").innerHTML=italian.map(article=>newsCard(article)).join("")||`<div class="card insight-card"><p class="muted">Il feed italiano è momentaneamente non disponibile.</p></div>`;
+  const italianSources=["Criptovaluta.it","BeInCrypto Italia","The Crypto Gateway"];
+  const balancedItalianNews=limit=>{
+    const buckets=italianSources.map(source=>state.news.filter(article=>article.source===source)),selected=[];
+    while(selected.length<limit){
+      const round=buckets.map(bucket=>bucket.shift()).filter(Boolean).sort((a,b)=>new Date(b.published)-new Date(a.published));
+      if(!round.length)break;
+      selected.push(...round.slice(0,limit-selected.length));
+    }
+    return selected;
+  };
+  const sourceClass=source=>({"Criptovaluta.it":"source-criptovaluta","BeInCrypto Italia":"source-beincrypto","The Crypto Gateway":"source-crypto-gateway"}[source]||"");
+  const newsCard=(a,compact=false)=>{const when=new Date(a.published),validLink=String(a.link).startsWith("https://")?a.link:"#",isItalian=a.sourceLanguage==="it",translated=state.translations[a.title],displayTitle=translated||a.title,date=Number.isNaN(when.valueOf())?"data non disponibile":when.toLocaleString(uiLocale(),compact?{day:"2-digit",month:"short"}:{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});return `<a class="card news-card ${isItalian?'italian-news-card':''} ${sourceClass(a.source)} ${compact?'home-news-card':''}" href="${esc(validLink)}" target="_blank" rel="noopener noreferrer"><div><h3>${esc(displayTitle)}</h3>${!compact&&translated&&translated!==a.title?`<div class="news-original">${esc(a.title)}</div>`:""}<span class="news-meta">${esc(a.source)} · ${date}${compact?"":" · "+(translated?"traduzione automatica":"titolo originale")}</span></div><div class="news-tags">${(a.tags||[]).map(t=>`<span>${esc(t)}</span>`).join("")}</div></a>`};
+  const italian=balancedItalianNews(9);
+  $("italianNewsList").innerHTML=italian.map(article=>newsCard(article)).join("")||`<div class="card insight-card"><p class="muted">${tr("Le notizie dalle fonti italiane sono momentaneamente non disponibili.")}</p></div>`;
   $("newsList").innerHTML=articles.slice(0,30).map(article=>newsCard(article)).join("")||`<div class="card insight-card"><p class="muted">Nessuna notizia corrisponde al filtro selezionato.</p></div>`;
-  $("homeItalianNewsList").innerHTML=italian.slice(0,4).map(article=>newsCard(article,true)).join("")||`<div class="card insight-card home-news-unavailable"><p class="muted">Il feed di Criptovaluta.it è momentaneamente non disponibile.</p></div>`;
+  $("homeItalianNewsList").innerHTML=italian.slice(0,4).map(article=>newsCard(article,true)).join("")||`<div class="card insight-card home-news-unavailable"><p class="muted">${tr("Le notizie dalle fonti italiane sono momentaneamente non disponibili.")}</p></div>`;
 }
 
 async function openDetail(id){

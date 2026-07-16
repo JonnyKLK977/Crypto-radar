@@ -2,7 +2,7 @@
 
 Dashboard per seguire fino a cinque crypto personali e individuare altre opportunità tramite uno score quantitativo trasparente.
 
-Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’utente può cercare per nome, simbolo o rank nel catalogo delle prime 5.000 crypto CoinMarketCap, ordinare i risultati per posizione o alfabeticamente e aggiungere o rimuovere fino a 5 asset. La selezione è distinta dal portafoglio e non viene inviata al server. La stessa pagina include il cambio lingua rapido, i cinque maggiori rialzi e ribassi settimanali ricavati dall’API ufficiale CoinMarketCap tra le prime 100 crypto idonee e gli ultimi articoli di Criptovaluta.it.
+Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’utente può cercare per nome, simbolo o rank nel catalogo delle prime 5.000 crypto CoinMarketCap, ordinare i risultati per posizione o alfabeticamente e aggiungere o rimuovere fino a 5 asset. La selezione è distinta dal portafoglio e non viene inviata al server. La stessa pagina include il cambio lingua rapido, i cinque maggiori rialzi e ribassi settimanali ricavati dall’API ufficiale CoinMarketCap tra le prime 100 crypto idonee e una selezione bilanciata degli ultimi articoli di Criptovaluta.it, BeInCrypto Italia e The Crypto Gateway.
 
 L’intera Home è componibile: ogni browser conserva ordine e visibilità dei sette moduli disponibili. Il pannello consente trascinamento, spostamento accessibile con frecce, mostra/nascondi e ripristino. Oltre ai moduli di mercato sono disponibili una sintesi personale del portafoglio e scorciatoie verso Assistente Personale, Laboratorio, guide e fiscalità.
 
@@ -77,7 +77,7 @@ La pagina **News & trend** separa volutamente tre concetti diversi:
 
 Una crypto in trend o molto citata non riceve automaticamente un punteggio più alto.
 
-Le notizie combinano il feed internazionale CoinDesk con una sezione italiana dedicata al feed RSS ufficiale di Criptovaluta.it. I titoli italiani vengono mostrati direttamente, senza traduzione automatica, e mantengono sempre fonte e collegamento all'articolo originale.
+Le notizie combinano il feed internazionale CoinDesk con una sezione italiana che aggrega i feed RSS ufficiali di Criptovaluta.it, BeInCrypto Italia e The Crypto Gateway. La selezione alterna le fonti disponibili per evitare che quella che pubblica più spesso occupi da sola la sezione. I titoli italiani vengono mostrati direttamente, senza traduzione automatica, e mantengono sempre fonte e collegamento all'articolo originale.
 
 I titoli CoinDesk vengono tradotti automaticamente in italiano tramite MyMemory. Il titolo inglese originale resta visibile e le traduzioni vengono memorizzate localmente in `data/news_translations_it.json` per evitare richieste ripetute.
 
