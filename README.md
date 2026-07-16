@@ -4,7 +4,7 @@ Dashboard per seguire fino a cinque crypto personali e individuare altre opportu
 
 Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’utente può aggiungere e rimuovere fino a 5 crypto tra le 200 monitorate. La selezione è distinta dal portafoglio e non viene inviata al server. La stessa pagina include il cambio lingua rapido, i cinque maggiori rialzi e ribassi settimanali ricavati dall’API ufficiale CoinMarketCap tra le prime 100 crypto idonee e gli ultimi articoli di Criptovaluta.it.
 
-L’intera Home è componibile: ogni browser conserva ordine e visibilità dei sette moduli disponibili. Il pannello consente trascinamento, spostamento accessibile con frecce, mostra/nascondi e ripristino. Oltre ai moduli di mercato sono disponibili una sintesi personale del portafoglio e scorciatoie verso Copilota 360, Decision Lab, guide e fiscalità.
+L’intera Home è componibile: ogni browser conserva ordine e visibilità dei sette moduli disponibili. Il pannello consente trascinamento, spostamento accessibile con frecce, mostra/nascondi e ripristino. Oltre ai moduli di mercato sono disponibili una sintesi personale del portafoglio e scorciatoie verso Assistente Personale, Laboratorio, guide e fiscalità.
 
 La pagina **Il mio portafoglio** parte vuota: POL, ALGO, ADA o altre crypto non vengono assegnate automaticamente. L'utente può aggiungere e rimuovere liberamente fino a 30 asset dal catalogo di mercato, quindi compilare quantità e costo medio. Nella demo pubblica portafoglio e piano vengono salvati soltanto nel browser utilizzato.
 
@@ -48,9 +48,9 @@ Il **Centro operativo** riunisce quattro strumenti salvati localmente nel browse
 
 Le variazioni settimanali precedenti alla prima fotografia sono stime ricostruite dai rendimenti degli asset. Il simulatore non riproduce spread, slippage, profondità di mercato o fiscalità.
 
-## Copilota 360
+## Assistente Personale
 
-Il **Copilota 360** è un livello locale di controllo e documentazione, non un servizio di consulenza o esecuzione. Comprende:
+L’**Assistente Personale** è un livello locale di controllo e documentazione, non un servizio di consulenza o esecuzione. Comprende:
 
 - simulatore pre-azione con impatto su concentrazione, allocazione crypto, costi e stress della posizione;
 - semaforo che misura la completezza del processo, senza prevedere il rendimento;
@@ -88,7 +88,7 @@ La pagina **Piano personale** permette di salvare limiti di rischio, orizzonte, 
 - simulazione DCA storica su BTC, ETH, POL, ALGO e ADA;
 - confronto fra acquisti mensili e investimento immediato dello stesso capitale.
 
-Il **Decision Lab** aggiunge:
+Il **Laboratorio** aggiunge:
 
 - controllo dell'impatto di un acquisto, vendita o ribilanciamento prima dell'esecuzione;
 - confronto con limite per posizione e allocazione obiettivo;
@@ -98,7 +98,7 @@ Il **Decision Lab** aggiunge:
 
 Il diario viene salvato in `data/decision_journal.json`.
 
-La pagina **Guide & Manuali** contiene un percorso educativo in sedici moduli:
+La pagina **Guide & Manuali** contiene un percorso educativo in diciannove moduli:
 
 - basi di crypto, token, exchange e wallet;
 - budget, rischio e piano personale;
@@ -107,15 +107,18 @@ La pagina **Guide & Manuali** contiene un percorso educativo in sedici moduli:
 - verifica delle fonti e difesa dall'hype;
 - custodia, seed phrase, 2FA e sicurezza delle API.
 - scelta e apertura di wallet per reti EVM/POL, Algorand e Cardano;
-- manuale di Panoramica, Opportunity screener e dettaglio crypto;
+- manuale di Panoramica, Potenziali Crypto e dettaglio crypto;
 - uso guidato di portafoglio, import CSV e Piano personale;
-- manuale completo di Decision Lab e Centro operativo;
+- manuale completo di Laboratorio e Centro operativo;
 - flusso di News, Metodo e guida fiscale.
-- manuale completo del Copilota 360, della condivisione e del Centro privacy.
+- manuale completo dell’Assistente Personale, della condivisione e del Centro privacy.
 - manuale di Execution Lab, Risk Engine e verifica degli operatori nel registro MiCA.
 - manuale completo dell'Intelligence Hub: temperatura, eventi, esposizioni, stress, integrità fiscale e brief.
+- manuale della Chat Community: profili, chat live, bacheca, strategie, fonti e valutazioni;
+- manuale di orientamento per usare indice, progresso, glossario e collegamenti contestuali;
+- manuale operativo per 730, fiscalità, Metodo e limiti dello score.
 
-Include un glossario ricercabile e una checklist pre-acquisto. L'avanzamento viene memorizzato nel browser e non viene inviato al server.
+Ogni sezione dell'app espone un collegamento **Come funziona** che apre direttamente il relativo capitolo. Potenziali Crypto include anche una legenda interna per score, motivazione, market cap, FDV/MC, performance e rischio. Il percorso comprende un glossario ricercabile e una checklist pre-acquisto; l'avanzamento viene memorizzato nel browser e non viene inviato al server.
 
 ## Strumenti avanzati
 
