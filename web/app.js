@@ -431,18 +431,41 @@ function toggleHomeLayout(open){$("homeLayoutManager").classList.toggle("hidden"
 function resetHomeLayout(){localStorage.removeItem(homeLayoutStore);applyHomeLayout();$("homeLayoutStatus").textContent="Impostazione iniziale ripristinata";window.CryptoRadarI18n?.translateDocument()}
 
 const sidebarLayoutStore="cryptoRadarSidebarLayoutV1";
-const sidebarTargets=()=>[...document.querySelectorAll("#sidebarNav .nav")].map(button=>button.dataset.target);
+const sidebarDefaultTargets=[...document.querySelectorAll("#sidebarNav .nav")].map(button=>button.dataset.target);
+const sidebarDefaultGroups=[...document.querySelectorAll("[data-sidebar-group]")].map(group=>group.dataset.sidebarGroup);
+const sidebarPresetTargets={
+  essential:["purpose","overview","screener","portfolio","news","method"],
+  portfolio:["overview","portfolio","connections","academy","plan","copilot","decision","operations","tax","method"],
+  analysis:["overview","screener","decision","operations","advanced","intelligence","news","method"],
+  community:["overview","academy","community","news","tax","method"],
+  complete:sidebarDefaultTargets
+};
+function normalizedSidebarOrder(value,defaults){
+  const known=new Set(defaults),ordered=Array.isArray(value)?[...new Set(value.filter(item=>known.has(item)))]:[];
+  return [...ordered,...defaults.filter(item=>!ordered.includes(item))];
+}
 function sidebarLayout(){
-  const saved=localData(sidebarLayoutStore,{}),knownTargets=new Set(sidebarTargets()),knownGroups=new Set([...document.querySelectorAll("[data-sidebar-group]")].map(group=>group.dataset.sidebarGroup));
+  const saved=localData(sidebarLayoutStore,{}),knownTargets=new Set(sidebarDefaultTargets),knownGroups=new Set(sidebarDefaultGroups);
   return {
     hidden:Array.isArray(saved.hidden)?[...new Set(saved.hidden.filter(target=>knownTargets.has(target)&&target!=="overview"))]:[],
     collapsed:Array.isArray(saved.collapsed)?[...new Set(saved.collapsed.filter(group=>knownGroups.has(group)))]:[],
-    density:saved.density==="compact"?"compact":"comfortable"
+    density:saved.density==="compact"?"compact":"comfortable",
+    order:normalizedSidebarOrder(saved.order,sidebarDefaultTargets),
+    groupOrder:normalizedSidebarOrder(saved.groupOrder,sidebarDefaultGroups)
   };
+}
+function sidebarPreset(layout=sidebarLayout()){
+  const visible=sidebarDefaultTargets.filter(target=>target==="overview"||!layout.hidden.includes(target));
+  return Object.entries(sidebarPresetTargets).find(([,targets])=>targets.length===visible.length&&targets.every(target=>visible.includes(target)))?.[0]||"";
 }
 function persistSidebarLayout(layout,status="Configurazione aggiornata"){saveLocalData(sidebarLayoutStore,layout);applySidebarLayout();if($("sidebarLayoutStatus"))$("sidebarLayoutStatus").textContent=status}
 function applySidebarLayout(refreshManager=true){
-  const layout=sidebarLayout(),sidebar=document.querySelector(".sidebar");if(!sidebar)return;
+  const layout=sidebarLayout(),sidebar=document.querySelector(".sidebar"),nav=$("sidebarNav");if(!sidebar||!nav)return;
+  layout.groupOrder.forEach(groupId=>{const group=nav.querySelector(`[data-sidebar-group="${groupId}"]`);if(group)nav.append(group)});
+  document.querySelectorAll("[data-sidebar-group]").forEach(group=>{
+    const items=group.querySelector(".sidebar-group-items");
+    layout.order.forEach(target=>{const button=group.querySelector(`.nav[data-target="${target}"]`);if(button)items.append(button)});
+  });
   sidebar.classList.toggle("sidebar-density-compact",layout.density==="compact");
   document.querySelectorAll("[data-sidebar-group]").forEach(group=>{
     const collapsed=layout.collapsed.includes(group.dataset.sidebarGroup),toggle=group.querySelector(".sidebar-group-toggle");
@@ -459,24 +482,59 @@ function applySidebarLayout(refreshManager=true){
     group.classList.toggle("sidebar-group-empty",!available);
   });
   document.querySelectorAll("[data-sidebar-density]").forEach(button=>button.classList.toggle("active",button.dataset.sidebarDensity===layout.density));
+  document.querySelectorAll("[data-sidebar-interface]").forEach(button=>button.classList.toggle("active",button.dataset.sidebarInterface===interfaceMode()));
+  requestAnimationFrame(()=>alignMobileSidebarTarget(state.currentPage));
   if(refreshManager)renderSidebarLayoutManager();
 }
+function alignMobileSidebarTarget(target){
+  if(!window.matchMedia("(max-width:760px)").matches)return;
+  const nav=$("sidebarNav"),button=nav?.querySelector(`.nav[data-target="${target}"]:not(.sidebar-module-hidden)`);if(!nav||!button)return;
+  const navRect=nav.getBoundingClientRect(),buttonRect=button.getBoundingClientRect(),left=nav.scrollLeft+buttonRect.left-navRect.left-(navRect.width-buttonRect.width)/2;
+  nav.scrollTo({left:Math.max(0,left),behavior:"auto"});
+}
 function renderSidebarLayoutManager(){
-  const list=$("sidebarModuleManagerList");if(!list)return;const layout=sidebarLayout();
-  list.innerHTML=[...document.querySelectorAll("[data-sidebar-group]")].map(group=>{
-    const groupLabel=group.querySelector(".sidebar-group-toggle b")?.textContent.trim()||"Sezioni";
-    const rows=[...group.querySelectorAll(".nav")].map(button=>{
-      const target=button.dataset.target,pinned=target==="overview",advanced=button.classList.contains("advanced-only");
-      return `<label class="sidebar-module-manager-row"><span class="sidebar-manager-dot" data-sidebar-manager-color="${esc(group.dataset.sidebarGroup)}"></span><span><b>${esc(button.textContent.trim())}</b><small>${pinned?"Sempre visibile":advanced?"Modalità avanzata":esc(groupLabel)}</small></span><input type="checkbox" data-sidebar-visible="${esc(target)}" ${layout.hidden.includes(target)?"":"checked"} ${pinned?"disabled":""}></label>`;
+  const list=$("sidebarModuleManagerList");if(!list)return;const layout=sidebarLayout(),groups=layout.groupOrder.map(groupId=>document.querySelector(`[data-sidebar-group="${groupId}"]`)).filter(Boolean);
+  list.innerHTML=groups.map((group,groupIndex)=>{
+    const groupId=group.dataset.sidebarGroup,groupLabel=group.querySelector(".sidebar-group-toggle b")?.textContent.trim()||"Sezioni";
+    const buttons=layout.order.map(target=>group.querySelector(`.nav[data-target="${target}"]`)).filter(Boolean);
+    const toggleable=buttons.filter(button=>button.dataset.target!=="overview"),visibleCount=toggleable.filter(button=>!layout.hidden.includes(button.dataset.target)).length;
+    const rows=buttons.map((button,index)=>{
+      const target=button.dataset.target,pinned=target==="overview",advanced=button.classList.contains("advanced-only"),inputId=`sidebar-visible-${target}`;
+      return `<div class="sidebar-module-manager-row"><span class="sidebar-manager-dot" data-sidebar-manager-color="${esc(groupId)}"></span><label class="sidebar-module-manager-copy" for="${esc(inputId)}"><b>${esc(button.textContent.trim())}</b><small>${pinned?"Sempre visibile":advanced?"Modalità avanzata":esc(groupLabel)}</small></label><div class="sidebar-manager-row-actions"><button class="sidebar-order-button" type="button" data-sidebar-move="${esc(target)}" data-sidebar-move-direction="-1" aria-label="Sposta su" title="Sposta su" ${index===0?"disabled":""}>↑</button><button class="sidebar-order-button" type="button" data-sidebar-move="${esc(target)}" data-sidebar-move-direction="1" aria-label="Sposta giù" title="Sposta giù" ${index===buttons.length-1?"disabled":""}>↓</button><label class="sidebar-visibility-switch" title="${pinned?"Sempre visibile":"Mostra o nascondi"}"><input id="${esc(inputId)}" type="checkbox" data-sidebar-visible="${esc(target)}" ${layout.hidden.includes(target)?"":"checked"} ${pinned?"disabled":""}></label></div></div>`;
     }).join("");
-    return `<div class="sidebar-manager-group"><span>${esc(groupLabel)}</span>${rows}</div>`;
+    return `<div class="sidebar-manager-group"><div class="sidebar-manager-group-head"><div class="sidebar-manager-group-title"><span class="sidebar-manager-dot" data-sidebar-manager-color="${esc(groupId)}"></span><b>${esc(groupLabel)}</b></div><div class="sidebar-manager-group-actions"><button class="sidebar-order-button" type="button" data-sidebar-group-move="${esc(groupId)}" data-sidebar-move-direction="-1" aria-label="Sposta gruppo su" title="Sposta gruppo su" ${groupIndex===0?"disabled":""}>↑</button><button class="sidebar-order-button" type="button" data-sidebar-group-move="${esc(groupId)}" data-sidebar-move-direction="1" aria-label="Sposta gruppo giù" title="Sposta gruppo giù" ${groupIndex===groups.length-1?"disabled":""}>↓</button><label class="sidebar-visibility-switch" title="Mostra o nascondi il gruppo"><input type="checkbox" data-sidebar-group-visible="${esc(groupId)}" ${visibleCount?"checked":""}></label></div></div>${rows}</div>`;
   }).join("");
+  list.querySelectorAll("[data-sidebar-group-visible]").forEach(input=>{
+    const group=document.querySelector(`[data-sidebar-group="${input.dataset.sidebarGroupVisible}"]`),targets=[...group.querySelectorAll(".nav")].map(button=>button.dataset.target).filter(target=>target!=="overview"),visible=targets.filter(target=>!layout.hidden.includes(target)).length;
+    input.indeterminate=visible>0&&visible<targets.length;
+    input.onchange=()=>{const next=sidebarLayout(),hidden=new Set(next.hidden);targets.forEach(target=>input.checked?hidden.delete(target):hidden.add(target));persistSidebarLayout({...next,hidden:[...hidden]},"Gruppo aggiornato")};
+  });
   list.querySelectorAll("[data-sidebar-visible]").forEach(input=>input.onchange=()=>{
     const next=sidebarLayout(),hidden=new Set(next.hidden);
     input.checked?hidden.delete(input.dataset.sidebarVisible):hidden.add(input.dataset.sidebarVisible);
     persistSidebarLayout({...next,hidden:[...hidden]});
   });
+  list.querySelectorAll("[data-sidebar-move]").forEach(button=>button.onclick=()=>moveSidebarTarget(button.dataset.sidebarMove,num(button.dataset.sidebarMoveDirection)));
+  list.querySelectorAll("[data-sidebar-group-move]").forEach(button=>button.onclick=()=>moveSidebarGroup(button.dataset.sidebarGroupMove,num(button.dataset.sidebarMoveDirection)));
+  const activePreset=sidebarPreset(layout);
+  document.querySelectorAll("[data-sidebar-preset]").forEach(button=>button.classList.toggle("active",button.dataset.sidebarPreset===activePreset));
+  document.querySelectorAll("[data-sidebar-interface]").forEach(button=>button.classList.toggle("active",button.dataset.sidebarInterface===interfaceMode()));
   window.CryptoRadarI18n?.translateDocument();
+}
+function moveSidebarTarget(target,direction){
+  const layout=sidebarLayout(),button=document.querySelector(`#sidebarNav .nav[data-target="${target}"]`),group=button?.closest("[data-sidebar-group]");if(!group)return;
+  const groupTargets=layout.order.filter(item=>group.querySelector(`.nav[data-target="${item}"]`)),index=groupTargets.indexOf(target),swapTarget=groupTargets[index+direction];if(!swapTarget)return;
+  const nextOrder=[...layout.order],from=nextOrder.indexOf(target),to=nextOrder.indexOf(swapTarget);[nextOrder[from],nextOrder[to]]=[nextOrder[to],nextOrder[from]];
+  persistSidebarLayout({...layout,order:nextOrder},"Ordine aggiornato");
+}
+function moveSidebarGroup(groupId,direction){
+  const layout=sidebarLayout(),nextOrder=[...layout.groupOrder],from=nextOrder.indexOf(groupId),to=from+direction;if(from<0||to<0||to>=nextOrder.length)return;
+  [nextOrder[from],nextOrder[to]]=[nextOrder[to],nextOrder[from]];
+  persistSidebarLayout({...layout,groupOrder:nextOrder},"Ordine gruppi aggiornato");
+}
+function setSidebarPreset(preset){
+  const targets=sidebarPresetTargets[preset];if(!targets)return;const visible=new Set(targets),layout=sidebarLayout(),hidden=sidebarDefaultTargets.filter(target=>target!=="overview"&&!visible.has(target));
+  persistSidebarLayout({...layout,hidden},`Percorso ${preset==="essential"?"Essenziale":preset==="portfolio"?"Portafoglio":preset==="analysis"?"Analisi":preset==="community"?"Community":"Completo"} attivo`);
 }
 function toggleSidebarGroup(groupId){
   const layout=sidebarLayout(),collapsed=new Set(layout.collapsed);
@@ -489,11 +547,15 @@ function revealSidebarTarget(target){
   persistSidebarLayout({...layout,collapsed:layout.collapsed.filter(id=>id!==group.dataset.sidebarGroup)});
 }
 function setSidebarDensity(density){const layout=sidebarLayout();persistSidebarLayout({...layout,density:density==="compact"?"compact":"comfortable"})}
+function setSidebarInterface(mode){applyInterfaceMode(mode==="advanced"?"advanced":"beginner");renderSidebarLayoutManager();if($("sidebarLayoutStatus"))$("sidebarLayoutStatus").textContent="Modalità aggiornata"}
 function toggleSidebarLayout(open){
   $("sidebarLayoutManager").classList.toggle("hidden",!open);
+  $("sidebarLayoutManager").setAttribute("aria-modal",String(open&&window.matchMedia("(max-width:760px)").matches));
+  $("sidebarLayoutBackdrop").classList.toggle("hidden",!open);
   $("openSidebarLayout").classList.toggle("active",open);
   $("openSidebarLayout").setAttribute("aria-expanded",String(open));
-  if(open)renderSidebarLayoutManager();
+  document.body.classList.toggle("sidebar-layout-open",open);
+  if(open){renderSidebarLayoutManager();setTimeout(()=>$("closeSidebarLayout").focus(),0)}
 }
 function resetSidebarLayout(){localStorage.removeItem(sidebarLayoutStore);applySidebarLayout();$("sidebarLayoutStatus").textContent="Impostazione iniziale ripristinata"}
 
@@ -1320,7 +1382,7 @@ setupCatalogPickers();
 ensureRestoreLocalControl();
 $("refreshBtn").onclick=()=>loadAll(true);$("applyFilters").onclick=renderScreener;$("savePortfolio").onclick=savePortfolio;$("addPortfolioCoin").onclick=addPortfolioCoin;$("savePlan").onclick=savePlan;$("runDca").onclick=runDca;$("analyzeTrade").onclick=analyzeTrade;$("saveDecision").onclick=saveDecision;$("backBtn").onclick=()=>showPage('overview');
 $("openHomeLayout").onclick=()=>toggleHomeLayout($("homeLayoutManager").classList.contains("hidden"));$("closeHomeLayout").onclick=()=>toggleHomeLayout(false);$("resetHomeLayout").onclick=resetHomeLayout;
-$("openSidebarLayout").onclick=()=>toggleSidebarLayout($("sidebarLayoutManager").classList.contains("hidden"));$("closeSidebarLayout").onclick=()=>toggleSidebarLayout(false);$("resetSidebarLayout").onclick=resetSidebarLayout;document.querySelectorAll("[data-sidebar-density]").forEach(button=>button.onclick=()=>setSidebarDensity(button.dataset.sidebarDensity));
+$("openSidebarLayout").onclick=()=>toggleSidebarLayout($("sidebarLayoutManager").classList.contains("hidden"));$("closeSidebarLayout").onclick=()=>toggleSidebarLayout(false);$("sidebarLayoutBackdrop").onclick=()=>toggleSidebarLayout(false);$("resetSidebarLayout").onclick=resetSidebarLayout;$("openSidebarProfile").onclick=()=>{toggleSidebarLayout(false);openOnboarding()};document.querySelectorAll("[data-sidebar-density]").forEach(button=>button.onclick=()=>setSidebarDensity(button.dataset.sidebarDensity));document.querySelectorAll("[data-sidebar-interface]").forEach(button=>button.onclick=()=>setSidebarInterface(button.dataset.sidebarInterface));document.querySelectorAll("[data-sidebar-preset]").forEach(button=>button.onclick=()=>setSidebarPreset(button.dataset.sidebarPreset));document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("sidebarLayoutManager").classList.contains("hidden"))toggleSidebarLayout(false)});
 $("managePinned").onclick=()=>{$("pinnedManager").classList.toggle("hidden");if(!$("pinnedManager").classList.contains("hidden")){$("pinnedCoinSearch").focus();renderPinnedOptions(true)}else closePinnedOptions()};$("closePinned").onclick=()=>{$("pinnedManager").classList.add("hidden");closePinnedOptions()};$("addPinned").onclick=addPinnedCoin;
 $("pinnedCoinSearch").onfocus=()=>state.marketCatalogLoaded?renderPinnedOptions(true):loadMarketCatalog($("pinnedCoinSearch").value,true);
 $("pinnedCoinSearch").oninput=()=>{$("pinnedCoinSelect").value="";$("addPinned").disabled=true;state.marketCatalogLoading=true;renderPinnedOptions(true);queuePinnedCatalogSearch(true)};

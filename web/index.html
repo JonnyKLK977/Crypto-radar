@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="/phase27.css">
   <link rel="stylesheet" href="/phase28.css">
   <link rel="stylesheet" href="/phase29.css">
+  <link rel="stylesheet" href="/phase30.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -45,10 +46,26 @@
         <div><span>MENU MODULARE</span><b>Le tue sezioni</b></div>
         <button id="openSidebarLayout" type="button" aria-expanded="false">Personalizza</button>
       </div>
-      <div id="sidebarLayoutManager" class="sidebar-layout-manager hidden">
-        <div class="sidebar-layout-manager-head"><div><span>PERSONALIZZA MENU</span><b>Scegli cosa vedere</b></div><button id="closeSidebarLayout" type="button" aria-label="Chiudi personalizzazione">×</button></div>
-        <div class="sidebar-density-control" role="group" aria-label="Densità del menu"><span>Densità</span><button type="button" data-sidebar-density="comfortable">Comoda</button><button type="button" data-sidebar-density="compact">Compatta</button></div>
+      <div id="sidebarLayoutBackdrop" class="sidebar-layout-backdrop hidden"></div>
+      <div id="sidebarLayoutManager" class="sidebar-layout-manager hidden" role="dialog" aria-modal="false" aria-labelledby="sidebarLayoutTitle">
+        <div class="sidebar-layout-manager-head"><div><span>PERSONALIZZA MENU</span><b id="sidebarLayoutTitle">Le tue sezioni</b></div><button id="closeSidebarLayout" type="button" aria-label="Chiudi personalizzazione">×</button></div>
+        <div class="sidebar-personalization-block">
+          <span class="sidebar-control-label">Percorsi rapidi</span>
+          <div class="sidebar-preset-control" role="group" aria-label="Percorsi rapidi">
+            <button type="button" data-sidebar-preset="essential">Essenziale</button>
+            <button type="button" data-sidebar-preset="portfolio">Portafoglio</button>
+            <button type="button" data-sidebar-preset="analysis">Analisi</button>
+            <button type="button" data-sidebar-preset="community">Community</button>
+            <button type="button" data-sidebar-preset="complete">Completo</button>
+          </div>
+        </div>
+        <div class="sidebar-personalization-controls">
+          <div class="sidebar-density-control" role="group" aria-label="Densità del menu"><span>Densità</span><button type="button" data-sidebar-density="comfortable">Comoda</button><button type="button" data-sidebar-density="compact">Compatta</button></div>
+          <div class="sidebar-interface-control" role="group" aria-label="Modalità dell'interfaccia"><span>Interfaccia</span><button type="button" data-sidebar-interface="beginner">Principiante</button><button type="button" data-sidebar-interface="advanced">Avanzata</button></div>
+        </div>
+        <div class="sidebar-manager-list-head"><span>Sezioni visibili</span><small>Usa le frecce per cambiare ordine</small></div>
         <div id="sidebarModuleManagerList" class="sidebar-module-manager-list"></div>
+        <button id="openSidebarProfile" class="sidebar-profile-shortcut" type="button">Configura profilo</button>
         <div class="sidebar-layout-manager-footer"><button id="resetSidebarLayout" type="button">Ripristina</button><span id="sidebarLayoutStatus">Salvato in questo browser</span></div>
       </div>
       <nav id="sidebarNav" aria-label="Navigazione principale">
