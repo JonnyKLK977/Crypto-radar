@@ -43,7 +43,7 @@
         <button class="nav" data-target="operations">Centro operativo</button>
         <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
         <button class="nav advanced-only" data-target="intelligence">Intelligence Hub</button>
-        <button class="nav" data-target="community">Piazza Radar</button>
+        <button class="nav" data-target="community">Chat Community</button>
         <button class="nav" data-target="news">News & trend</button>
         <button class="nav" data-target="tax">730 & fiscalità crypto</button>
         <button class="nav" data-target="method">Metodo & rischio</button>
@@ -685,11 +685,11 @@
 
       <section id="community" class="page community-page">
         <div class="community-heading">
-          <div><p class="eyebrow">CONFRONTO, NON RUMORE</p><h2>Idee con metodo</h2><p>Idee crypto comprensibili, fonti visibili e strategie che dichiarano anche quando smettono di essere valide.</p></div>
+          <div><p class="eyebrow">CONFRONTO, NON RUMORE</p><h2>Chat Community</h2><p>Idee crypto comprensibili, fonti visibili e strategie che dichiarano anche quando smettono di essere valide.</p></div>
           <div class="community-presence"><span class="community-live-dot" aria-hidden="true"></span><b id="communityActive">0 attivi ora</b><small id="communityPersistence">Spazio condiviso</small></div>
         </div>
 
-        <div class="community-tabs" role="tablist" aria-label="Sezioni Piazza Radar">
+        <div class="community-tabs" role="tablist" aria-label="Sezioni Chat Community">
           <button class="chip active" data-community-tab="live" role="tab" aria-selected="true">Live</button>
           <button class="chip" data-community-tab="board" role="tab" aria-selected="false">Bacheca</button>
         </div>
@@ -703,7 +703,9 @@
                 <label>Tipo<select id="communityMessageCategory"><option value="idea">Idea</option><option value="question">Domanda</option><option value="source">Fonte</option><option value="risk">Rischio</option></select></label>
                 <label>Asset<input id="communityMessageAsset" maxlength="12" placeholder="BTC"></label>
                 <label class="community-message-body">Messaggio<textarea id="communityMessageBody" maxlength="400" rows="2" placeholder="Cosa hai osservato, su quali dati e che cosa resta da verificare?"></textarea><small><span id="communityMessageCount">0</span>/400</small></label>
+                <label class="community-upload-field">Foto / screenshot<input id="communityMessageImage" type="file" accept="image/jpeg,image/png,image/webp"></label>
                 <button id="sendCommunityMessage" class="primary" type="submit">Invia</button>
+                <div id="communityMessageImagePreview" class="community-upload-preview community-message-upload-preview hidden"></div>
               </form>
             </section>
 
@@ -729,6 +731,7 @@
                     <label>Condizione di invalidazione<textarea id="communityPostInvalidation" maxlength="800" rows="3" placeholder="Quale evento o dato ti farebbe cambiare idea?"></textarea></label>
                   </div>
                   <label>Fonte principale HTTPS<input id="communityPostSource" type="url" maxlength="500" placeholder="https://documentazione-ufficiale..."></label>
+                  <div class="community-upload-row"><label class="community-upload-field">Foto o screenshot<input id="communityPostImage" type="file" accept="image/jpeg,image/png,image/webp"></label><div id="communityPostImagePreview" class="community-upload-preview hidden"></div></div>
                   <div class="community-compose-footer"><p id="communityQualityHint">Completezza metodologica: aggiungi tesi, invalidazione, rischio e fonte.</p><button class="primary" type="submit">Pubblica</button></div>
                 </form>
               </details>
@@ -755,7 +758,7 @@
               <div id="communityFollowing" class="community-following"><p>Nessun profilo o strategia seguita.</p></div>
             </article>
 
-            <div class="community-principle"><b>Regola della Piazza</b><p>Spiega il perché, mostra la fonte, dichiara il rischio. Popolarità e follower non misurano affidabilità.</p></div>
+            <div class="community-principle"><b>Regola della community</b><p>Spiega il perché, mostra la fonte, dichiara il rischio. Popolarità e follower non misurano affidabilità.</p></div>
           </aside>
         </div>
       </section>

@@ -140,14 +140,14 @@ La modalità Avanzata include un centro di controllo costruito con funzioni che 
 
 Gli indici aggregati arrivano dalla Keyless Public API di CoinMarketCap e vengono memorizzati dal server per cinque minuti per rispettare i limiti condivisi. Gli endpoint senza chiave sono adatti a prototipi e uso leggero: una futura versione commerciale dovrà usare un piano/API key adeguato. Eventi, classificazioni e stress restano strumenti di ricerca e non raccomandazioni.
 
-## Piazza Radar
+## Chat Community
 
-La sezione **Piazza Radar** concentra la community in uno spazio compatto con due viste:
+La sezione **Chat Community** concentra la community in uno spazio compatto con due viste:
 
 - **Live Desk** per domande, fonti, idee e rischi in messaggi brevi, aggiornati ogni cinque secondi;
 - **Bacheca delle tesi** per analisi, domande, lezioni e Carte Strategia consultabili nel tempo.
 
-Una Carta Strategia separa contenuto, tesi, condizione di invalidazione, orizzonte, rischio dichiarato e fonte HTTPS. Il comando "Segui strategia" la aggiunge al radar sociale dell'utente: non copia operazioni e non esegue ordini. Profili, follow, messaggi, post e reazioni vengono salvati in `data/community.json`, separati da portafoglio e piano personale. Sono presenti limiti di lunghezza, convalida degli URL e rate limiting essenziale.
+Una Carta Strategia separa contenuto, tesi, condizione di invalidazione, orizzonte, rischio dichiarato e fonte HTTPS. Il comando "Segui strategia" la aggiunge al radar sociale dell'utente: non copia operazioni e non esegue ordini. Ogni contributo puo ricevere un voto da 1 a 5 e un feedback testuale; messaggi e feedback supportano like e dislike mutuamente esclusivi. Chat e bacheca accettano inoltre una foto o uno screenshot JPEG, PNG o WebP, compresso nel browser e validato dal server fino a 700 KB. Profili, follow, messaggi, post, valutazioni e reazioni vengono salvati in `data/community.json`, separati da portafoglio e piano personale. Sono presenti limiti di lunghezza, convalida degli URL e rate limiting essenziale.
 
 Nella demo Render le scritture community sono abilitate per consentire l'interazione tra visitatori, ma il filesystem resta temporaneo: un riavvio o una nuova distribuzione puo cancellare i contenuti. Prima di un uso pubblico stabile servono database persistente, autenticazione, recupero account, segnalazioni, moderazione, blocco utenti, informativa privacy e controlli anti-abuso piu robusti.
 

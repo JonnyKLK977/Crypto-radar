@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 import html
 import csv
+import base64
+import binascii
 import hashlib
 import io
 import mimetypes
@@ -213,6 +215,9 @@ def empty_community() -> dict:
         "follows": {},
         "strategyFollows": {},
         "reactions": {},
+        "messageVotes": {},
+        "ratings": {},
+        "feedbackVotes": {},
     }
 
 
@@ -231,6 +236,9 @@ def load_community_unlocked() -> dict:
         ("follows", dict),
         ("strategyFollows", dict),
         ("reactions", dict),
+        ("messageVotes", dict),
+        ("ratings", dict),
+        ("feedbackVotes", dict),
     ):
         if isinstance(data.get(key), expected):
             result[key] = data[key]
@@ -256,6 +264,61 @@ def community_text(value: object, maximum: int, label: str, minimum: int = 0) ->
     if len(cleaned) < minimum:
         raise ValueError(f"{label}: inserisci almeno {minimum} caratteri.")
     return cleaned
+
+
+def community_attachment(value: object) -> dict | None:
+    if value in (None, "", {}):
+        return None
+    if not isinstance(value, dict):
+        raise ValueError("Allegato immagine non valido.")
+    data_url = str(value.get("dataUrl", "")).strip()
+    if len(data_url) > 950_000 or "," not in data_url:
+        raise ValueError("L'immagine supera il limite consentito.")
+    header, encoded = data_url.split(",", 1)
+    mime_by_header = {
+        "data:image/jpeg;base64": "image/jpeg",
+        "data:image/png;base64": "image/png",
+        "data:image/webp;base64": "image/webp",
+    }
+    mime = mime_by_header.get(header.lower())
+    if not mime:
+        raise ValueError("Sono ammesse solo immagini JPEG, PNG o WebP.")
+    try:
+        raw = base64.b64decode(encoded, validate=True)
+    except (ValueError, binascii.Error) as exc:
+        raise ValueError("Immagine codificata in modo non valido.") from exc
+    if not raw or len(raw) > 700_000:
+        raise ValueError("L'immagine deve pesare al massimo 700 KB dopo la compressione.")
+    valid_signature = (
+        (mime == "image/jpeg" and raw.startswith(b"\xff\xd8\xff"))
+        or (mime == "image/png" and raw.startswith(b"\x89PNG\r\n\x1a\n"))
+        or (mime == "image/webp" and len(raw) >= 12 and raw[:4] == b"RIFF" and raw[8:12] == b"WEBP")
+    )
+    if not valid_signature:
+        raise ValueError("Il contenuto non corrisponde al formato immagine dichiarato.")
+    width = max(0, min(4096, int(value.get("width", 0) or 0)))
+    height = max(0, min(4096, int(value.get("height", 0) or 0)))
+    return {
+        "dataUrl": f"{header.lower()},{encoded}",
+        "name": community_text(value.get("name"), 80, "Nome immagine") or "immagine-community",
+        "mime": mime,
+        "size": len(raw),
+        "width": width,
+        "height": height,
+    }
+
+
+def community_vote_snapshot(votes: dict, target_id: str, viewer: str) -> dict:
+    bucket = votes.get(target_id, {})
+    if not isinstance(bucket, dict):
+        bucket = {}
+    likes = list(dict.fromkeys(str(item) for item in bucket.get("likes", []) if isinstance(item, str)))
+    dislikes = list(dict.fromkeys(str(item) for item in bucket.get("dislikes", []) if isinstance(item, str)))
+    return {
+        "likeCount": len(likes),
+        "dislikeCount": len(dislikes),
+        "viewerVote": "like" if viewer in likes else ("dislike" if viewer in dislikes else ""),
+    }
 
 
 def community_rate_allowed(client_ip: str, bucket: str, limit: int, window: int) -> bool:
@@ -292,14 +355,46 @@ def community_snapshot(viewer_value: object) -> dict:
             if isinstance(profile, dict):
                 profiles.append({**profile, "followerCount": follower_counts.get(str(profile.get("id", "")), 0)})
         profiles.sort(key=lambda item: (-int(item.get("followerCount", 0)), str(item.get("displayName", "")).lower()))
+        messages = []
+        for item in [entry for entry in data["messages"] if isinstance(entry, dict)][-120:]:
+            message_id = str(item.get("id", ""))
+            messages.append({**item, **community_vote_snapshot(data["messageVotes"], message_id, viewer)})
+        posts = []
+        for item in sorted(
+            [entry for entry in data["posts"] if isinstance(entry, dict)],
+            key=lambda entry: int(entry.get("createdAt", 0)),
+            reverse=True,
+        )[:300]:
+            post_id = str(item.get("id", ""))
+            raw_ratings = data["ratings"].get(post_id, {})
+            if not isinstance(raw_ratings, dict):
+                raw_ratings = {}
+            ratings = []
+            for entry in raw_ratings.values():
+                if not isinstance(entry, dict):
+                    continue
+                try:
+                    valid_score = 1 <= int(entry.get("score", 0)) <= 5
+                except (TypeError, ValueError):
+                    valid_score = False
+                if valid_score:
+                    ratings.append(entry)
+            feedback = []
+            for entry in sorted(ratings, key=lambda rating: int(rating.get("updatedAt", 0)), reverse=True)[:60]:
+                feedback_id = str(entry.get("id", ""))
+                feedback.append({**entry, **community_vote_snapshot(data["feedbackVotes"], feedback_id, viewer)})
+            score_total = sum(int(entry.get("score", 0)) for entry in ratings)
+            posts.append({
+                **item,
+                "ratingAverage": round(score_total / len(ratings), 1) if ratings else 0,
+                "ratingCount": len(ratings),
+                "viewerRating": raw_ratings.get(viewer) if viewer else None,
+                "feedback": feedback,
+            })
         return {
             "profiles": profiles,
-            "messages": [item for item in data["messages"] if isinstance(item, dict)][-120:],
-            "posts": sorted(
-                [item for item in data["posts"] if isinstance(item, dict)],
-                key=lambda item: int(item.get("createdAt", 0)),
-                reverse=True,
-            )[:300],
+            "messages": messages,
+            "posts": posts,
             "following": data["follows"].get(viewer, []) if viewer else [],
             "followedStrategies": data["strategyFollows"].get(viewer, []) if viewer else [],
             "reactedPosts": [
@@ -350,7 +445,10 @@ def save_community_profile(payload: dict) -> dict:
 
 def add_community_message(payload: dict) -> dict:
     user_id = community_id(payload.get("userId"))
-    body = community_text(payload.get("body"), 400, "Messaggio", 2)
+    body = community_text(payload.get("body"), 400, "Messaggio")
+    attachment = community_attachment(payload.get("attachment"))
+    if len(body) < 2 and not attachment:
+        raise ValueError("Inserisci un messaggio oppure allega un'immagine.")
     category = str(payload.get("category", "idea"))
     if category not in {"idea", "question", "source", "risk"}:
         category = "idea"
@@ -359,7 +457,7 @@ def add_community_message(payload: dict) -> dict:
         data = load_community_unlocked()
         if user_id not in data["profiles"]:
             raise ValueError("Completa il profilo community prima di scrivere.")
-        message = {"id": uuid.uuid4().hex, "authorId": user_id, "body": body, "category": category, "asset": asset, "createdAt": int(time.time())}
+        message = {"id": uuid.uuid4().hex, "authorId": user_id, "body": body, "category": category, "asset": asset, "attachment": attachment, "createdAt": int(time.time())}
         data["messages"] = ([item for item in data["messages"] if isinstance(item, dict)] + [message])[-500:]
         write_community_unlocked(data)
     return message
@@ -382,6 +480,7 @@ def add_community_post(payload: dict) -> dict:
     thesis = community_text(payload.get("thesis"), 1200, "Tesi")
     invalidation = community_text(payload.get("invalidation"), 800, "Invalidazione")
     source_url = str(payload.get("sourceUrl", "")).strip()[:500]
+    attachment = community_attachment(payload.get("attachment"))
     if source_url:
         parsed = urllib.parse.urlparse(source_url)
         if parsed.scheme != "https" or not parsed.netloc:
@@ -405,6 +504,7 @@ def add_community_post(payload: dict) -> dict:
             "thesis": thesis,
             "invalidation": invalidation,
             "sourceUrl": source_url,
+            "attachment": attachment,
             "quality": quality,
             "createdAt": int(time.time()),
             "reactionCount": 0,
@@ -413,6 +513,42 @@ def add_community_post(payload: dict) -> dict:
         data["posts"] = ([item for item in data["posts"] if isinstance(item, dict)] + [post])[-300:]
         write_community_unlocked(data)
     return post
+
+
+def save_community_rating(payload: dict) -> dict:
+    user_id = community_id(payload.get("userId"))
+    post_id = community_id(payload.get("postId"), "contributo")
+    try:
+        score = int(payload.get("score", 0))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Seleziona un voto da 1 a 5.") from exc
+    if score < 1 or score > 5:
+        raise ValueError("Seleziona un voto da 1 a 5.")
+    feedback = community_text(payload.get("feedback"), 600, "Feedback")
+    with _community_lock:
+        data = load_community_unlocked()
+        if user_id not in data["profiles"]:
+            raise ValueError("Profilo community non trovato.")
+        post = next((item for item in data["posts"] if isinstance(item, dict) and item.get("id") == post_id), None)
+        if not post:
+            raise ValueError("Contributo non trovato.")
+        if post.get("authorId") == user_id:
+            raise ValueError("Non puoi valutare il tuo contributo.")
+        post_ratings = data["ratings"].setdefault(post_id, {})
+        previous = post_ratings.get(user_id, {}) if isinstance(post_ratings.get(user_id), dict) else {}
+        now = int(time.time())
+        rating = {
+            "id": str(previous.get("id") or uuid.uuid4().hex),
+            "postId": post_id,
+            "authorId": user_id,
+            "score": score,
+            "feedback": feedback,
+            "createdAt": int(previous.get("createdAt", now)),
+            "updatedAt": now,
+        }
+        post_ratings[user_id] = rating
+        write_community_unlocked(data)
+    return rating
 
 
 def update_community_relation(payload: dict) -> dict:
@@ -424,6 +560,43 @@ def update_community_relation(payload: dict) -> dict:
         data = load_community_unlocked()
         if user_id not in data["profiles"]:
             raise ValueError("Profilo community non trovato.")
+        vote_actions = {
+            "message-like": ("messageVotes", "like"),
+            "message-dislike": ("messageVotes", "dislike"),
+            "feedback-like": ("feedbackVotes", "like"),
+            "feedback-dislike": ("feedbackVotes", "dislike"),
+        }
+        if action in vote_actions:
+            store_key, sentiment = vote_actions[action]
+            if store_key == "messageVotes":
+                target = next((item for item in data["messages"] if isinstance(item, dict) and item.get("id") == target_id), None)
+            else:
+                target = next((
+                    entry
+                    for post_ratings in data["ratings"].values() if isinstance(post_ratings, dict)
+                    for entry in post_ratings.values()
+                    if isinstance(entry, dict) and entry.get("id") == target_id
+                ), None)
+            if not target:
+                raise ValueError("Contenuto da votare non trovato.")
+            if target.get("authorId") == user_id:
+                raise ValueError("Non puoi votare il tuo contenuto.")
+            bucket = data[store_key].setdefault(target_id, {"likes": [], "dislikes": []})
+            if not isinstance(bucket, dict):
+                bucket = {"likes": [], "dislikes": []}
+            selected_key = "likes" if sentiment == "like" else "dislikes"
+            other_key = "dislikes" if sentiment == "like" else "likes"
+            selected = [str(item) for item in bucket.get(selected_key, []) if isinstance(item, str)]
+            other = [str(item) for item in bucket.get(other_key, []) if isinstance(item, str) and item != user_id]
+            if active and user_id not in selected:
+                selected.append(user_id)
+            if not active:
+                selected = [item for item in selected if item != user_id]
+            bucket = {selected_key: list(dict.fromkeys(selected)), other_key: list(dict.fromkeys(other))}
+            data[store_key][target_id] = bucket
+            write_community_unlocked(data)
+            snapshot = community_vote_snapshot(data[store_key], target_id, user_id)
+            return {"action": action, "targetId": target_id, "active": active, **snapshot}
         if action == "follow-profile":
             if target_id == user_id or target_id not in data["profiles"]:
                 raise ValueError("Profilo da seguire non valido.")
@@ -1313,7 +1486,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({"error": "Errore interno inatteso."}, 500)
 
     def do_POST(self) -> None:  # noqa: N802
-        community_paths = {"/api/community/profile", "/api/community/message", "/api/community/post", "/api/community/action"}
+        community_paths = {"/api/community/profile", "/api/community/message", "/api/community/post", "/api/community/rating", "/api/community/action"}
         allowed_paths = {"/api/portfolio", "/api/plan", "/api/journal", "/api/import/preview", "/api/import/confirm", "/api/restore-local-backup"} | community_paths
         if self.path not in allowed_paths:
             return self.send_json({"error": "Endpoint non trovato."}, 404)
@@ -1321,7 +1494,12 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json({"error": "La demo pubblica è in sola lettura e non salva dati personali."}, 403)
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            limit = 3_000_000 if self.path == "/api/import/preview" else 100_000
+            if self.path == "/api/import/preview":
+                limit = 3_000_000
+            elif self.path in {"/api/community/message", "/api/community/post"}:
+                limit = 1_200_000
+            else:
+                limit = 100_000
             if length > limit:
                 return self.send_json({"error": "Richiesta troppo grande."}, 413)
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
@@ -1330,6 +1508,7 @@ class Handler(BaseHTTPRequestHandler):
                     "/api/community/profile": ("profile", 8, 600),
                     "/api/community/message": ("message", 15, 60),
                     "/api/community/post": ("post", 5, 600),
+                    "/api/community/rating": ("rating", 12, 600),
                     "/api/community/action": ("action", 40, 60),
                 }
                 bucket, count, window = rules[self.path]
@@ -1341,6 +1520,8 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json(add_community_message(payload), 201)
                 if self.path == "/api/community/post":
                     return self.send_json(add_community_post(payload), 201)
+                if self.path == "/api/community/rating":
+                    return self.send_json(save_community_rating(payload), 201)
                 return self.send_json(update_community_relation(payload))
             if self.path == "/api/restore-local-backup":
                 return self.send_json(restore_local_backup(payload))
