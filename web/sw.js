@@ -1,5 +1,5 @@
-const CACHE_NAME="crypto-radar-shell-v27";
-const SHELL=["/","/styles.css","/phase2.css","/phase3.css","/phase4.css","/phase5.css","/phase6.css","/phase7.css","/phase8.css","/phase9.css","/phase10.css","/phase11.css","/phase12.css","/phase13.css","/phase14.css","/phase15.css","/phase16.css","/phase17.css","/phase18.css","/phase19.css","/phase20.css","/phase21.css","/phase22.css","/phase23.css","/phase24.css","/phase25.css","/phase26.css","/phase27.css","/phase28.css","/phase29.css","/phase30.css","/phase31.css","/phase32.css","/phase33.css","/phase34.css","/app.js","/i18n.js","/i18n-en.json","/i18n-es.json","/icon.svg","/manifest.webmanifest"];
+const CACHE_NAME="crypto-radar-shell-v28";
+const SHELL=["/","/styles.css","/phase2.css","/phase3.css","/phase4.css","/phase5.css","/phase6.css","/phase7.css","/phase8.css","/phase9.css","/phase10.css","/phase11.css","/phase12.css","/phase13.css","/phase14.css","/phase15.css","/phase16.css","/phase17.css","/phase18.css","/phase19.css","/phase20.css","/phase21.css","/phase22.css","/phase23.css","/phase24.css","/phase25.css","/phase26.css","/phase27.css","/phase28.css","/phase29.css","/phase30.css","/phase31.css","/phase32.css","/phase33.css","/phase34.css","/phase35.css","/app.js","/i18n.js","/i18n-en.json","/i18n-es.json","/icon.svg","/manifest.webmanifest"];
 
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.allSettled(SHELL.map(path=>cache.add(path)))));
