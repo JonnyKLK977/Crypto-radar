@@ -722,6 +722,11 @@ function chartMoney(value,currency=detailChartState.currency,compact=false){
   const amount=num(value),absolute=Math.abs(amount),digits=absolute>=1000?2:absolute>=1?4:absolute>=.01?6:8;
   return new Intl.NumberFormat(uiLocale(),{style:"currency",currency:currency||"EUR",notation:compact?"compact":"standard",maximumFractionDigits:compact?2:digits}).format(amount);
 }
+function chartPercent(value){
+  const amount=num(value),absolute=Math.abs(amount);
+  if(absolute<10000)return fmtPct(amount);
+  return `${amount>=0?"+":"−"}${new Intl.NumberFormat(uiLocale(),{notation:"compact",maximumFractionDigits:2}).format(absolute)}%`;
+}
 function chartDate(timestamp,range=detailChartState.range,full=false){
   const date=new Date(num(timestamp));
   const options=range==="1"?{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}:range==="7"?{weekday:full?"short":undefined,day:"2-digit",month:"short",hour:full?"2-digit":undefined,minute:full?"2-digit":undefined}:range==="30"||range==="90"?{day:"2-digit",month:"short",year:full?"numeric":undefined}:{month:"short",year:"numeric",day:full?"2-digit":undefined};
@@ -742,7 +747,7 @@ function setChartQuote(row,index=detailChartState.rows.length-1){
   if(!row)return;
   const first=detailChartState.rows[0],changePct=first?.price?(row.price/first.price-1)*100:0;
   $("detailChartPrice").textContent=chartMoney(row.price);
-  $("detailChartChange").textContent=fmtPct(changePct);
+  $("detailChartChange").textContent=chartPercent(changePct);
   $("detailChartChange").className=changePct>=0?"positive":"negative";
   $("detailChartTimestamp").textContent=`${chartDate(row.timestamp,detailChartState.range,true)} · ${tr(detailRangeLabels[detailChartState.range])}`;
 }
@@ -758,7 +763,7 @@ function showChartPoint(index){
   hover?.setAttribute("visibility","visible");crosshair?.setAttribute("x1",x);crosshair?.setAttribute("x2",x);
   dot?.setAttribute("cx",x);dot?.setAttribute("cy",y);
   const periodChange=detailChartState.rows[0]?.price?(row.price/detailChartState.rows[0].price-1)*100:0;
-  tooltip.innerHTML=`<b>${chartMoney(row.price)}</b><span>${esc(chartDate(row.timestamp,detailChartState.range,true))}</span><small>${tr("Variazione periodo")}: ${fmtPct(periodChange)}${row.volume?` · ${tr("Volume 24h")}: ${chartMoney(row.volume,detailChartState.currency,true)}`:""}</small>`;
+  tooltip.innerHTML=`<b>${chartMoney(row.price)}</b><span>${esc(chartDate(row.timestamp,detailChartState.range,true))}</span><small>${tr("Variazione periodo")}: ${chartPercent(periodChange)}${row.volume?` · ${tr("Volume 24h")}: ${chartMoney(row.volume,detailChartState.currency,true)}`:""}</small>`;
   tooltip.classList.remove("hidden");
   const stageRect=stage.getBoundingClientRect(),left=x/detailChartState.width*stageRect.width+12,top=y/detailChartState.height*stageRect.height-18;
   tooltip.style.left=`${clamp(left,8,Math.max(8,stageRect.width-tooltip.offsetWidth-8))}px`;
