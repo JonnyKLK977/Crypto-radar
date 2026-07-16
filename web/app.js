@@ -1258,6 +1258,30 @@ document.querySelectorAll('[data-help-guide]').forEach(button=>button.onclick=()
 function renderTaxChecklist(){const checks=[...document.querySelectorAll('[data-tax-check]')],saved=localData("cryptoRadarTaxChecklist",{});checks.forEach((check,index)=>check.checked=Boolean(saved[index]));const done=checks.filter(check=>check.checked).length,pct=checks.length?Math.round(done/checks.length*100):0;if($("taxCheckLabel"))$("taxCheckLabel").textContent=`${done}/${checks.length} documenti controllati`;if($("taxCheckBar"))$("taxCheckBar").style.width=`${pct}%`}
 document.querySelectorAll('[data-tax-check]').forEach((check,index)=>check.onchange=()=>{const saved=localData("cryptoRadarTaxChecklist",{});saved[index]=check.checked;saveLocalData("cryptoRadarTaxChecklist",saved);renderTaxChecklist()});
 renderTaxChecklist();
+function renderFirstTaxPath(){
+  const checks=[...document.querySelectorAll("[data-tax-first]")],saved=localData("cryptoRadarFirstDeclaration2026",{});
+  checks.forEach(check=>check.checked=Boolean(saved[check.dataset.taxFirst]));
+  const done=checks.filter(check=>check.checked).length,pct=checks.length?Math.round(done/checks.length*100):0;
+  if($("taxFirstProgressLabel"))$("taxFirstProgressLabel").textContent=done===checks.length?"Percorso preparatorio completato":`${done}/${checks.length} passaggi completati`;
+  if($("taxFirstProgressBar"))$("taxFirstProgressBar").style.width=`${pct}%`;
+}
+document.querySelectorAll("[data-tax-first]").forEach(check=>check.onchange=()=>{
+  const saved=localData("cryptoRadarFirstDeclaration2026",{});
+  saved[check.dataset.taxFirst]=check.checked;
+  saveLocalData("cryptoRadarFirstDeclaration2026",saved);
+  renderFirstTaxPath();
+});
+if($("resetTaxFirstPath"))$("resetTaxFirstPath").onclick=()=>{
+  localStorage.removeItem("cryptoRadarFirstDeclaration2026");
+  renderFirstTaxPath();
+};
+document.querySelectorAll("[data-tax-open]").forEach(button=>button.onclick=()=>{
+  const lesson=$(button.dataset.taxOpen);
+  if(!lesson)return;
+  lesson.open=true;
+  lesson.scrollIntoView({behavior:"smooth",block:"start"});
+});
+renderFirstTaxPath();
 const taxTemplateFiles={
   inventory:{
     filename:"crypto-radar-inventario-crypto-2025.csv",
@@ -1268,6 +1292,11 @@ const taxTemplateFiles={
     filename:"crypto-radar-registro-operazioni-fiscali-2025.csv",
     type:"text/csv;charset=utf-8",
     content:()=>"\ufeffData_ora;Fuso_orario;Piattaforma;Wallet;Tipo_evento;Asset_ceduto;Quantita_ceduta;Asset_ricevuto;Quantita_ricevuta;Corrispettivo_o_valore_EUR;Costo_documentato_EUR;Commissioni_EUR;Fonte_cambio;Hash_o_ID;Wallet_proprio_SI_NO;Classificazione_da_verificare;Documento_fonte;Note\r\n"
+  },
+  reconciliation:{
+    filename:"crypto-radar-riconciliazione-trasferimenti-2025.csv",
+    type:"text/csv;charset=utf-8",
+    content:()=>"\ufeffID_abbinamento;Data_ora_uscita;Piattaforma_wallet_uscita;Asset;Quantita_uscita;Fee_asset;Fee_quantita;Hash_o_ID_uscita;Data_ora_ingresso;Piattaforma_wallet_ingresso;Quantita_ingresso;Hash_o_ID_ingresso;Entrambi_wallet_propri_SI_NO;Differenza_spiegata;Prova_titolarita;Esito_riconciliazione;Note\r\n"
   },
   handover:{
     filename:"crypto-radar-checklist-consegna-730-2026.txt",
