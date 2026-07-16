@@ -114,7 +114,7 @@ La pagina **Guide & Manuali** contiene un percorso educativo in diciannove modul
 - manuale completo di Laboratorio e Centro operativo;
 - flusso di News, Metodo e guida fiscale.
 - manuale completo dell’Assistente Personale, della condivisione e del Centro privacy.
-- manuale di Execution Lab, Risk Engine e verifica degli operatori nel registro MiCA.
+- manuale di Costo operazione, Risk Engine e verifica degli operatori nel registro MiCA.
 - manuale completo dell'Intelligence Hub: temperatura, eventi, esposizioni, stress, integrità fiscale e brief.
 - manuale della Chat Community: profili, chat live, bacheca, strategie, fonti e valutazioni;
 - manuale di orientamento per usare indice, progresso, glossario e collegamenti contestuali;
@@ -126,13 +126,13 @@ Ogni sezione dell'app espone un collegamento **Come funziona** che apre direttam
 
 La modalità Avanzata include tre strumenti con fonti e limiti dichiarati:
 
-- **Execution Lab** confronta gli order book pubblici BTC/altcoin-EUR di Coinbase, Kraken e Bitvavo e mostra spread, VWAP, slippage, fill e profondità osservata;
+- **Costo operazione** confronta i prezzi e la liquidità pubblica delle coppie crypto-EUR di Coinbase, Kraken e Bitvavo e spiega in ordine fill, VWAP, slippage, spread, profondità e commissioni;
 - **Risk Engine** combina le posizioni del portafoglio usando serie orarie Kraken e calcola volatilità annualizzata, beta BTC, numero effettivo di posizioni, proxy storica di perdita, correlazioni e contributi al rischio;
 - **Verifica MiCA** cerca nome, dominio o LEI nei CSV ufficiali ESMA dei CASP autorizzati e delle entità non conformi.
 
 Sono strumenti informativi: non eseguono ordini, non certificano operatori e non stimano la perdita massima futura.
 
-I selettori crypto di Home, Portafoglio, Piano DCA, Assistente Personale, Laboratorio, Paper Trading ed Execution Lab permettono di scrivere nome o simbolo e ordinare il catalogo per rank o alfabeticamente. Il catalogo di scelta include fino a 5.000 asset CoinMarketCap; la disponibilità di storico CoinGecko, score completo o coppie EUR viene verificata separatamente e può essere più limitata.
+I selettori crypto di Home, Portafoglio, Piano DCA, Assistente Personale, Laboratorio, Paper Trading e Costo operazione permettono di scrivere nome o simbolo e ordinare il catalogo per rank o alfabeticamente. Il catalogo di scelta include fino a 5.000 asset CoinMarketCap; la disponibilità di storico CoinGecko, score completo o coppie EUR viene verificata separatamente e può essere più limitata.
 
 ## Intelligence Hub personale
 
