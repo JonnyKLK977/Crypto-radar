@@ -8,6 +8,8 @@ L’intera Home è componibile: ogni browser conserva ordine e visibilità dei s
 
 Anche la navigazione laterale è modulare: le voci mantengono i nomi originali ma sono raccolte in gruppi richiudibili. Ogni browser può nascondere le sezioni non utilizzate, scegliere una densità comoda o compatta e ripristinare la configurazione iniziale; Panoramica resta sempre disponibile.
 
+La sezione **A cosa serve** introduce il progetto con un linguaggio accessibile ma completo: chiarisce che cosa Crypto Radar fa e non fa, descrive il processo in sei passaggi, propone percorsi distinti per principianti e utenti esperti e collega ogni sezione alla domanda pratica a cui risponde.
+
 La pagina **Il mio portafoglio** parte vuota: POL, ALGO, ADA o altre crypto non vengono assegnate automaticamente. L'utente può aggiungere e rimuovere liberamente fino a 30 asset dal catalogo di mercato, quindi compilare quantità e costo medio. Nella demo pubblica portafoglio e piano vengono salvati soltanto nel browser utilizzato.
 
 ## Avvio
