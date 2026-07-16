@@ -8,7 +8,7 @@ La scheda di ogni crypto include un grafico interattivo in stile CoinMarketCap c
 
 L’intera Home è componibile: ogni browser conserva ordine e visibilità dei sette moduli disponibili. Il pannello consente trascinamento, spostamento accessibile con frecce, mostra/nascondi e ripristino. Oltre ai moduli di mercato sono disponibili una sintesi personale del portafoglio e scorciatoie verso Assistente Personale, Laboratorio, guide e fiscalità.
 
-Anche la navigazione laterale è modulare: le voci mantengono i nomi originali ma sono raccolte in gruppi richiudibili. Ogni browser può nascondere le sezioni non utilizzate, scegliere una densità comoda o compatta e ripristinare la configurazione iniziale; Panoramica resta sempre disponibile.
+Anche la navigazione laterale è modulare: le voci mantengono i nomi originali ma sono raccolte in gruppi richiudibili. Ogni browser può usare percorsi rapidi tematici, mostrare o nascondere gruppi e singole sezioni, riordinarli, scegliere una densità comoda o compatta, passare tra interfaccia Principiante e Avanzata e ripristinare la configurazione iniziale; Panoramica resta sempre disponibile. Su mobile il menu è una barra compatta con la sezione attiva visibile e il pannello Personalizza si apre dal basso rispettando le aree sicure di iOS e Android.
 
 La sezione **A cosa serve** introduce il progetto con un linguaggio accessibile ma completo: chiarisce che cosa Crypto Radar fa e non fa, descrive il processo in sei passaggi, propone percorsi distinti per principianti e utenti esperti e collega ogni sezione alla domanda pratica a cui risponde.
 
