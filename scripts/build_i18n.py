@@ -21,6 +21,13 @@ WEB = ROOT / "web"
 SPLIT = "<<<CR_SPLIT>>>"
 MANUAL_OVERRIDES = {
     "en": {
+        "Potenziali Crypto": "Potential Cryptos",
+        "Assistente Personale": "Personal Assistant",
+        "Laboratorio": "Laboratory",
+        "Usare l’Assistente Personale": "Using the Personal Assistant",
+        "Apri Assistente Personale": "Open Personal Assistant",
+        "Come funziona": "How it works",
+        "Guida della sezione": "Section guide",
         "Ultime da Criptovaluta.it": "Latest from Criptovaluta.it",
         "Apri Criptovaluta.it ↗": "Open Criptovaluta.it ↗",
         "La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.": "The Home page shows the latest headlines from Criptovaluta.it. Always open the source and keep information separate from the quantitative score.",
@@ -29,6 +36,13 @@ MANUAL_OVERRIDES = {
         "Layer 1": "Layer 1", "Layer 2": "Layer 2", "Altro / da verificare": "Other / to verify",
     },
     "es": {
+        "Potenziali Crypto": "Criptomonedas potenciales",
+        "Assistente Personale": "Asistente Personal",
+        "Laboratorio": "Laboratorio",
+        "Usare l’Assistente Personale": "Usar el Asistente Personal",
+        "Apri Assistente Personale": "Abrir Asistente Personal",
+        "Come funziona": "Cómo funciona",
+        "Guida della sezione": "Guía de la sección",
         "Ultime da Criptovaluta.it": "Lo último de Criptovaluta.it",
         "Apri Criptovaluta.it ↗": "Abrir Criptovaluta.it ↗",
         "La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.": "La página de inicio muestra los últimos titulares de Criptovaluta.it. Abra siempre la fuente y mantenga la información separada de la puntuación cuantitativa.",

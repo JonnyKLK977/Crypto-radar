@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="/phase17.css">
   <link rel="stylesheet" href="/phase18.css">
   <link rel="stylesheet" href="/phase19.css">
+  <link rel="stylesheet" href="/phase20.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -33,13 +34,13 @@
       <div class="brand"><span class="brand-mark">CR</span><div><b>Crypto Radar</b><small>Decision support</small></div></div>
       <nav>
         <button class="nav active" data-target="overview">Panoramica</button>
-        <button class="nav" data-target="screener">Opportunity screener</button>
+        <button class="nav" data-target="screener">Potenziali Crypto</button>
         <button class="nav" data-target="portfolio">Il mio portafoglio</button>
         <button class="nav" data-target="connections">Exchange & wallet</button>
         <button class="nav" data-target="academy">Guide & Manuali</button>
         <button class="nav" data-target="plan">Piano personale</button>
-        <button class="nav" data-target="copilot">Copilota 360</button>
-        <button class="nav" data-target="decision">Decision Lab</button>
+        <button class="nav" data-target="copilot">Assistente Personale</button>
+        <button class="nav" data-target="decision">Laboratorio</button>
         <button class="nav" data-target="operations">Centro operativo</button>
         <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
         <button class="nav advanced-only" data-target="intelligence">Intelligence Hub</button>
@@ -59,7 +60,7 @@
       </header>
 
       <div id="notice" class="notice hidden"></div>
-      <div id="demoBanner" class="demo-banner hidden"><b>Modalità demo pubblica</b><span>Le scritture sul server sono disattivate. Preferenze, Copilota e strumenti operativi possono restare soltanto nel browser e si gestiscono dal Centro privacy.</span></div>
+      <div id="demoBanner" class="demo-banner hidden"><b>Modalità demo pubblica</b><span>Le scritture sul server sono disattivate. Preferenze, Assistente Personale e strumenti operativi possono restare soltanto nel browser e si gestiscono dal Centro privacy.</span></div>
 
       <section id="overview" class="page active">
         <article class="card home-layout-bar">
@@ -143,15 +144,15 @@
         </div>
 
         <div class="home-widget" data-home-widget="candidates">
-        <div class="section-title"><div><p class="eyebrow">SEGNALI MIGLIORI</p><h2>Candidate emerse oggi</h2></div><button class="link-button" data-go="screener">Apri screener →</button></div>
+        <div class="section-title"><div><p class="eyebrow">SEGNALI MIGLIORI</p><h2>Candidate emerse oggi</h2></div><button class="link-button" data-go="screener">Apri Potenziali Crypto →</button></div>
         <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>Crypto</th><th>Score</th><th>Perché emerge</th><th>Prezzo</th><th>7g</th><th>30g</th><th>Rischio</th></tr></thead><tbody id="topCandidates"></tbody></table></div></div>
         </div>
 
         <div class="home-widget" data-home-widget="quick-actions">
           <div class="section-title"><div><p class="eyebrow">PROSSIMO PASSO</p><h2>Azioni rapide e consapevoli</h2></div><span class="muted">Prima il processo, poi la decisione</span></div>
           <div class="home-quick-grid">
-            <button class="card home-quick-action" data-go="copilot"><span>01</span><div><b>Controlla una decisione</b><small>Usa il Copilota 360 prima di agire</small></div><i>→</i></button>
-            <button class="card home-quick-action" data-go="decision"><span>02</span><div><b>Simula rischio e peso</b><small>Apri Decision Lab e confronta il piano</small></div><i>→</i></button>
+            <button class="card home-quick-action" data-go="copilot"><span>01</span><div><b>Controlla una decisione</b><small>Usa l’Assistente Personale prima di agire</small></div><i>→</i></button>
+            <button class="card home-quick-action" data-go="decision"><span>02</span><div><b>Simula rischio e peso</b><small>Apri Laboratorio e confronta il piano</small></div><i>→</i></button>
             <button class="card home-quick-action" data-go="academy"><span>03</span><div><b>Chiarisci un dubbio</b><small>Consulta Guide & Manuali</small></div><i>→</i></button>
             <button class="card home-quick-action" data-go="tax"><span>04</span><div><b>Aggiorna la parte fiscale</b><small>Controlla documenti e riconciliazione</small></div><i>→</i></button>
           </div>
@@ -201,14 +202,35 @@
         </div>
 
         <div class="guide-jump-grid" aria-label="Indice delle guide">
+          <button class="card guide-jump" data-guide-open="academy-manual"><b>00 · Orientarsi</b><span>Indice, progresso, glossario e collegamenti Come funziona</span></button>
           <button class="card guide-jump" data-guide-open="foundations"><b>01–06 · Imparare</b><span>Basi, rischio, ricerca, grafici, fonti e sicurezza</span></button>
           <button class="card guide-jump" data-guide-open="wallet"><b>07 · Aprire un wallet</b><span>Scelta, installazione, backup e primo trasferimento</span></button>
-          <button class="card guide-jump" data-guide-open="app-start"><b>08–09 · Iniziare con l’app</b><span>Panoramica, screener, portafoglio e importazioni</span></button>
-          <button class="card guide-jump" data-guide-open="decision-manual"><b>10–12 · Decidere e controllare</b><span>Piano, Decision Lab e Centro operativo</span></button>
+          <button class="card guide-jump" data-guide-open="app-start"><b>08–09 · Iniziare con l’app</b><span>Panoramica, Potenziali Crypto, portafoglio e importazioni</span></button>
+          <button class="card guide-jump" data-guide-open="decision-manual"><b>10–12 · Decidere e controllare</b><span>Piano, Laboratorio e Centro operativo</span></button>
           <button class="card guide-jump" data-guide-open="news-manual"><b>13 · Informazione e metodo</b><span>News, punteggi, limiti e routine consigliata</span></button>
-          <button class="card guide-jump" data-guide-open="copilot-manual"><b>14 · Copilota 360</b><span>Controlli, passaporti, fisco, sicurezza e privacy</span></button>
+          <button class="card guide-jump" data-guide-open="copilot-manual"><b>14 · Assistente Personale</b><span>Controlli, passaporti, fisco, sicurezza e privacy</span></button>
           <button class="card guide-jump" data-guide-open="advanced-manual"><b>15 · Strumenti avanzati</b><span>Esecuzione, rischio congiunto e verifica MiCA</span></button>
           <button class="card guide-jump" data-guide-open="intelligence-manual"><b>16 · Intelligence Hub</b><span>Contesto, esposizioni, stress, eventi, fisco e brief</span></button>
+          <button class="card guide-jump" data-guide-open="community-manual"><b>17 · Community</b><span>Chat live, bacheca, strategie, profili e valutazioni</span></button>
+          <button class="card guide-jump" data-guide-open="tax-method-manual"><b>18 · Fisco e metodo</b><span>Usare la guida 730 e interpretare correttamente lo score</span></button>
+        </div>
+
+        <div class="guide-section-heading guide-directory-heading"><span>MANUALI RAPIDI</span><div><b>Una guida per ogni sezione</b><small>Apri direttamente il capitolo collegato alla funzione che stai usando</small></div></div>
+        <div class="guide-directory" aria-label="Manuali delle sezioni">
+          <button data-guide-open="app-start">Panoramica</button>
+          <button data-guide-open="app-start">Potenziali Crypto</button>
+          <button data-guide-open="portfolio-manual">Il mio portafoglio</button>
+          <button data-guide-open="portfolio-manual">Exchange &amp; wallet</button>
+          <button data-guide-open="plan-manual">Piano personale</button>
+          <button data-guide-open="copilot-manual">Assistente Personale</button>
+          <button data-guide-open="decision-manual">Laboratorio</button>
+          <button data-guide-open="operations-manual">Centro operativo</button>
+          <button data-guide-open="advanced-manual">Strumenti avanzati</button>
+          <button data-guide-open="intelligence-manual">Intelligence Hub</button>
+          <button data-guide-open="community-manual">Chat Community</button>
+          <button data-guide-open="news-manual">News &amp; trend</button>
+          <button data-guide-open="tax-method-manual">730 &amp; fiscalità</button>
+          <button data-guide-open="tax-method-manual">Metodo &amp; rischio</button>
         </div>
 
         <div class="academy-layout">
@@ -345,14 +367,27 @@
 
             <div class="guide-section-heading"><span>PARTE 3</span><div><b>Manuale completo di Crypto Radar</b><small>Che cosa mostra ogni sezione e in quale ordine usarla</small></div></div>
 
-            <details class="card lesson" data-lesson="app-start">
-              <summary><span class="lesson-number">08</span><div><b>Panoramica e Opportunity screener</b><small>Leggere regime, score, rischio e filtri senza scambiarli per previsioni</small></div><span class="lesson-time">18 min</span></summary>
+            <details class="card lesson" data-lesson="academy-manual">
+              <summary><span class="lesson-number">00</span><div><b>Come usare Guide &amp; Manuali</b><small>Indice, lezioni, progresso, glossario e collegamenti contestuali</small></div><span class="lesson-time">8 min</span></summary>
               <div class="lesson-content">
-                <h3>Panoramica</h3><div class="field-guide"><div><b>Personalizza Home</b><span>Apri il pannello in cima alla pagina. Trascina i moduli o usa le frecce per cambiarne l’ordine; disattiva “Visibile” per nasconderli e riattivala per aggiungerli di nuovo. “Ripristina” torna all’ordine iniziale. Tutto resta nel browser.</span></div><div><b>Lingua della Home</b><span>Seleziona italiano, inglese o spagnolo. La scelta viene ricordata nel browser e traduce l’intera app, non soltanto la pagina iniziale.</span></div><div><b>Sintesi portafoglio</b><span>Riepiloga valore, risultato indicativo, posizione maggiore e confronto col limite personale. Se mancano costi medi o piano, lo segnala invece di produrre una conclusione incompleta.</span></div><div><b>Azioni rapide</b><span>Collega i passaggi più utili: controllo 360, Decision Lab, guide e fiscalità. Puoi spostare o nascondere anche questo modulo.</span></div><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Movimenti settimanali</b><span>Prezzi, ranking, capitalizzazioni e variazioni a 7 giorni arrivano dall’API ufficiale CoinMarketCap. La sezione mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.</span></div><div><b>Posizioni fissate</b><span>Premi “Gestisci” e scegli fino a 5 crypto personali. La selezione resta nel browser ed è separata dal portafoglio.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div><div><b>Notizie italiane</b><span>La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.</span></div></div>
-                <h3>Opportunity screener</h3><ol class="learning-steps"><li><b>Capitalizzazione minima:</b> esclude progetti troppo piccoli; il valore è in milioni di euro.</li><li><b>Volume 24h minimo:</b> imposta un primo controllo di liquidità, senza garantire che il volume sia di qualità.</li><li><b>Prezzo unitario massimo:</b> è solo un filtro pratico. Un prezzo basso non rende una crypto sottovalutata.</li><li><b>Rischio massimo:</b> limita la volatilità ammessa dal modello.</li><li>Premi <b>Applica filtri</b>, poi confronta score, motivazione, market cap, 7g, 30g, FDV/MC e rischio.</li><li>Apri la crypto e completa la ricerca fondamentale prima di usare Decision Lab.</li></ol>
-                <div class="beginner-rule"><b>Sequenza corretta</b><span>Screener → progetto e tokenomics → fonti → compatibilità col piano → Decision Lab. Lo score serve a restringere la ricerca, non a sostituirla.</span></div>
-                <button class="secondary" data-go="overview">Apri Panoramica</button> <button class="secondary" data-go="screener">Apri Opportunity screener</button>
-                <label class="lesson-done"><input type="checkbox" data-complete="app-start"> So interpretare regime, ampiezza, score, FDV/MC e filtri dello screener</label>
+                <div class="screen-map"><div><b>Indice principale</b><p>I pulsanti iniziali aprono i grandi blocchi: basi, custodia, uso dell’app, decisioni, community, fiscalità e strumenti avanzati.</p></div><div><b>Manuali rapidi</b><p>La griglia per sezione porta direttamente alla lezione collegata. È lo stesso collegamento usato dal pulsante “Come funziona” presente nelle pagine.</p></div><div><b>Lezioni espandibili</b><p>Apri un capitolo, segui i passaggi e usa i pulsanti finali per tornare allo strumento. Puoi consultare le lezioni in qualunque ordine.</p></div><div><b>Progresso</b><p>La spunta finale ricorda localmente quali capitoli hai letto. La percentuale non certifica competenza e non viene inviata a un account.</p></div><div><b>Glossario</b><p>Cerca un termine quando incontri parole come FDV, drawdown, slippage o seed phrase. Le definizioni sono introduttive e vanno integrate con fonti ufficiali.</p></div><div><b>Checklist</b><p>Serve a rendere visibili i controlli mancanti prima di una decisione. Completare le caselle non rende sicuro un investimento.</p></div></div>
+                <div class="beginner-rule"><b>Uso consigliato</b><span>Apri “Come funziona” dalla sezione in cui ti trovi, leggi il relativo manuale e torna allo strumento con il pulsante finale del capitolo.</span></div>
+                <label class="lesson-done"><input type="checkbox" data-complete="academy-manual"> So trovare la guida corretta e distinguere apprendimento, controllo e consulenza</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="app-start">
+              <summary><span class="lesson-number">08</span><div><b>Panoramica e Potenziali Crypto</b><small>Leggere regime, score, rischio e filtri senza scambiarli per previsioni</small></div><span class="lesson-time">24 min</span></summary>
+              <div class="lesson-content">
+                <h3>Panoramica</h3><div class="field-guide"><div><b>Personalizza Home</b><span>Apri il pannello in cima alla pagina. Trascina i moduli o usa le frecce per cambiarne l’ordine; disattiva “Visibile” per nasconderli e riattivala per aggiungerli di nuovo. “Ripristina” torna all’ordine iniziale. Tutto resta nel browser.</span></div><div><b>Lingua della Home</b><span>Seleziona italiano, inglese o spagnolo. La scelta viene ricordata nel browser e traduce l’intera app, non soltanto la pagina iniziale.</span></div><div><b>Sintesi portafoglio</b><span>Riepiloga valore, risultato indicativo, posizione maggiore e confronto col limite personale. Se mancano costi medi o piano, lo segnala invece di produrre una conclusione incompleta.</span></div><div><b>Azioni rapide</b><span>Collega i passaggi più utili: Assistente Personale, Laboratorio, guide e fiscalità. Puoi spostare o nascondere anche questo modulo.</span></div><div><b>Regime di mercato</b><span>Sintesi calcolata usando BTC, ETH e ampiezza delle principali crypto. Descrive il contesto, non anticipa la prossima direzione.</span></div><div><b>BTC/ETH 24h</b><span>Variazione percentuale nell’ultima giornata e prezzo corrente indicativo.</span></div><div><b>Movimenti settimanali</b><span>Prezzi, ranking, capitalizzazioni e variazioni a 7 giorni arrivano dall’API ufficiale CoinMarketCap. La sezione mostra i cinque maggiori rialzi e ribassi tra le prime 100 crypto, escludendo stablecoin e versioni wrapped o staked. È una fotografia retrospettiva, non una previsione.</span></div><div><b>Posizioni fissate</b><span>Premi “Gestisci” e scegli fino a 5 crypto personali. La selezione resta nel browser ed è separata dal portafoglio.</span></div><div><b>Ampiezza 7g</b><span>Quota delle prime 50 crypto in rialzo: aiuta a capire se il movimento è diffuso o concentrato.</span></div><div><b>Candidate emerse</b><span>Asset che superano meglio le regole quantitative del momento. “Emerge” non significa “comprare”.</span></div><div><b>Notizie italiane</b><span>La Home mostra gli ultimi titoli di Criptovaluta.it. Apri sempre la fonte e separa l’informazione dal punteggio quantitativo.</span></div></div>
+                <h3>Potenziali Crypto: da dove arrivano i risultati</h3>
+                <p>La sezione non cerca la crypto che “salirà”. Riduce un universo ampio a un massimo di 50 risultati confrontabili. Prima dei filtri scelti dall’utente esclude stablecoin, versioni wrapped o staked, asset oltre il rank 200, capitalizzazione inferiore a 100 milioni di euro, volume sotto 5 milioni e rapporto FDV/MC superiore a 2,5.</p>
+                <div class="field-guide"><div><b>Score · 0–100</b><span>Combina momentum 30%, liquidità 25%, tokenomics 20% e controllo quantitativo del rischio 25%. Ordina le priorità di ricerca, non la probabilità di profitto.</span></div><div><b>Motivazione</b><span>Mostra fino a due fattori che spiccano: momentum, liquidità, diluizione o volatilità. È una sintesi automatica, non una tesi completa.</span></div><div><b>Market cap</b><span>Prezzo moltiplicato per offerta circolante. Permette confronti economici migliori del solo prezzo unitario.</span></div><div><b>FDV/MC</b><span>Rapporto tra valutazione completamente diluita e capitalizzazione corrente. Vicino a 1 indica minore differenza; valori elevati richiedono analisi di emissioni e unlock.</span></div><div><b>7g e 30g</b><span>Movimenti passati usati nel momentum. Non sono previsioni e possono peggiorare il timing se inseguiti senza metodo.</span></div><div><b>Rischio</b><span>Classe basata su volatilità recente e rank. Non include bug, governance, truffe, liquidità futura, normativa o perdita delle chiavi.</span></div></div>
+                <div class="score-legend"><div class="score-band strong"><b>70–100</b><span>Profilo quantitativo forte nei dati disponibili. Richiede comunque ricerca completa.</span></div><div class="score-band mixed"><b>52–69</b><span>Profilo misto: alcuni fattori sono solidi e altri richiedono verifica.</span></div><div class="score-band weak"><b>0–51</b><span>Profilo quantitativo debole o incompleto. Non equivale a vendita automatica.</span></div></div>
+                <h3>Come usare i filtri</h3><ol class="learning-steps"><li><b>Capitalizzazione minima:</b> alzala per concentrarti su mercati più grandi; il valore è espresso in milioni di euro.</li><li><b>Volume 24h minimo:</b> alzalo per richiedere più attività di scambio. Il volume non garantisce profondità, autenticità o facilità di uscita.</li><li><b>Prezzo unitario massimo:</b> usalo solo per esigenze pratiche. Avere molte unità non rende l’asset economico o meno rischioso.</li><li><b>Rischio massimo:</b> limita le classi quantitative mostrate. “Basso” significa più contenuto rispetto all’universo osservato, non sicuro.</li><li>Premi <b>Applica filtri</b> e confronta più righe, senza fermarti al primo score.</li><li>Apri il dettaglio della crypto per vedere componenti, grafico e dati di mercato.</li><li>Verifica progetto, utilizzo, tokenomics, unlock, sicurezza, fonti e compatibilità con il Piano personale.</li><li>Passa dall’Assistente Personale o dal Laboratorio prima di documentare una scelta.</li></ol>
+                <div class="beginner-rule"><b>Sequenza corretta</b><span>Potenziali Crypto → dettaglio e tokenomics → fonti ufficiali e indipendenti → compatibilità col piano → Assistente Personale o Laboratorio. Lo score restringe la ricerca, non la sostituisce.</span></div>
+                <button class="secondary" data-go="overview">Apri Panoramica</button> <button class="secondary" data-go="screener">Apri Potenziali Crypto</button>
+                <label class="lesson-done"><input type="checkbox" data-complete="app-start"> So interpretare regime, ampiezza, score, FDV/MC, rischio e filtri di Potenziali Crypto</label>
               </div>
             </details>
 
@@ -379,14 +414,14 @@
             </details>
 
             <details class="card lesson" data-lesson="decision-manual">
-              <summary><span class="lesson-number">11</span><div><b>Come usare Decision Lab</b><small>Tutti i riquadri: controllo, stress test e diario</small></div><span class="lesson-time">25 min</span></summary>
+              <summary><span class="lesson-number">11</span><div><b>Come usare Laboratorio</b><small>Tutti i riquadri: controllo, stress test e diario</small></div><span class="lesson-time">25 min</span></summary>
               <div class="lesson-content">
                 <h3>1 · Controllo della decisione</h3><div class="field-guide"><div><b>Crypto</b><span>L’asset sul quale stai ragionando.</span></div><div><b>Decisione</b><span>Acquisto, osservazione, vendita o ribilanciamento: “osservazione” permette di documentare senza operare.</span></div><div><b>Importo ipotetico</b><span>Somma da confrontare con capitale, portafoglio e limiti.</span></div><div><b>Stato emotivo</b><span>Calmo, incerto, FOMO o paura: rende visibile un possibile bias, non misura clinicamente l’emozione.</span></div><div><b>Tesi</b><span>Motivo verificabile, orizzonte e dati che sostengono la scelta. Evita “salirà”.</span></div><div><b>Invalidazione</b><span>Evento osservabile che ti farà riesaminare la posizione: perdita di utilizzo, incidente, emissioni o cambio normativo.</span></div><div><b>Rispetta il piano</b><span>Conferma consapevole; il sistema verifica poi coerenza e impatto.</span></div></div>
                 <p>Premi <b>Analizza impatto</b> e leggi ogni avviso. Correggi importo o tesi finché la decisione è comprensibile. Solo allora usa <b>Salva nel diario</b>: salvare non esegue alcun ordine.</p>
                 <h3>2 · Stress test</h3><p>I preset Correzione, Crypto winter e Stress altcoin impostano shock ipotetici. Puoi modificare i cursori BTC, ETH e altcoin: la tabella applica uno shock lineare alle posizioni e mostra valore simulato e perdita. Serve a chiederti “posso sostenere questo scenario?”, non a stimarne la probabilità.</p>
                 <h3>3 · Diario</h3><p>Il diario conserva localmente motivazione, emozione e risultato dell’analisi. Usalo per rivedere il processo una volta a settimana: cerca decisioni prese in FOMO, tesi vaghe, importi fuori piano e differenze tra intenzione e azione. I dati non si sincronizzano tra dispositivi.</p>
                 <div class="beginner-scenario"><b>Esempio ben formulato</b><p>“Osservo ADA per 90 giorni. La tesi è crescita misurabile dell’attività e mantenimento del limite del 20%. La invalido se l’utilizzo scende per tre revisioni o la posizione supera il limite. Sono in FOMO: non acquisto oggi e salvo l’osservazione.”</p></div>
-                <button class="secondary" data-go="decision">Apri Decision Lab</button>
+                <button class="secondary" data-go="decision">Apri Laboratorio</button>
                 <label class="lesson-done"><input type="checkbox" data-complete="decision-manual"> So scrivere tesi e invalidazione, leggere lo stress test e usare il diario</label>
               </div>
             </details>
@@ -395,7 +430,7 @@
               <summary><span class="lesson-number">12</span><div><b>Come usare il Centro operativo</b><small>Alert, report, simulatore e calendario</small></div><span class="lesson-time">25 min</span></summary>
               <div class="lesson-content">
                 <div class="screen-map"><div><b>Alert</b><p>Imposta soglie per movimento 24h, movimento 7g, concentrazione massima e scostamento dall’obiettivo in punti percentuali. L’opzione News evidenzia articoli collegati al portafoglio. Salva le soglie e indaga la causa: un alert non è un segnale operativo.</p></div><div><b>Report settimanale</b><p>Riepiloga valore, variazioni, contributori e controlli. “Salva fotografia” crea un punto storico locale; prima della prima fotografia la variazione 7g è una stima. “Stampa / PDF” crea una copia da archiviare.</p></div><div><b>Simulatore</b><p>Scegli crypto, acquisto/vendita, euro e commissione. Controlla l’anteprima e premi “Esegui simulazione”. Quantità, costo medio, P/L e registro sono virtuali; “Azzera” cancella la simulazione.</p></div><div><b>Calendario</b><p>Aggiungi titolo, data, categoria, asset, note e fonte. Le routine creano DCA mensile e revisione domenicale nei prossimi 90 giorni. Esporta .ics per il calendario personale; verifica sempre gli eventi di mercato.</p></div></div>
-                <h3>Routine consigliata</h3><ol class="learning-steps"><li><b>Ogni giorno, massimo pochi minuti:</b> controlla alert e notizie solo se è scattata una soglia.</li><li><b>Ogni settimana:</b> apri il report, salva una fotografia e confronta concentrazione, tesi e diario.</li><li><b>Prima di usare denaro:</b> prova l’operazione nel simulatore e poi passa da Decision Lab.</li><li><b>Ogni mese:</b> verifica DCA, allocazione obiettivo, eventi futuri e documenti fiscali.</li></ol>
+                <h3>Routine consigliata</h3><ol class="learning-steps"><li><b>Ogni giorno, massimo pochi minuti:</b> controlla alert e notizie solo se è scattata una soglia.</li><li><b>Ogni settimana:</b> apri il report, salva una fotografia e confronta concentrazione, tesi e diario.</li><li><b>Prima di usare denaro:</b> prova l’operazione nel simulatore e poi passa dal Laboratorio.</li><li><b>Ogni mese:</b> verifica DCA, allocazione obiettivo, eventi futuri e documenti fiscali.</li></ol>
                 <button class="secondary" data-go="operations">Apri Centro operativo</button>
                 <label class="lesson-done"><input type="checkbox" data-complete="operations-manual"> So configurare alert, salvare report, simulare e pianificare eventi</label>
               </div>
@@ -405,19 +440,19 @@
               <summary><span class="lesson-number">13</span><div><b>News, dettaglio crypto, Metodo e fiscalità</b><small>Le ultime sezioni e il flusso completo dell’app</small></div><span class="lesson-time">18 min</span></summary>
               <div class="lesson-content">
                 <div class="screen-map"><div><b>News & trend</b><p>Trending misura attenzione, non qualità. Criptovaluta.it offre titoli italiani; le altre notizie sono tradotte mostrando anche l’originale. Usa i filtri Portafoglio/POL/ALGO/ADA e apri sempre la fonte.</p></div><div><b>Dettaglio crypto</b><p>Dal nome di un asset apri prezzo, performance, market cap, volumi, rapporto FDV/MC, grafico e motivazione del punteggio. Cambia timeframe e cerca conferme fuori dall’app.</p></div><div><b>Metodo & rischio</b><p>Spiega come vengono costruiti score, regime e classi di rischio e quali dati non sono inclusi. È la pagina da consultare prima di interpretare una graduatoria.</p></div><div><b>730 & fiscalità crypto</b><p>Organizza documenti, Quadro W, Quadro T, scadenze e correzioni. È educativa: per la compilazione concreta verifica istruzioni annuali e professionista.</p></div></div>
-                <h3>Flusso completo, senza saltare passaggi</h3><div class="app-flow"><span>1 · Impara</span><i>→</i><span>2 · Definisci il piano</span><i>→</i><span>3 · Inserisci il portafoglio</span><i>→</i><span>4 · Filtra e ricerca</span><i>→</i><span>5 · Decision Lab</span><i>→</i><span>6 · Monitora</span><i>→</i><span>7 · Archivia e dichiara</span></div>
+                <h3>Flusso completo, senza saltare passaggi</h3><div class="app-flow"><span>1 · Impara</span><i>→</i><span>2 · Definisci il piano</span><i>→</i><span>3 · Inserisci il portafoglio</span><i>→</i><span>4 · Filtra e ricerca</span><i>→</i><span>5 · Laboratorio</span><i>→</i><span>6 · Monitora</span><i>→</i><span>7 · Archivia e dichiara</span></div>
                 <button class="secondary" data-go="news">Apri News & trend</button> <button class="secondary" data-go="method">Apri Metodo & rischio</button> <button class="secondary" data-go="tax">Apri guida fiscale</button>
                 <label class="lesson-done"><input type="checkbox" data-complete="news-manual"> So usare l’intero flusso senza confondere dati, segnali e consulenza</label>
               </div>
             </details>
 
             <details class="card lesson" data-lesson="copilot-manual">
-              <summary><span class="lesson-number">14</span><div><b>Come usare il Copilota 360</b><small>Semaforo, Passaporti, fisco, sicurezza, condivisione e privacy</small></div><span class="lesson-time">30 min</span></summary>
+              <summary><span class="lesson-number">14</span><div><b>Come usare l’Assistente Personale</b><small>Semaforo, Passaporti, fisco, sicurezza, condivisione e privacy</small></div><span class="lesson-time">30 min</span></summary>
               <div class="lesson-content">
                 <h3>Il significato del semaforo</h3><p>Il risultato verde, giallo o rosso misura quanto il processo dichiarato è completo e coerente con i dati disponibili. Non stima il rendimento, non certifica la crypto e non suggerisce di eseguire l’operazione. Un controllo verde può comunque precedere una perdita totale.</p>
                 <div class="screen-map"><div><b>Prima di comprare</b><p>Inserisci crypto, azione, importo, costi, emozione, tesi, invalidazione e fonti. Conferma soltanto controlli realmente eseguiti. Leggi peso previsto, stress, costi e ogni avviso prima di salvare.</p></div><div><b>Passaporti</b><p>Congelano prezzo, score, componenti, fonti e motivazione. Dopo 7, 30 e 90 giorni mostrano l’andamento del prezzo rispetto alla fotografia, senza attribuire automaticamente merito o colpa alla decisione.</p></div><div><b>Fisco continuo</b><p>Registra transazioni e anomalie e completa la checklist. La percentuale misura preparazione documentale dichiarata, non correttezza della dichiarazione.</p></div><div><b>Perché è cambiato?</b><p>Salva una fotografia degli score. Al controllo successivo vedrai variazione totale e contributi di momentum, liquidità, tokenomics e rischio.</p></div><div><b>Radar sicurezza</b><p>Controlla URL, contratto, registro, permessi, incidenti e test minimo. Il punteggio riflette le verifiche completate e non garantisce che un soggetto sia sicuro.</p></div><div><b>Condividi</b><p>Scegli sezioni, destinatario e occultamento importi. Il file HTML è in sola lettura, ma dopo l’invio non può essere revocato: aprilo e controllalo prima.</p></div><div><b>Privacy</b><p>Gestisci profilo locale, inventario, backup e cancellazione. Il profilo non è un account cloud e non sincronizza dispositivi.</p></div><div><b>Tutor “?”</b><p>Il pulsante in basso apre istruzioni relative alla pagina corrente e collega la guida o lo strumento successivo.</p></div></div>
                 <h3>Procedura consigliata</h3><ol class="learning-steps"><li>Compila prima Portafoglio e Piano personale.</li><li>Ricerca progetto, tokenomics, sicurezza e fonti.</li><li>Esegui il controllo 360 senza spuntare verifiche non effettuate.</li><li>Se il semaforo segnala lacune, correggi il processo e ripeti.</li><li>Salva il Passaporto anche quando decidi di non agire.</li><li>Rivedi i Passaporti nel report settimanale e salva periodicamente gli score.</li><li>Aggiorna il fisco continuo ogni volta che importi nuove operazioni.</li><li>Effettua un backup locale prima di cambiare browser o cancellare dati.</li></ol>
-                <button class="secondary" data-go="copilot">Apri Copilota 360</button>
+                <button class="secondary" data-go="copilot">Apri Assistente Personale</button>
                 <label class="lesson-done"><input type="checkbox" data-complete="copilot-manual"> So interpretare il semaforo e usare tutti i pannelli senza scambiarli per consulenza</label>
               </div>
             </details>
@@ -449,6 +484,27 @@
                 <label class="lesson-done"><input type="checkbox" data-complete="intelligence-manual"> So distinguere contesto, ipotesi, fonte e controllo documentale</label>
               </div>
             </details>
+
+            <details class="card lesson" data-lesson="community-manual">
+              <summary><span class="lesson-number">17</span><div><b>Come usare Chat Community</b><small>Profilo, chat live, bacheca, strategie, fonti e valutazioni</small></div><span class="lesson-time">18 min</span></summary>
+              <div class="lesson-content">
+                <div class="screen-map"><div><b>Profilo</b><p>Imposta nome, handle ed esperienza senza inserire dati sensibili. Follower e contenuti pubblicati descrivono attività sociale, non competenza certificata.</p></div><div><b>Chat live</b><p>Usala per domande brevi, chiarimenti e confronto in tempo reale. Se citi una notizia o un dato, indica asset, contesto e fonte verificabile.</p></div><div><b>Bacheca</b><p>Pubblica analisi più strutturate con titolo, timeframe, rischio, tesi e invalidazione. Una strategia senza condizioni di errore non è completa.</p></div><div><b>Segui</b><p>Seguire un profilo o una strategia crea una lista personale da monitorare. Non copia ordini e non rende affidabili i risultati pubblicati.</p></div><div><b>Valutazioni</b><p>Le stelle e i feedback misurano l’utilità percepita dalla community. Popolarità, follower e voti non sostituiscono fonti e verifica indipendente.</p></div><div><b>Immagini e link</b><p>Non condividere seed phrase, chiavi, saldi identificabili o documenti personali. Apri i link con cautela e verifica sempre dominio e contratto.</p></div></div>
+                <h3>Formato consigliato per un’idea</h3><ol class="learning-steps"><li>Indica asset e timeframe.</li><li>Descrivi la tesi con dati controllabili.</li><li>Dichiara il rischio e che cosa invaliderebbe l’idea.</li><li>Aggiungi almeno una fonte primaria quando disponibile.</li><li>Distingui chiaramente fatti, ipotesi e opinioni.</li><li>Aggiorna il post quando la tesi cambia, senza cancellare retroattivamente gli errori.</li></ol>
+                <p class="tax-warning">La community è uno spazio di confronto. Non pubblicare promesse di rendimento, segnali coordinati, credenziali, indirizzi privati o richieste di trasferimento fondi.</p>
+                <button class="secondary" data-go="community">Apri Chat Community</button>
+                <label class="lesson-done"><input type="checkbox" data-complete="community-manual"> So condividere e valutare contenuti senza confondere popolarità, metodo e affidabilità</label>
+              </div>
+            </details>
+
+            <details class="card lesson" data-lesson="tax-method-manual">
+              <summary><span class="lesson-number">18</span><div><b>Come usare 730 &amp; fiscalità e Metodo &amp; rischio</b><small>Documenti, riconciliazione, score e limiti del modello</small></div><span class="lesson-time">20 min</span></summary>
+              <div class="lesson-content">
+                <div class="screen-map"><div><b>730 &amp; fiscalità</b><p>Seleziona l’anno corretto, raccogli CSV e documenti, riconcilia exchange e wallet, poi usa i capitoli su Quadri W e T, imposta sul valore, scadenze e correzioni.</p></div><div><b>Checklist documenti</b><p>Le spunte misurano soltanto che hai controllato un documento. Non validano valori, classificazioni o completezza della dichiarazione.</p></div><div><b>Casi complessi</b><p>Staking, DeFi, NFT, airdrop, mining, trasferimenti non riconciliati e cambi di residenza richiedono particolare cautela e spesso verifica professionale.</p></div><div><b>Metodo &amp; rischio</b><p>Spiega formula e pesi dello score. Consultala quando una classifica cambia o quando vuoi capire che cosa il modello include ed esclude.</p></div><div><b>Score</b><p>Momentum, liquidità, tokenomics e rischio quantitativo sono indicatori retrospettivi. Nessuno misura da solo utilità, sicurezza o adeguatezza personale.</p></div><div><b>Fonti</b><p>Per il fisco usa istruzioni annuali e fonti ufficiali. Per il metodo confronta i dati con documentazione del progetto e sorgenti indipendenti.</p></div></div>
+                <div class="do-dont"><div><b>Usa queste sezioni per</b><span>Preparare documenti, riconoscere lacune, capire formule e porre domande migliori a un professionista.</span></div><div class="danger"><b>Non usarle per</b><span>Inviare automaticamente una dichiarazione, certificare un calcolo o trasformare lo score in un consiglio operativo.</span></div></div>
+                <button class="secondary" data-go="tax">Apri 730 &amp; fiscalità</button> <button class="secondary" data-go="method">Apri Metodo &amp; rischio</button>
+                <label class="lesson-done"><input type="checkbox" data-complete="tax-method-manual"> So distinguere preparazione documentale, verifica fiscale e interpretazione quantitativa</label>
+              </div>
+            </details>
           </div>
 
           <aside class="academy-side">
@@ -461,6 +517,23 @@
       </section>
 
       <section id="screener" class="page">
+        <details class="card screener-inline-guide">
+          <summary><div><p class="eyebrow">GUIDA RAPIDA E LEGENDA</p><b>Come leggere Potenziali Crypto</b></div><span>Apri la spiegazione</span></summary>
+          <div class="screener-guide-body">
+            <p>Questa sezione ordina un gruppo di crypto secondo dati quantitativi disponibili. Non prevede il prezzo e non indica che cosa comprare: serve a scegliere quali progetti meritano un approfondimento.</p>
+            <div class="screener-legend-grid">
+              <div><b>Score</b><span>30% momentum, 25% liquidità, 20% tokenomics, 25% controllo del rischio.</span></div>
+              <div><b>Motivazione</b><span>I due fattori quantitativi che emergono maggiormente nella riga.</span></div>
+              <div><b>Market cap</b><span>Dimensione economica corrente: prezzo per offerta circolante.</span></div>
+              <div><b>FDV/MC</b><span>Differenza tra valutazione diluita e capitalizzazione attuale.</span></div>
+              <div><b>7g / 30g</b><span>Performance passata usata per descrivere il momentum.</span></div>
+              <div><b>Rischio</b><span>Classe relativa basata su volatilità recente e posizione in classifica.</span></div>
+            </div>
+            <div class="score-legend compact"><div class="score-band strong"><b>70–100</b><span>forte nei dati osservati</span></div><div class="score-band mixed"><b>52–69</b><span>profilo misto</span></div><div class="score-band weak"><b>0–51</b><span>debole o incompleto</span></div></div>
+            <p class="screener-guide-note">Universo iniziale: niente stablecoin o versioni wrapped/staked; rank massimo 200; capitalizzazione sopra 100 M€; volume sopra 5 M€; FDV/MC non oltre 2,5. Vengono mostrati al massimo 50 risultati.</p>
+            <button class="secondary" data-help-guide="app-start">Apri la guida completa</button>
+          </div>
+        </details>
         <div class="card filters">
           <label>Capitalizzazione minima<input id="minCap" type="number" value="100" min="10" step="50"><small>milioni €</small></label>
           <label>Volume 24h minimo<input id="minVolume" type="number" value="5" min="1" step="5"><small>milioni €</small></label>
@@ -532,10 +605,10 @@
 
       <section id="copilot" class="page copilot-page">
         <div class="copilot-hero card">
-          <div><p class="eyebrow">CONTROLLO PRIMA DELL’AZIONE</p><h2>Copilota 360</h2><p>Collega decisione, rischio, comportamento, documenti e fiscalità. Non genera ordini né raccomandazioni personalizzate: evidenzia conseguenze e controlli mancanti.</p></div>
+          <div><p class="eyebrow">CONTROLLO PRIMA DELL’AZIONE</p><h2>Assistente Personale</h2><p>Collega decisione, rischio, comportamento, documenti e fiscalità. Non genera ordini né raccomandazioni personalizzate: evidenzia conseguenze e controlli mancanti.</p></div>
           <div class="copilot-hero-metrics"><div><span>DISCIPLINA</span><b id="behaviorScore">0</b><small>/100</small></div><div><span>FISCO PRONTO</span><b id="taxReadinessScore">0%</b><small id="taxReadinessLabel">da configurare</small></div><div><span>PASSAPORTI</span><b id="passportCount">0</b><small>salvati localmente</small></div></div>
         </div>
-        <div class="trust-strip"><span>✓ Dati del Copilota nel browser</span><span>✓ Nessuna esecuzione di ordini</span><span>✓ Motivazioni visibili</span><span>✓ Export controllato dall’utente</span></div>
+        <div class="trust-strip"><span>✓ Dati dell’Assistente Personale nel browser</span><span>✓ Nessuna esecuzione di ordini</span><span>✓ Motivazioni visibili</span><span>✓ Export controllato dall’utente</span></div>
 
         <div class="copilot-nav" role="tablist"><button class="chip active" data-copilot-tab="check">Prima di comprare</button><button class="chip" data-copilot-tab="passports">Passaporti</button><button class="chip" data-copilot-tab="monthly">Report mensile</button><button class="chip advanced-only" data-copilot-tab="fiscal">Fisco continuo</button><button class="chip advanced-only" data-copilot-tab="scores">Perché è cambiato?</button><button class="chip" data-copilot-tab="quality">Qualità dati</button><button class="chip advanced-only" data-copilot-tab="security">Radar sicurezza</button><button class="chip" data-copilot-tab="share">Condividi</button><button class="chip" data-copilot-tab="privacy">Privacy</button></div>
 
@@ -1023,7 +1096,7 @@
             <div><b>Momentum</b><span>Variazioni 7 e 30 giorni, con penalità per rialzi giornalieri estremi.</span></div>
             <div><b>Liquidità</b><span>Volume rispetto alla capitalizzazione e dimensione del mercato.</span></div>
             <div><b>Tokenomics</b><span>Rapporto fra market cap e valutazione completamente diluita.</span></div>
-            <div><b>Rischio</b><span>Volatilità recente, drawdown e posizione nella classifica.</span></div>
+            <div><b>Rischio</b><span>Volatilità recente e posizione nella classifica.</span></div>
           </div>
           <div class="risk-box"><b>Importante</b><p>Un punteggio alto non significa “comprare”. Prima di investire considera orizzonte, diversificazione, perdita massima sostenibile e rischio specifico del progetto. Evita leva e denaro necessario per spese o emergenze.</p></div>
         </article>
