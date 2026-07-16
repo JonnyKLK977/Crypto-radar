@@ -6,6 +6,8 @@ Nella Home, **Posizioni fissate** è personalizzabile per ciascun browser: l’u
 
 L’intera Home è componibile: ogni browser conserva ordine e visibilità dei sette moduli disponibili. Il pannello consente trascinamento, spostamento accessibile con frecce, mostra/nascondi e ripristino. Oltre ai moduli di mercato sono disponibili una sintesi personale del portafoglio e scorciatoie verso Assistente Personale, Laboratorio, guide e fiscalità.
 
+Anche la navigazione laterale è modulare: le voci mantengono i nomi originali ma sono raccolte in gruppi richiudibili. Ogni browser può nascondere le sezioni non utilizzate, scegliere una densità comoda o compatta e ripristinare la configurazione iniziale; Panoramica resta sempre disponibile.
+
 La pagina **Il mio portafoglio** parte vuota: POL, ALGO, ADA o altre crypto non vengono assegnate automaticamente. L'utente può aggiungere e rimuovere liberamente fino a 30 asset dal catalogo di mercato, quindi compilare quantità e costo medio. Nella demo pubblica portafoglio e piano vengono salvati soltanto nel browser utilizzato.
 
 ## Avvio
