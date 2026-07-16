@@ -1854,8 +1854,13 @@ class Handler(BaseHTTPRequestHandler):
             candidate = web_root / "index.html"
         body = candidate.read_bytes()
         mime = mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
+        content_type = f"{mime}; charset=utf-8" if mime.startswith("text/") or mime in {
+            "application/javascript",
+            "application/json",
+            "application/manifest+json",
+        } else mime
         self.send_response(200)
-        self.send_header("Content-Type", f"{mime}; charset=utf-8")
+        self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-cache")
         self.end_headers()

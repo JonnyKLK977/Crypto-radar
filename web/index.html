@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="/phase28.css">
   <link rel="stylesheet" href="/phase29.css">
   <link rel="stylesheet" href="/phase30.css">
+  <link rel="stylesheet" href="/phase31.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -1028,6 +1029,75 @@
 
         <div class="tax-alert"><b>Prima regola: non confondere gli anni.</b><span>Le operazioni del 2025 si dichiarano nel 2026 con aliquota crypto del 26% e senza la vecchia soglia di 2.000 €. Per le operazioni ordinarie effettuate dal 1° gennaio 2026 la legge prevede il 33%; la dichiarazione arriverà nel 2027. È prevista una specifica eccezione al 26% per determinati token di moneta elettronica denominati in euro.</span></div>
 
+        <section id="taxFirstDeclaration" class="card tax-first-declaration" aria-labelledby="taxFirstTitle">
+          <div class="tax-first-heading">
+            <div>
+              <span class="tax-first-badge">PRIMA DICHIARAZIONE</span>
+              <p class="eyebrow">INIZIA DA QUI</p>
+              <h2 id="taxFirstTitle">La tua prima dichiarazione crypto, un passo alla volta</h2>
+              <p>Non devi conoscere subito ogni rigo fiscale. Prima costruisci un fascicolo completo e verificabile; soltanto dopo scegli il modello, compili i quadri necessari, controlli i pagamenti e invii.</p>
+            </div>
+            <div class="tax-first-result">
+              <small>IL RISULTATO DA OTTENERE</small>
+              <b>Un fascicolo che spiega da dove arriva ogni numero</b>
+              <span>CSV originali, saldi riconciliati, prove dei costi, prospetti W/T, dichiarazione, ricevuta e quietanze.</span>
+            </div>
+          </div>
+
+          <div class="tax-first-actions">
+            <a class="primary" href="/documents/guida-prima-dichiarazione-crypto-2026.pdf" target="_blank" rel="noopener">Apri la guida PDF</a>
+            <a class="secondary" href="/documents/kit-prima-dichiarazione-crypto-2026.zip" download>Scarica il kit completo ZIP</a>
+            <a class="secondary" href="https://infoprecompilata.agenziaentrate.gov.it/portale/" target="_blank" rel="noopener noreferrer">Apri la precompilata ufficiale ↗</a>
+          </div>
+
+          <div class="tax-first-progress">
+            <div><b id="taxFirstProgressLabel">0/8 passaggi completati</b><button id="resetTaxFirstPath" class="link-button" type="button">Azzera percorso</button></div>
+            <div class="bar-track"><div id="taxFirstProgressBar" class="bar-fill"></div></div>
+            <small>La spunta resta soltanto in questo browser e non viene inviata al server.</small>
+          </div>
+
+          <div class="tax-first-grid">
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="year"><span><b>1. Fissa anno e obiettivo</b><small>Il 730/2026 dichiara redditi, possesso e operazioni del 2025. Non inserire movimenti del 2026.</small></span></label>
+              <button class="tax-first-link" type="button" data-tax-open="tax-lesson-path">Vedi il percorso completo</button>
+            </article>
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="accounts"><span><b>2. Elenca tutto ciò che hai usato</b><small>Exchange, app, wallet, indirizzi, carte crypto, conti chiusi e piattaforme usate anche per pochi giorni.</small></span></label>
+              <button class="tax-first-link" type="button" data-tax-open="tax-lesson-documents">Apri la lista documenti</button>
+            </article>
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="exports"><span><b>3. Scarica i dati originali</b><small>Esporta CSV completi, estratti, bonifici, report fiscali del provider e cronologia on-chain senza modificarli.</small></span></label>
+              <a class="tax-first-link" href="/documents/inventario-exchange-wallet-2025.csv" download>Scarica l'inventario CSV</a>
+            </article>
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="reconcile"><span><b>4. Riconcilia saldi e trasferimenti</b><small>Abbina prelievi e depositi tra wallet propri, separa le fee e risolvi saldi negativi o movimenti senza origine.</small></span></label>
+              <a class="tax-first-link" href="/documents/riconciliazione-trasferimenti-2025.csv" download>Scarica il modello trasferimenti</a>
+            </article>
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="model"><span><b>5. Scegli 730, CAF o Redditi PF</b><small>Il possesso di crypto non impone da solo Redditi PF. Conta la tua intera posizione personale e reddituale.</small></span></label>
+              <button class="tax-first-link" type="button" data-tax-open="tax-lesson-professional">Scopri quando farti aiutare</button>
+            </article>
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="frames"><span><b>6. Verifica Quadro W e Quadro T</b><small>W riguarda possesso, monitoraggio e imposta sul valore; T riguarda plusvalenze, proventi e minusvalenze.</small></span></label>
+              <div class="tax-first-mini-actions"><button class="tax-first-link" type="button" data-tax-open="tax-lesson-w">Quadro W</button><button class="tax-first-link" type="button" data-tax-open="tax-lesson-t">Quadro T</button></div>
+            </article>
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="review"><span><b>7. Controlla esito e pagamenti</b><small>Confronta il prospetto 730-3, gli eventuali F24, anno, importi, rate e scadenze prima di confermare.</small></span></label>
+              <button class="tax-first-link" type="button" data-tax-open="tax-lesson-deadlines">Apri scadenze e pagamenti</button>
+            </article>
+            <article class="tax-first-step">
+              <label><input type="checkbox" data-tax-first="archive"><span><b>8. Invia e conserva le prove</b><small>Una bozza non è un invio. Salva modello definitivo, ricevuta telematica, 730-3, F24 e quietanze.</small></span></label>
+              <button class="tax-first-link" type="button" data-tax-open="tax-lesson-archive">Prepara l'archivio finale</button>
+            </article>
+          </div>
+
+          <div class="tax-help-router">
+            <div class="tax-help-route route-simple"><span>PERCORSO GESTIBILE</span><b>Operazioni semplici e dati completi</b><p>Uno o pochi exchange, acquisti/detenzione/vendite, esportazioni complete e costi documentati. Puoi preparare il fascicolo seguendo la guida e decidere se inviare direttamente o tramite CAF.</p></div>
+            <div class="tax-help-route route-assisted"><span>ASSISTENZA CONSIGLIATA</span><b>Molti wallet o operazioni particolari</b><p>Staking, airdrop, NFT, DeFi, bridge, wallet chiusi, molte permute o report discordanti richiedono classificazioni che un semplice CSV non risolve.</p></div>
+            <div class="tax-help-route route-stop"><span>FERMATI E VERIFICA</span><b>Anni precedenti, costi mancanti o controlli</b><p>Omissioni pregresse, cambio di residenza fiscale, attività professionale, fondi di terzi o comunicazioni dell'Agenzia vanno gestiti subito con un professionista abilitato.</p></div>
+          </div>
+        </section>
+
         <div class="tax-summary-grid">
           <article class="card"><span>POSSESSO E MONITORAGGIO</span><b>Quadro W</b><p>Cripto detenute tramite exchange, wallet, conti digitali o altri sistemi; serve anche per l'imposta sul valore delle cripto-attività.</p></article>
           <article class="card"><span>PLUSVALENZE E PROVENTI</span><b>Quadro T</b><p>Per il 730/2026 contiene la sezione dedicata alle plusvalenze crypto realizzate nel 2025 e tassate al 26%.</p></article>
@@ -1088,7 +1158,7 @@
               <tr><td data-label="Situazione">Il 730 non copre tutti i redditi o la tua posizione</td><td data-label="Documento o servizio">Redditi PF 2026; verifica in particolare Fascicolo 2, RW e RT</td><td data-label="Risultato da conservare">Modello Redditi, ricevuta, prospetto di calcolo e F24</td></tr>
               <tr><td data-label="Situazione">Hai già inviato e trovi un errore</td><td data-label="Documento o servizio">Annullamento entro il termine disponibile, 730 integrativo solo nei casi ammessi oppure Redditi correttivo/integrativo</td><td data-label="Risultato da conservare">Nuova ricevuta, dichiarazione sostitutiva e calcolo del ravvedimento se dovuto</td></tr>
               <tr><td data-label="Situazione">Devi pagare imposte o usare crediti in compensazione</td><td data-label="Documento o servizio">F24 con dati ricavati dall'esito ufficiale o predisposti da CAF/professionista</td><td data-label="Risultato da conservare">Modello trasmesso e quietanza dell'addebito riuscito</td></tr>
-              <tr><td data-label="Situazione">Devi consegnare i dati a CAF o commercialista</td><td data-label="Documento o servizio">CSV originali, estratti, registro riconciliato e i tre file preparatori qui sotto</td><td data-label="Risultato da conservare">Copia esatta del fascicolo consegnato e lista delle domande aperte</td></tr>
+              <tr><td data-label="Situazione">Devi consegnare i dati a CAF o commercialista</td><td data-label="Documento o servizio">CSV originali, estratti, registro riconciliato e kit preparatorio qui sotto</td><td data-label="Risultato da conservare">Copia esatta del fascicolo consegnato e lista delle domande aperte</td></tr>
             </tbody></table></div>
           </div>
 
@@ -1097,8 +1167,11 @@
             <span class="tax-file-kind working">NON UFFICIALI</span>
           </div>
           <div class="tax-template-grid">
+            <article class="card tax-template-card tax-guide-download"><span>PDF · GUIDA COMPLETA</span><h3>Prima dichiarazione crypto 2026</h3><p>Percorso stampabile per neofiti: documenti, inventario, riconciliazione, Quadri W e T, procedura online, scadenze, controlli e archivio finale.</p><a class="secondary" href="/documents/guida-prima-dichiarazione-crypto-2026.pdf" target="_blank" rel="noopener">Apri guida PDF</a></article>
+            <article class="card tax-template-card tax-kit-download"><span>ZIP · KIT COMPLETO</span><h3>Tutti i file preparatori</h3><p>Guida PDF, inventario exchange e wallet, registro operazioni, riconciliazione trasferimenti, checklist di consegna e collegamenti ufficiali.</p><a class="secondary" href="/documents/kit-prima-dichiarazione-crypto-2026.zip" download>Scarica kit ZIP</a></article>
             <article class="card tax-template-card"><span>CSV · QUADRO W/RW</span><h3>Inventario exchange e wallet</h3><p>Una riga per asset e contenitore, con quantità, valori, periodo di possesso, custodia, documenti e imposta o bollo eventualmente applicati.</p><button class="secondary" type="button" data-tax-template="inventory">Scarica inventario CSV</button></article>
             <article class="card tax-template-card"><span>CSV · QUADRO T/RT</span><h3>Registro operazioni fiscali</h3><p>Raccoglie vendite, swap, pagamenti, ricompense, trasferimenti propri, costi, commissioni, cambi, hash e classificazioni da verificare.</p><button class="secondary" type="button" data-tax-template="transactions">Scarica registro CSV</button></article>
+            <article class="card tax-template-card"><span>CSV · RICONCILIAZIONE</span><h3>Trasferimenti tra wallet propri</h3><p>Abbina uscita e ingresso, documenta hash, indirizzi, fee e titolarità per non confondere un semplice trasferimento con una cessione.</p><button class="secondary" type="button" data-tax-template="reconciliation">Scarica riconciliazione CSV</button></article>
             <article class="card tax-template-card"><span>TXT · CONSEGNA</span><h3>Checklist CAF o commercialista</h3><p>Prepara il fascicolo, le domande da porre e l'elenco dei risultati da ricevere dopo la compilazione.</p><button class="secondary" type="button" data-tax-template="handover">Scarica checklist TXT</button></article>
           </div>
           <p class="tax-warning"><b>Regola anti-errore:</b> non compilare un F24 usando codici trovati in articoli o dichiarazioni di anni diversi. Leggi i dati nell'esito 730/2026, nelle istruzioni dell'anno o nel prospetto firmato dal professionista, poi confronta importo, anno di riferimento, rateazione e scadenza.</p>
@@ -1115,14 +1188,14 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-path" class="card tax-lesson">
               <summary><span>02</span><div><b>Il percorso completo in sette passaggi</b><small>Dalla raccolta documenti alla ricevuta</small></div></summary>
               <div class="tax-content">
                 <ol class="tax-steps"><li><b>Definisci l'anno fiscale.</b> Nel 730/2026 inserisci i dati del 2025, non le operazioni avvenute nel 2026.</li><li><b>Raccogli tutti i documenti.</b> Non affidarti soltanto ai dati precompilati: confrontali con CU, spese, banche, exchange e wallet.</li><li><b>Ricostruisci le crypto.</b> Elenca consistenze, movimenti, costi, commissioni, trasferimenti tra wallet propri e valori in euro.</li><li><b>Scegli il modello.</b> 730 semplificato/ordinario, CAF o professionista; se necessario Redditi PF.</li><li><b>Controlla i quadri.</b> Per le crypto verifica soprattutto W e T, oltre agli altri quadri relativi alla tua situazione.</li><li><b>Controlla il prospetto 730-3 e l'F24.</b> Le imposte sostitutive crypto non vengono normalmente conguagliate dal datore di lavoro: l'eventuale debito va versato con F24.</li><li><b>Invia e conserva.</b> Scarica dichiarazione, ricevuta telematica, 730-3, F24 e il fascicolo dei calcoli.</li></ol>
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-documents" class="card tax-lesson">
               <summary><span>03</span><div><b>Documenti da preparare</b><small>Checklist generale e fascicolo crypto</small></div></summary>
               <div class="tax-content">
                 <h3>Documenti generali</h3>
@@ -1133,7 +1206,7 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-w" class="card tax-lesson">
               <summary><span>04</span><div><b>Quadro W: possesso, monitoraggio e imposta</b><small>Anche se non hai venduto</small></div></summary>
               <div class="tax-content">
                 <p>Il quadro W del 730 è l'equivalente pratico del quadro RW di Redditi PF per investimenti esteri e cripto-attività. Le istruzioni includono espressamente cripto detenute tramite portafogli, conti digitali o altri sistemi di archiviazione o conservazione.</p>
@@ -1142,7 +1215,7 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-t" class="card tax-lesson">
               <summary><span>05</span><div><b>Quadro T: plusvalenze, proventi e minusvalenze</b><small>Operazioni 2025 dichiarate nel 2026</small></div></summary>
               <div class="tax-content">
                 <p>Per le operazioni realizzate dal 1° gennaio al 31 dicembre 2025, le plusvalenze e gli altri proventi crypto concorrono alla formazione del reddito senza soglia minima e sono soggetti all'imposta sostitutiva del 26%.</p>
@@ -1153,7 +1226,7 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-deadlines" class="card tax-lesson">
               <summary><span>06</span><div><b>Scadenze 2026 e pagamenti</b><small>Calendario ufficiale della precompilata</small></div></summary>
               <div class="tax-content">
                 <div class="deadline-grid"><div><b>30 aprile</b><span>Visualizzazione 730 precompilato.</span></div><div><b>14 maggio</b><span>Accettazione, modifica e invio del 730.</span></div><div><b>30 giugno</b><span>Saldo e primo acconto per 730 senza sostituto o Redditi.</span></div><div><b>30 luglio</b><span>Versamento con maggiorazione dello 0,40%.</span></div><div><b>30 settembre</b><span>Termine ordinario per presentare il 730.</span></div><div><b>26 ottobre</b><span>730 integrativo favorevole tramite CAF/professionista.</span></div><div><b>2 novembre</b><span>Redditi PF e Redditi correttivo del 730.</span></div><div><b>1 febbraio 2027</b><span>Termine della dichiarazione Redditi tardiva entro 90 giorni.</span></div></div>
@@ -1161,7 +1234,7 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-errors" class="card tax-lesson">
               <summary><span>07</span><div><b>Errori, correzioni, ravvedimento e sanzioni</b><small>Agire presto riduce normalmente il costo</small></div></summary>
               <div class="tax-content">
                 <div class="penalty-table table-wrap"><table><thead><tr><th>Problema</th><th>Regola generale vigente</th><th>Primo passo</th></tr></thead><tbody><tr><td>Quadro W/RW omesso o incompleto</td><td>Sanzione dal 3% al 15% degli importi non dichiarati; dal 6% al 30% per attività in Stati o territori a regime privilegiato. Se la dichiarazione è presentata entro 90 giorni, la norma prevede €258.</td><td>Ricostruisci valori e periodi e valuta subito integrativa/ravvedimento.</td></tr><tr><td>Dichiarazione infedele con maggiore imposta</td><td>La disciplina generale prevede il 70% della maggiore imposta o differenza di credito, con minimo di €150, salvo riduzioni, aggravanti e ravvedimento.</td><td>Calcola imposta, interessi e sanzione ridotta con un professionista.</td></tr><tr><td>Dichiarazione omessa</td><td>La disciplina generale prevede il 120% delle imposte dovute, minimo €250; se non sono dovute imposte, da €250 a €1.000.</td><td>Non aspettare un controllo: verifica se sei ancora nei 90 giorni.</td></tr><tr><td>Versamento tardivo o insufficiente</td><td>Sono dovuti tributo, interessi giornalieri e sanzione; il ravvedimento può ridurla in base al ritardo e alla fase del controllo.</td><td>Calcola la data esatta e usa i codici F24 corretti.</td></tr></tbody></table></div>
@@ -1170,7 +1243,7 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-professional" class="card tax-lesson">
               <summary><span>08</span><div><b>Quando serve davvero un commercialista</b><small>Casi in cui il fai-da-te è rischioso</small></div></summary>
               <div class="tax-content">
                 <div class="professional-grid"><span>Molti exchange, wallet o anni non riconciliati</span><span>Staking, lending, liquidity pool, bridge o DeFi</span><span>NFT, airdrop, mining o compensi ricevuti in crypto</span><span>Costi di acquisto mancanti o fondi trasferiti tra familiari</span><span>Residenza fiscale cambiata o periodi all'estero</span><span>Attività professionale o d'impresa collegata alle crypto</span><span>Vecchie dichiarazioni senza RW/W o RT/T</span><span>Comunicazioni, questionari o controlli dell'Agenzia</span></div>
@@ -1192,7 +1265,7 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-online" class="card tax-lesson">
               <summary><span>11</span><div><b>Procedura online, schermata per schermata</b><small>Accesso, verifica, invio e ricevute</small></div></summary>
               <div class="tax-content">
                 <ol class="tax-steps"><li><b>Accedi al portale ufficiale.</b> Usa SPID, CIE o CNS; evita link ricevuti via e-mail o messaggio.</li><li><b>Leggi le informazioni disponibili.</b> Controlla CU, spese, immobili, acconti e dati trasmessi da terzi; annota assenze e anomalie.</li><li><b>Scegli il modello.</b> Usa la procedura guidata dell’Agenzia, ma valuta l’intera posizione e non soltanto il fatto di possedere crypto.</li><li><b>Controlla dati anagrafici e sostituto.</b> Se non hai un sostituto, il rimborso o pagamento segue modalità diverse.</li><li><b>Completa redditi e oneri.</b> Confronta ogni importo con CU e documenti; evita doppioni di spese già precaricate.</li><li><b>Apri l’area W.</b> Inserisci o verifica tutte le cripto-attività e i periodi rilevanti usando il prospetto annuale preparato.</li><li><b>Apri l’area T.</b> Riporta plusvalenze, proventi, minusvalenze e residui secondo istruzioni e calcolo documentato.</li><li><b>Visualizza l’esito.</b> Controlla messaggi, incongruenze, scelta d’uso dei crediti e prospetto 730-3.</li><li><b>Verifica i versamenti separati.</b> Controlla l’F24 per imposte sostitutive e imposte sulle cripto-attività, anche in presenza del datore di lavoro.</li><li><b>Invia.</b> La bozza salvata non è una dichiarazione presentata: attendi la ricevuta telematica.</li><li><b>Scarica tutto.</b> Conserva modello, 730-3, ricevuta, eventuali F24 e versione finale dei calcoli.</li></ol>
@@ -1226,7 +1299,7 @@
               </div>
             </details>
 
-            <details class="card tax-lesson">
+            <details id="tax-lesson-archive" class="card tax-lesson">
               <summary><span>15</span><div><b>Archivio annuale e controllo prima dell’invio</b><small>Un fascicolo comprensibile anche dopo anni</small></div></summary>
               <div class="tax-content">
                 <h3>Struttura consigliata</h3><div class="archive-tree"><span>2025 / 01_CSV_originali</span><span>2025 / 02_Estratti_e_bonifici</span><span>2025 / 03_Wallet_e_hash</span><span>2025 / 04_Registro_normalizzato</span><span>2025 / 05_Calcoli_W_T</span><span>2025 / 06_Dichiarazione_730-3_F24</span><span>2025 / 07_Fonti_e_note_professionista</span></div>

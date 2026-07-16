@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guida alla prima dichiarazione crypto 2026 - Crypto Radar</title>
+  <style>
+    @page{size:A4;margin:16mm 15mm 17mm}
+    *{box-sizing:border-box}
+    html{font-family:Arial,Helvetica,sans-serif;color:#17202a;background:#fff}
+    body{margin:0;font-size:10.2pt;line-height:1.48}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:30pt;line-height:1.03;margin-bottom:12px}
+    h2{font-size:18pt;line-height:1.15;margin:0 0 10px;color:#11344d}
+    h3{font-size:12.5pt;margin:17px 0 7px;color:#173e58}
+    p{margin-bottom:10px}
+    a{color:#0a5c83;text-decoration:none}
+    ul,ol{margin:7px 0 12px;padding-left:20px}
+    li{margin:4px 0}
+    table{width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:8.9pt}
+    th,td{padding:7px 8px;border:1px solid #cfd9df;text-align:left;vertical-align:top}
+    th{background:#eaf1f5;color:#18384c}
+    code{font-family:Consolas,monospace;font-size:8.7pt}
+    .cover{min-height:260mm;display:flex;flex-direction:column;justify-content:space-between;padding:6mm 2mm}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:#173e58}
+    .logo{display:grid;place-items:center;width:38px;height:38px;border-radius:7px;background:#55d7a2;color:#092d23}
+    .kicker{display:inline-block;margin-bottom:12px;padding:5px 8px;border-radius:5px;background:#e7f8f1;color:#126744;font-size:8pt;font-weight:800;letter-spacing:.08em}
+    .subtitle{max-width:155mm;color:#536774;font-size:14pt;line-height:1.42}
+    .cover-box{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+    .cover-box div{padding:13px;border:1px solid #cfd9df;border-top:4px solid #55d7a2}
+    .cover-box b,.cover-box span{display:block}
+    .cover-box span{margin-top:5px;color:#5d707c;font-size:9pt}
+    .verified{display:flex;justify-content:space-between;gap:20px;padding-top:10px;border-top:1px solid #ccd8df;color:#596b76;font-size:8.5pt}
+    .chapter{break-before:page}
+    .chapter:first-of-type{break-before:auto}
+    .chapter-head{margin-bottom:16px;padding-bottom:10px;border-bottom:3px solid #55d7a2}
+    .chapter-no{display:block;margin-bottom:4px;color:#188a64;font-size:8pt;font-weight:800;letter-spacing:.1em}
+    .lead{color:#445d6c;font-size:11.5pt;line-height:1.5}
+    .notice,.warning,.success{padding:11px 13px;margin:12px 0;border-left:4px solid}
+    .notice{background:#edf5ff;border-color:#5797d6}
+    .warning{background:#fff7df;border-color:#e1ad35}
+    .success{background:#eaf8f2;border-color:#36a879}
+    .notice b,.warning b,.success b{display:block;margin-bottom:3px}
+    .grid-2,.grid-3{display:grid;gap:9px;margin:10px 0 14px}
+    .grid-2{grid-template-columns:1fr 1fr}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .box{padding:11px;border:1px solid #d1dce2;border-radius:5px;break-inside:avoid}
+    .box b,.box span{display:block}
+    .box span{margin-top:4px;color:#586d79;font-size:9pt}
+    .step{display:grid;grid-template-columns:28px 1fr;gap:10px;margin:7px 0;padding:10px;border:1px solid #d2dce2;break-inside:avoid}
+    .step>span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#153c54;color:#fff;font-weight:800}
+    .step b{display:block;margin-bottom:3px}
+    .step p{margin:0;color:#526774;font-size:9.3pt}
+    .checklist{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}
+    .checklist div{padding:8px 9px;border:1px solid #d4dee4;break-inside:avoid}
+    .checklist div:before{content:"□";margin-right:7px;color:#188a64;font-weight:800}
+    .formula{padding:14px;margin:13px 0;border:2px solid #bad1df;background:#f6fafc;text-align:center;font-weight:800}
+    .flow{display:flex;align-items:stretch;gap:6px;margin:12px 0}
+    .flow div{flex:1;padding:9px;border:1px solid #cfdbe1;text-align:center}
+    .flow i{align-self:center;color:#188a64;font-style:normal;font-weight:800}
+    .route{border-top:4px solid}
+    .route.green{border-top-color:#36a879}.route.yellow{border-top-color:#e1ad35}.route.red{border-top-color:#d75d6f}
+    .small{color:#60727d;font-size:8.6pt}
+    .source-list a{display:block;padding:6px 0;border-bottom:1px solid #dbe3e7;word-break:break-all}
+    .footer-note{margin-top:18px;padding-top:8px;border-top:1px solid #d3dde2;color:#61737d;font-size:8pt}
+    .no-break{break-inside:avoid}
+    @media screen{body{max-width:210mm;margin:20px auto;padding:14mm;box-shadow:0 8px 30px rgba(0,0,0,.12)}.chapter{padding-top:8mm}}
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div>
+      <div class="brand"><span class="logo">CR</span><span>Crypto Radar</span></div>
+      <div style="margin-top:42mm">
+        <span class="kicker">PERIODO D'IMPOSTA 2025 · DICHIARAZIONE 2026</span>
+        <h1>La tua prima<br>dichiarazione crypto</h1>
+        <p class="subtitle">Guida pratica per raccogliere i documenti, ricostruire exchange e wallet, capire i Quadri W e T, usare la precompilata, controllare i pagamenti e conservare un fascicolo completo.</p>
+        <div class="cover-box">
+          <div><b>Scritta per chi inizia</b><span>Parole semplici, ordine operativo e controlli concreti.</span></div>
+          <div><b>Utile anche al professionista</b><span>File e prove organizzati, casi dubbi evidenziati e domande già pronte.</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="warning"><b>Importante</b>Questa guida è informazione educativa generale. Non compila né invia la dichiarazione, non certifica i calcoli e non sostituisce l'Agenzia delle Entrate, un CAF o un professionista abilitato.</div>
+      <div class="verified"><span>Verificata il 16 luglio 2026</span><span>Fonti: Agenzia delle Entrate e Normattiva</span></div>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">00 · COME USARE QUESTA GUIDA</span><h2>Prima prepara, poi compila</h2></div>
+    <p class="lead">La dichiarazione non comincia dal portale dell'Agenzia. Comincia dalla ricostruzione completa di ciò che hai fatto durante il 2025.</p>
+    <div class="flow">
+      <div><b>1. Raccogli</b><br><span class="small">CSV, estratti, wallet e bonifici</span></div><i>→</i>
+      <div><b>2. Riconcilia</b><br><span class="small">saldi, trasferimenti e fee</span></div><i>→</i>
+      <div><b>3. Classifica</b><br><span class="small">possesso, cessioni e proventi</span></div><i>→</i>
+      <div><b>4. Dichiara</b><br><span class="small">730 o Redditi PF</span></div><i>→</i>
+      <div><b>5. Conserva</b><br><span class="small">ricevuta, esito e quietanze</span></div>
+    </div>
+    <div class="notice"><b>La regola più importante</b>Il modello 730/2026 riguarda il periodo d'imposta 2025. Le normali operazioni effettuate nel 2026 non vanno mescolate: saranno dichiarate nel 2027 con le regole applicabili a quell'anno.</div>
+    <h3>Che cosa contiene il kit Crypto Radar</h3>
+    <div class="grid-2">
+      <div class="box"><b>Inventario exchange e wallet</b><span>Una riga per piattaforma, wallet e asset, con valori, quantità, periodo e documenti.</span></div>
+      <div class="box"><b>Registro operazioni</b><span>Una riga per evento: acquisto, vendita, swap, pagamento, reward, fee o trasferimento.</span></div>
+      <div class="box"><b>Riconciliazione trasferimenti</b><span>Collega l'uscita da un tuo account all'ingresso in un altro tuo account.</span></div>
+      <div class="box"><b>Checklist di consegna</b><span>Controlli finali e domande per CAF o commercialista.</span></div>
+    </div>
+    <div class="warning"><b>Non inserire mai</b>Seed phrase, chiavi private, password, codici 2FA o codici di recupero. Per dimostrare un wallet bastano normalmente indirizzo pubblico, hash, estratti e altre prove di titolarità da valutare nel caso concreto.</div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">01 · IL PUNTO DI PARTENZA</span><h2>Capisci che cosa devi dichiarare</h2></div>
+    <p class="lead">Le crypto possono generare due famiglie di dati diverse. Una riguarda ciò che hai posseduto; l'altra riguarda ciò che hai realizzato con vendite, impieghi o altri eventi.</p>
+    <div class="grid-3">
+      <div class="box"><b>Quadro W</b><span>Monitoraggio delle cripto-attività detenute tramite wallet, conti digitali o altri sistemi e determinazione dell'imposta sul valore nei casi previsti.</span></div>
+      <div class="box"><b>Quadro T</b><span>Plusvalenze, altri proventi e minusvalenze di natura finanziaria, inclusa la sezione crypto del 730/2026.</span></div>
+      <div class="box"><b>Redditi PF</b><span>Alternativa quando il 730 non è utilizzabile o non copre l'intera situazione; usa in particolare RW e RT per le aree corrispondenti.</span></div>
+    </div>
+    <h3>Domande preliminari</h3>
+    <div class="checklist">
+      <div>Eri fiscalmente residente in Italia nel 2025?</div>
+      <div>Hai posseduto crypto anche senza venderle?</div>
+      <div>Hai usato exchange esteri o self-custody?</div>
+      <div>Hai venduto crypto contro euro o altra valuta?</div>
+      <div>Hai pagato beni o servizi in crypto?</div>
+      <div>Hai fatto swap tra crypto o token diversi?</div>
+      <div>Hai ricevuto staking, airdrop o altri reward?</div>
+      <div>Hai usato DeFi, NFT, bridge o liquidity pool?</div>
+      <div>Hai costi di acquisto mancanti?</div>
+      <div>Hai anni precedenti non dichiarati o incompleti?</div>
+    </div>
+    <div class="warning"><b>Se hai risposto sì alle ultime quattro domande</b>Prepara comunque tutti i dati, ma non forzare da solo una classificazione. Struttura del protocollo, disponibilità del provento, funzione dei token e continuità del costo possono cambiare il trattamento.</div>
+    <h3>730 o Redditi PF?</h3>
+    <p>Il solo possesso di crypto non obbliga automaticamente a usare Redditi PF: il 730/2026 contiene il Quadro W e il Quadro T. La scelta dipende dall'intera posizione personale, dai redditi posseduti e dalle condizioni di accesso al 730. La procedura ufficiale consente di scegliere tra 730 ordinario, 730 semplificato e Redditi PF.</p>
+    <div class="grid-3">
+      <div class="box route green"><b>Percorso più lineare</b><span>Dipendente o pensionato ammesso al 730, dati completi, operazioni semplici, nessun anno arretrato.</span></div>
+      <div class="box route yellow"><b>Assistenza consigliata</b><span>Molti wallet, report discordanti, staking, NFT, DeFi, token wrapped, bridge o costi parziali.</span></div>
+      <div class="box route red"><b>Verifica immediata</b><span>Omissioni pregresse, residenza cambiata, attività professionale, fondi di terzi o comunicazioni dell'Agenzia.</span></div>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">02 · DOCUMENTI</span><h2>Costruisci il fascicolo prima di calcolare</h2></div>
+    <p class="lead">L'obiettivo non è avere un solo report finale. Devi poter risalire dal numero dichiarato al documento originale.</p>
+    <h3>Documenti generali</h3>
+    <div class="checklist">
+      <div>Documento d'identità e codice fiscale</div>
+      <div>SPID, CIE o CNS funzionante</div>
+      <div>CU 2026 e altri redditi percepiti nel 2025</div>
+      <div>Dichiarazione e ricevuta dell'anno precedente</div>
+      <div>Prospetto 730-3 o liquidazione precedente</div>
+      <div>F24, acconti e crediti già utilizzati</div>
+      <div>Documenti di spese, immobili e familiari</div>
+      <div>Eventuali comunicazioni dell'Agenzia</div>
+    </div>
+    <h3>Documenti crypto per ogni exchange</h3>
+    <div class="checklist">
+      <div>Export completo di tutte le transazioni 2025</div>
+      <div>Saldo o estratto al 1 gennaio e al 31 dicembre</div>
+      <div>Storico depositi e prelievi fiat</div>
+      <div>Storico depositi e prelievi crypto</div>
+      <div>Storico acquisti, vendite, swap e conversioni</div>
+      <div>Storico reward, staking e campagne promozionali</div>
+      <div>Report fee e commissioni</div>
+      <div>Report fiscale del provider, se disponibile</div>
+      <div>Prova di bollo o imposta già applicata</div>
+      <div>E-mail di chiusura per account non più attivi</div>
+    </div>
+    <h3>Documenti per ogni wallet</h3>
+    <div class="checklist">
+      <div>Indirizzo pubblico e rete corretta</div>
+      <div>Cronologia completa delle transazioni</div>
+      <div>Hash dei trasferimenti principali</div>
+      <div>Prova che il wallet è nella tua disponibilità</div>
+      <div>Saldi al principio e alla fine del periodo</div>
+      <div>Elenco di contratti DeFi e NFT utilizzati</div>
+    </div>
+    <div class="notice"><b>Conserva due versioni</b>Metti gli export originali in una cartella di sola lettura. Lavora su copie separate. In questo modo puoi dimostrare che cosa proveniva dalla piattaforma e che cosa hai successivamente normalizzato.</div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">03 · INVENTARIO</span><h2>Elenca ogni exchange, wallet e asset</h2></div>
+    <p class="lead">L'inventario serve a evitare l'errore più comune: dimenticare un account vecchio, un wallet usato per poco tempo o un token rimasto con valore ridotto.</p>
+    <div class="step"><span>1</span><div><b>Scrivi tutti i contenitori</b><p>Exchange, broker, app, wallet hardware, wallet mobile, estensioni browser, carte crypto e account chiusi nel 2025.</p></div></div>
+    <div class="step"><span>2</span><div><b>Elenca gli asset separatamente</b><p>Non scrivere soltanto “wallet MetaMask”: indica ogni token e la rete su cui era detenuto.</p></div></div>
+    <div class="step"><span>3</span><div><b>Ricostruisci il periodo</b><p>Data iniziale, eventuale data di acquisto, data finale o data di cessione, quota di possesso e giorni rilevanti.</p></div></div>
+    <div class="step"><span>4</span><div><b>Collega i documenti</b><p>Per ogni riga annota il nome del CSV, estratto, screenshot o transazione che sostiene il dato.</p></div></div>
+    <div class="step"><span>5</span><div><b>Verifica bollo o imposta</b><p>Controlla se un intermediario ha applicato un prelievo. Non dare per scontato che copra ogni wallet o ogni periodo.</p></div></div>
+    <h3>Controllo quantitativo</h3>
+    <div class="formula">Quantità iniziale + acquisti e accrediti − vendite, uscite e fee = quantità finale</div>
+    <p>Ripeti il controllo per asset e per piattaforma. Una differenza non va nascosta: può dipendere da fee di rete, staking, token migrati, redenominazioni, airdrop, operazioni duplicate o dati mancanti.</p>
+    <table>
+      <thead><tr><th>Segnale</th><th>Che cosa può significare</th><th>Azione</th></tr></thead>
+      <tbody>
+        <tr><td>Saldo finale negativo</td><td>Operazioni mancanti, duplicati o segno errato.</td><td>Non procedere al calcolo finché non è risolto.</td></tr>
+        <tr><td>Deposito senza origine</td><td>Trasferimento da altro wallet, acquisto mancante, reward o fondi di terzi.</td><td>Trova hash e piattaforma di provenienza.</td></tr>
+        <tr><td>Vendita senza costo</td><td>Acquisto avvenuto su altra piattaforma o in un anno precedente.</td><td>Ricostruisci la storia prima di stimare il risultato.</td></tr>
+        <tr><td>Differenza piccola e ricorrente</td><td>Fee di rete o arrotondamenti.</td><td>Registra la fee separatamente e conserva la prova.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">04 · REGISTRO OPERAZIONI</span><h2>Una riga per ogni evento</h2></div>
+    <p class="lead">Il registro traduce formati diversi in un'unica struttura leggibile. Non sostituisce gli originali e non deve eliminare le operazioni dubbie.</p>
+    <table>
+      <thead><tr><th>Campo</th><th>Che cosa inserire</th></tr></thead>
+      <tbody>
+        <tr><td>Data, ora e fuso</td><td>Timestamp originale e fuso orario. Conserva il criterio usato per trasformarlo nella data fiscale.</td></tr>
+        <tr><td>Piattaforma e wallet</td><td>Nome exchange, account, indirizzo pubblico e rete quando rilevante.</td></tr>
+        <tr><td>Tipo evento</td><td>Acquisto, vendita, swap, deposito, prelievo, trasferimento proprio, reward, fee, pagamento, NFT o altro.</td></tr>
+        <tr><td>Asset e quantità</td><td>Asset ceduto e ricevuto, quantità lorde e commissioni senza compensare righe diverse.</td></tr>
+        <tr><td>Valore in euro</td><td>Controvalore, fonte del cambio, data/ora e criterio applicato.</td></tr>
+        <tr><td>Costo documentato</td><td>Costo storico e commissioni attribuite, collegati a prove certe e precise.</td></tr>
+        <tr><td>Hash o ID</td><td>Identificativo exchange o hash on-chain che consente di ritrovare l'evento.</td></tr>
+        <tr><td>Classificazione</td><td>Rilevante, non rilevante o da verificare, con una breve motivazione.</td></tr>
+      </tbody>
+    </table>
+    <h3>Trasferimenti fra wallet propri</h3>
+    <p>Un trasferimento fra due account entrambi tuoi non è normalmente una cessione, ma devi dimostrare la continuità. Abbina uscita e ingresso con data, asset, quantità e hash; spiega la differenza dovuta alla fee; conserva la prova che entrambi i wallet erano nella tua disponibilità.</p>
+    <div class="warning"><b>Non cancellare la doppia riga</b>Il prelievo e il deposito devono restare nel registro ed essere collegati dallo stesso ID di riconciliazione. Eliminandoli perdi la traccia del movimento e rischi di rompere il costo storico.</div>
+    <h3>Operazioni da tenere separate</h3>
+    <div class="grid-2">
+      <div class="box"><b>Staking e reward</b><span>Quantità, momento di disponibilità, valore in euro e condizioni del servizio.</span></div>
+      <div class="box"><b>Airdrop e promozioni</b><span>Motivo dell'accredito, eventuali condizioni e valore al momento rilevante.</span></div>
+      <div class="box"><b>DeFi e liquidity pool</b><span>Depositi, token ricevuti, reward, ritiri, bridge, wrapped token e smart contract.</span></div>
+      <div class="box"><b>NFT e pagamenti</b><span>Asset ceduto, bene o diritto ricevuto, valore in euro, fee e documentazione.</span></div>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">05 · QUADRO W</span><h2>Possesso, monitoraggio e imposta sul valore</h2></div>
+    <p class="lead">Il Quadro W del 730/2026 può riguardare le cripto-attività detenute attraverso portafogli, conti digitali o altri sistemi di archiviazione o conservazione, anche se non hai venduto.</p>
+    <div class="grid-3">
+      <div class="box"><b>Monitoraggio</b><span>Fotografa le attività e i periodi rilevanti secondo le istruzioni annuali.</span></div>
+      <div class="box"><b>Imposta sul valore</b><span>Va verificata sulla base di valore, periodo e prelievi eventualmente già applicati.</span></div>
+      <div class="box"><b>Prova</b><span>Inventario, estratti, prezzi, giorni, titolarità e documenti del provider.</span></div>
+    </div>
+    <h3>Dati da preparare prima di aprire il Quadro W</h3>
+    <div class="checklist">
+      <div>Tipologia della cripto-attività</div>
+      <div>Piattaforma, wallet e tipo di custodia</div>
+      <div>Valore iniziale o al primo giorno di possesso</div>
+      <div>Valore finale o alla data di cessione</div>
+      <div>Quota e periodo di possesso</div>
+      <div>Eventuali trasferimenti durante l'anno</div>
+      <div>Bollo o imposta già applicata</div>
+      <div>Eccedenze o acconti dell'anno precedente</div>
+    </div>
+    <div class="notice"><b>Il Quadro W non è soltanto “exchange estero”</b>La pagina ufficiale 2026 cita espressamente le cripto-attività detenute tramite portafogli, conti digitali o altri sistemi. Non escludere automaticamente self-custody o wallet non collegati a un intermediario.</div>
+    <h3>Controlli anti-duplicazione</h3>
+    <ol>
+      <li>Verifica se il provider ha applicato bollo o altra imposta e per quale periodo.</li>
+      <li>Controlla se lo stesso asset compare in due piattaforme a causa di un trasferimento.</li>
+      <li>Non sommare come nuova ricchezza un'uscita e il corrispondente ingresso.</li>
+      <li>Confronta quanto inserito con l'inventario e con le istruzioni 730/2026 da pagina 117.</li>
+      <li>Se hai più moduli, controlla che nessuna riga sia duplicata o mancante.</li>
+    </ol>
+    <div class="warning"><b>Fatti assistere quando</b>La custodia cambia più volte, non sai come valorizzare il periodo, hai quote condivise, hai trasferito fondi tra familiari o un provider ha applicato prelievi non comprensibili.</div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">06 · QUADRO T</span><h2>Plusvalenze, proventi e minusvalenze</h2></div>
+    <p class="lead">Per le cessioni realizzate nel 2025, la sezione crypto del Quadro T del 730/2026 applica il 26% e la vecchia soglia di 2.000 euro non opera più.</p>
+    <div class="formula">Corrispettivo o valore ricevuto − costo o valore di acquisto documentato = plusvalenza o minusvalenza</div>
+    <table>
+      <thead><tr><th>Evento</th><th>Trattamento generale da verificare</th><th>Prove da conservare</th></tr></thead>
+      <tbody>
+        <tr><td>Acquisto e detenzione</td><td>Non realizza da solo una plusvalenza; resta da valutare il Quadro W.</td><td>Bonifico, ricevuta, quantità, prezzo e fee.</td></tr>
+        <tr><td>Vendita contro euro</td><td>Evento normalmente rilevante.</td><td>Corrispettivo, costo storico, commissioni e data.</td></tr>
+        <tr><td>Pagamento di beni o servizi</td><td>L'impiego della crypto può realizzare un risultato.</td><td>Valore in euro e documento del bene o servizio.</td></tr>
+        <tr><td>Permuta crypto-crypto</td><td>L'esclusione riguarda soltanto cripto con eguali caratteristiche e funzioni; i casi dubbi vanno analizzati.</td><td>Funzione dei token, valori, fee e motivazione.</td></tr>
+        <tr><td>Trasferimento proprio</td><td>Normalmente non è una cessione se entrambi gli account sono tuoi e il movimento è provato.</td><td>Hash, indirizzi, quantità e riconciliazione.</td></tr>
+        <tr><td>Reward, DeFi o NFT</td><td>Dipende dalla struttura, dal diritto ricevuto e dal momento di disponibilità.</td><td>Termini, smart contract, movimenti e valori.</td></tr>
+      </tbody>
+    </table>
+    <h3>Esempio puramente didattico</h3>
+    <p>Acquisto documentato 1.000 euro, commissioni attribuite al costo 10 euro, vendita 1.400 euro, commissione di vendita 14 euro. In un esempio semplificato: 1.386 − 1.010 = 376 euro di plusvalenza. Il 26% sarebbe 97,76 euro prima di compensazioni, minusvalenze, regole del quadro e particolarità del caso.</p>
+    <div class="warning"><b>Il costo deve essere provato</b>Se un costo non è sostenuto da elementi certi e precisi, il risultato può diventare molto sfavorevole. Non inventare una media e non usare soltanto il prezzo mostrato oggi dall'app.</div>
+    <h3>Minusvalenze</h3>
+    <p>Le minusvalenze devono essere correttamente calcolate e indicate per poter essere utilizzate secondo le regole applicabili. Verifica eventuali residui da dichiarazioni precedenti e la relativa scadenza. Non considerarle automaticamente “salvate” da un report dell'exchange.</p>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">07 · PROCEDURA ONLINE</span><h2>Dalla precompilata alla ricevuta</h2></div>
+    <p class="lead">Accedi soltanto dal portale ufficiale. Una dichiarazione salvata come bozza non è ancora presentata.</p>
+    <div class="step"><span>1</span><div><b>Accedi con SPID, CIE o CNS</b><p>Controlla il dominio dell'Agenzia delle Entrate e non usare link ricevuti da messaggi sospetti.</p></div></div>
+    <div class="step"><span>2</span><div><b>Leggi il foglio informativo</b><p>Verifica quali dati sono stati usati e quali non sono stati inseriti nella precompilata.</p></div></div>
+    <div class="step"><span>3</span><div><b>Scegli il modello</b><p>Valuta 730 semplificato, 730 ordinario o Redditi PF in base all'intera posizione.</p></div></div>
+    <div class="step"><span>4</span><div><b>Controlla anagrafica e sostituto</b><p>Residenza, familiari, e-mail e soggetto che effettua il conguaglio devono essere corretti.</p></div></div>
+    <div class="step"><span>5</span><div><b>Controlla redditi e spese</b><p>Confronta CU, immobili, oneri e acconti con i documenti; evita omissioni e doppioni.</p></div></div>
+    <div class="step"><span>6</span><div><b>Compila o verifica W e T</b><p>Usa i prospetti preparati, non la memoria. Salva ogni sezione e aggiungi moduli se necessari.</p></div></div>
+    <div class="step"><span>7</span><div><b>Leggi l'esito</b><p>Controlla messaggi, crediti, debiti, 730-3 ed eventuali pagamenti separati.</p></div></div>
+    <div class="step"><span>8</span><div><b>Invia e attendi la ricevuta</b><p>Scarica la copia definitiva e verifica che la ricevuta telematica confermi la presentazione.</p></div></div>
+    <h3>Controllo prima del clic finale</h3>
+    <div class="checklist">
+      <div>Codice fiscale e anno corretti</div>
+      <div>Modello adatto alla situazione</div>
+      <div>Tutti gli exchange e wallet inclusi</div>
+      <div>W e T confrontati con i prospetti</div>
+      <div>Credito o debito compreso</div>
+      <div>Rate e scadenze annotate</div>
+      <div>PDF definitivo pronto da archiviare</div>
+      <div>Piano per scaricare la ricevuta</div>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">08 · DATE E PAGAMENTI</span><h2>Calendario ufficiale 2026</h2></div>
+    <table>
+      <thead><tr><th>Data</th><th>Passaggio</th></tr></thead>
+      <tbody>
+        <tr><td>30 aprile 2026</td><td>Disponibile la visualizzazione della dichiarazione 730 precompilata.</td></tr>
+        <tr><td>14 maggio 2026</td><td>È possibile accettare, modificare e inviare il 730 tramite l'applicazione web.</td></tr>
+        <tr><td>30 giugno 2026</td><td>Termine ordinario indicato per saldo e primo acconto dei contribuenti con 730 senza sostituto o Redditi, salvo proroghe applicabili.</td></tr>
+        <tr><td>30 luglio 2026</td><td>Versamento con maggiorazione dello 0,40% nei casi indicati dal calendario ufficiale, salvo proroghe applicabili.</td></tr>
+        <tr><td>30 settembre 2026</td><td>Termine ordinario di presentazione del 730.</td></tr>
+        <tr><td>26 ottobre 2026</td><td>730 integrativo tramite CAF o professionista, solo nei casi favorevoli o a imposta invariata.</td></tr>
+        <tr><td>2 novembre 2026</td><td>Termine per Redditi precompilato e Redditi correttivo del 730; anche secondo o unico acconto nei casi indicati.</td></tr>
+        <tr><td>1 febbraio 2027</td><td>Termine del Redditi tardivo entro 90 giorni dalla scadenza, secondo il calendario ufficiale.</td></tr>
+      </tbody>
+    </table>
+    <div class="notice"><b>Le date possono avere eccezioni</b>Controlla sempre il calendario ufficiale per proroghe, contribuenti ISA, forfetari, assenza del sostituto, rateazioni e altre condizioni personali.</div>
+    <h3>Come controllare un F24</h3>
+    <ol>
+      <li>Parti dall'esito ufficiale della dichiarazione o dal prospetto del professionista.</li>
+      <li>Confronta codice tributo, anno di riferimento, importo, rateazione e data.</li>
+      <li>Non riciclare codici trovati in guide riferite ad anni precedenti.</li>
+      <li>Verifica che l'addebito sia riuscito: la semplice delega inserita non è una quietanza.</li>
+      <li>Salva modello e quietanza nella stessa cartella della dichiarazione.</li>
+    </ol>
+    <div class="warning"><b>Non improvvisare correzioni</b>Se scopri un errore dopo l'invio, lo strumento cambia in base a data e risultato: annullamento nei termini, 730 integrativo nei soli casi ammessi, Redditi correttivo o integrativo e, se dovuto, ravvedimento.</div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">09 · ARCHIVIO FINALE</span><h2>Conserva un fascicolo comprensibile</h2></div>
+    <p class="lead">Tra alcuni anni dovresti poter spiegare ogni importo senza affidarti alla memoria.</p>
+    <table>
+      <thead><tr><th>Cartella</th><th>Contenuto</th></tr></thead>
+      <tbody>
+        <tr><td><code>2025/01_CSV_originali</code></td><td>Export scaricati dagli exchange senza modifiche.</td></tr>
+        <tr><td><code>2025/02_Estratti_e_bonifici</code></td><td>Estratti conto, depositi, prelievi fiat e conferme.</td></tr>
+        <tr><td><code>2025/03_Wallet_e_hash</code></td><td>Indirizzi pubblici, cronologia, hash e prove di titolarità.</td></tr>
+        <tr><td><code>2025/04_Registro_normalizzato</code></td><td>Registro operazioni e riconciliazione trasferimenti.</td></tr>
+        <tr><td><code>2025/05_Calcoli_W_T</code></td><td>Inventario, valori, criteri, fonti cambio e prospetti finali.</td></tr>
+        <tr><td><code>2025/06_Dichiarazione_730-3_F24</code></td><td>Modello inviato, ricevuta, esito, F24 e quietanze.</td></tr>
+        <tr><td><code>2025/07_Fonti_e_note</code></td><td>Istruzioni dell'anno, domande, risposte e note professionali.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controllo di qualità</h3>
+    <div class="checklist">
+      <div>Nessun account o wallet dimenticato</div>
+      <div>Intero 2025 coperto</div>
+      <div>Saldi iniziali e finali riconciliati</div>
+      <div>Trasferimenti propri abbinati</div>
+      <div>Fee e cambi euro documentati</div>
+      <div>Costi mancanti evidenziati</div>
+      <div>Reward, DeFi e NFT separati</div>
+      <div>Minusvalenze pregresse verificate</div>
+      <div>W e imposta sul valore controllati</div>
+      <div>T e aliquota 2025 controllati</div>
+      <div>730-3 e F24 compresi</div>
+      <div>Ricevuta e quietanze presenti</div>
+    </div>
+    <div class="success"><b>Sei davvero arrivato alla fine quando</b>Un terzo può partire dagli export originali, seguire le trasformazioni, capire i casi dubbi e arrivare agli importi dichiarati senza chiederti di ricostruire tutto da capo.</div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">10 · ASSISTENZA PROFESSIONALE</span><h2>Che cosa chiedere e che cosa ricevere</h2></div>
+    <p class="lead">Un buon fascicolo riduce il tempo speso a cercare dati e lascia più spazio alle vere decisioni fiscali.</p>
+    <h3>Domande da portare al CAF o commercialista</h3>
+    <ol>
+      <li>Il 730 è sufficiente per la mia intera posizione o devo usare Redditi PF?</li>
+      <li>Quali righe di W/RW e T/RT sono state compilate e con quali prospetti?</li>
+      <li>Come sono stati trattati swap, fee, staking, airdrop, bridge, NFT, liquidity pool e wrapped token?</li>
+      <li>Quale criterio e quale fonte cambio sono stati usati?</li>
+      <li>Come sono stati ricostruiti i costi e quali operazioni restano senza prova?</li>
+      <li>Chi ha applicato bollo o imposta sul valore e come sono stati evitati duplicati?</li>
+      <li>Quali minusvalenze restano riportabili e fino a quale anno?</li>
+      <li>Quali pagamenti devo effettuare personalmente, con quali importi, rate e scadenze?</li>
+      <li>Ci sono anni precedenti da correggere o ravvedere?</li>
+    </ol>
+    <h3>Documenti da ricevere dopo il lavoro</h3>
+    <div class="checklist">
+      <div>Copia completa della dichiarazione inviata</div>
+      <div>Ricevuta telematica</div>
+      <div>Prospetto 730-3 o liquidazione Redditi</div>
+      <div>Prospetto dei calcoli crypto</div>
+      <div>F24 predisposti e calendario pagamenti</div>
+      <div>Elenco dei criteri e delle fonti usate</div>
+      <div>Minusvalenze residue e relativa scadenza</div>
+      <div>Indicazioni su eventuali correzioni future</div>
+    </div>
+    <div class="warning"><b>Non consegnare soltanto il report di un software</b>Allega anche export originali, wallet, prove dei costi e movimenti fiat. Un risultato automatico può contenere duplicati, trasferimenti non abbinati o classificazioni non adatte al caso concreto.</div>
+  </section>
+
+  <section class="chapter">
+    <div class="chapter-head"><span class="chapter-no">11 · FONTI UFFICIALI</span><h2>Controlla sempre la versione vigente</h2></div>
+    <p class="lead">I collegamenti seguenti sono il punto di riferimento per modelli, istruzioni, procedura e scadenze. Il PDF personale valido viene generato dal portale dopo la compilazione e l'invio.</p>
+    <div class="source-list">
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/">Portale dichiarazione precompilata</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/documents/d/guest/730_istruzioni_2026.pdf">Istruzioni ufficiali 730/2026 PDF</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/scadenze">Date e scadenze 2026</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/scegli-il-modello">Scelta tra 730 e Redditi PF</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/quadro-w">Quadro W - guida ufficiale</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/quadro-t">Quadro T - guida ufficiale</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/documents/d/guest/pf2_istruzioni_2026.pdf">Redditi PF 2026 - Fascicolo 2 PDF</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/prospetto-di-liquidazione">Prospetto di liquidazione 730-3</a>
+      <a href="https://telematici.agenziaentrate.gov.it/Main/F24web.jsp">Servizio F24 Web</a>
+      <a href="https://telematici.agenziaentrate.gov.it/pdf/ModF24_1copia.pdf">Modello F24 PDF</a>
+      <a href="https://infoprecompilata.agenziaentrate.gov.it/portale/it/redditi-aggiuntivo-e-correttivo/integrativo">Correzioni e dichiarazioni integrative</a>
+      <a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.presidente.repubblica:1986-12-22;917~art67!vig=">Normattiva - TUIR, articolo 67</a>
+      <a href="https://www.normattiva.it/eli/id/2025/12/30/25G00212/ORIGINAL">Normattiva - Legge 30 dicembre 2025, n. 199</a>
+    </div>
+    <div class="notice"><b>Assistenza Agenzia delle Entrate</b>Le pagine ufficiali riportano i canali di assistenza aggiornati. Per quesiti personali complessi, l'assistenza generale dell'Agenzia non sostituisce l'analisi di un professionista incaricato.</div>
+    <div class="footer-note">Crypto Radar · Guida preparatoria non ufficiale · Versione 16 luglio 2026. Prima dell'uso verifica eventuali aggiornamenti a modelli, istruzioni, scadenze, prassi e normativa.</div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,57 @@
+CRYPTO RADAR - CHECKLIST PRIMA DICHIARAZIONE
+Anno dichiarazione: 2026
+Periodo d'imposta: 2025
+Documento preparatorio non ufficiale
+
+IDENTITA E ACCESSO
+[ ] Documento di identita e codice fiscale
+[ ] SPID, CIE o CNS funzionante
+[ ] CU 2026 e altri redditi 2025
+[ ] Dichiarazione, ricevuta, prospetto e F24 dell'anno precedente
+
+INVENTARIO CRYPTO
+[ ] Elenco completo di exchange, app, carte e conti crypto
+[ ] Elenco completo di wallet e indirizzi pubblici
+[ ] Inclusi account chiusi o non piu usati
+[ ] Saldi al 1 gennaio e al 31 dicembre ricostruiti
+[ ] Periodi di possesso e valori in euro documentati
+[ ] Bollo o imposta applicati dai provider verificati
+
+OPERAZIONI
+[ ] CSV originali conservati senza modifiche
+[ ] Acquisti, vendite, swap, pagamenti e fee registrati
+[ ] Trasferimenti fra wallet propri abbinati
+[ ] Bonifici fiat riconciliati con depositi e prelievi
+[ ] Staking, lending, airdrop, DeFi, NFT e mining separati
+[ ] Costi di acquisto sostenuti da prove certe
+[ ] Fonte del cambio in euro annotata
+[ ] Operazioni dubbie evidenziate senza forzare una classificazione
+
+SCELTA E COMPILAZIONE
+[ ] Verificato se il 730 copre l'intera situazione
+[ ] Quadro W/RW verificato per possesso e monitoraggio
+[ ] Imposta sul valore e bollo verificati senza duplicazioni
+[ ] Quadro T/RT verificato per plus, proventi e minus
+[ ] Operazioni speciali sottoposte a CAF o professionista
+
+DOPO IL CALCOLO
+[ ] Prospetto 730-3 o liquidazione Redditi controllato
+[ ] Eventuali F24 confrontati con l'esito ufficiale
+[ ] Importi, anno, rate e scadenze controllati
+[ ] Modello definitivo inviato
+[ ] Ricevuta telematica scaricata
+[ ] Quietanze dei pagamenti riusciti salvate
+[ ] Fascicolo finale archiviato in una cartella dedicata
+
+DOMANDE DA FARE AL PROFESSIONISTA
+- Il 730 e sufficiente oppure serve Redditi PF?
+- Quali righe di W/RW e T/RT sono state compilate?
+- Come sono stati trattati swap, fee, staking, airdrop, DeFi e NFT?
+- Come sono stati ricostruiti i costi mancanti e i cambi in euro?
+- Come sono stati evitati duplicati tra bollo e imposta sul valore?
+- Quali minusvalenze restano riportabili e fino a quale anno?
+- Quali F24 devo pagare personalmente e con quali scadenze?
+- Serve correggere o ravvedere anni precedenti?
+
+Nota: questo file organizza la preparazione. Non certifica calcoli,
+classificazioni, imposte o adempimenti personali.

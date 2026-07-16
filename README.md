@@ -185,11 +185,13 @@ Lo score serve a ordinare le crypto per approfondimenti. Non è una previsione n
 
 La pagina **730 & fiscalità crypto** raccoglie una guida burocratica aggiornata al 2026 con 15 capitoli, tra cui:
 
+- percorso introduttivo in otto passaggi per la prima dichiarazione, con progresso salvato nel browser;
 - scelta tra modello 730 e Redditi PF;
 - procedura di preparazione, invio, pagamento e conservazione;
 - centro documenti con istruzioni ufficiali 730/2026 e Redditi PF, guide W/T, 730-3 e servizi F24;
 - tabella guidata per scegliere quale modello o percorso di correzione usare;
-- file preparatori scaricabili per inventario wallet/exchange, registro operazioni e consegna a CAF o commercialista;
+- guida stampabile di 13 pagine e kit ZIP scaricabile;
+- file preparatori per inventario wallet/exchange, registro operazioni, riconciliazione dei trasferimenti e consegna a CAF o commercialista;
 - checklist locale dei documenti generali e degli estratti crypto;
 - spiegazione dei quadri W/RW e T/RT;
 - trattamento generale di detenzione, vendite, permute, wallet propri, staking, DeFi e NFT;

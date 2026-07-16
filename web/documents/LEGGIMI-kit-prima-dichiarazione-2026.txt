@@ -1,0 +1,26 @@
+KIT PRIMA DICHIARAZIONE CRYPTO 2026
+
+Questo kit serve a preparare i dati relativi al periodo d'imposta 2025.
+Non sostituisce il modello ufficiale, l'invio telematico, un CAF o un
+professionista abilitato.
+
+CONTENUTO
+- guida-prima-dichiarazione-crypto-2026.pdf
+- inventario-exchange-wallet-2025.csv
+- registro-operazioni-crypto-2025.csv
+- riconciliazione-trasferimenti-2025.csv
+- checklist-consegna-fiscale-2026.txt
+- fonti-ufficiali-730-crypto-2026.txt
+
+ORDINE CONSIGLIATO
+1. Leggi la guida PDF.
+2. Compila l'inventario di tutti gli exchange e wallet.
+3. Conserva gli export originali in una cartella separata.
+4. Normalizza gli eventi nel registro operazioni.
+5. Abbina i trasferimenti tra wallet propri.
+6. Evidenzia costi mancanti e casi dubbi.
+7. Usa la checklist prima della compilazione o della consegna.
+8. Verifica modelli, scadenze e pagamenti sulle fonti ufficiali.
+
+Non inserire seed phrase, password, codici 2FA o chiavi private in
+nessuno di questi file.
