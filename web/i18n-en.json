@@ -2671,5 +2671,12 @@
   "Candele aggregate dai punti di mercato": "Candles aggregated from market data points",
   "1 ora": "1 hour",
   "2 ore": "2 hours",
-  "4 ore": "4 hours"
+  "4 ore": "4 hours",
+  "Tema": "Theme",
+  "Scuro": "Dark",
+  "Chiaro": "Light",
+  "Sistema": "System",
+  "Tema dell'interfaccia": "Interface theme",
+  "Torna alla Panoramica": "Return to Overview",
+  "Tema aggiornato": "Theme updated"
 }
