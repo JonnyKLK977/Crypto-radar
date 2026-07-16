@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="/phase22.css">
   <link rel="stylesheet" href="/phase23.css">
   <link rel="stylesheet" href="/phase24.css">
+  <link rel="stylesheet" href="/phase25.css">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
 </head>
@@ -36,22 +37,52 @@
   <div class="shell">
     <aside class="sidebar">
       <div class="brand"><span class="brand-mark">CR</span><div><b>Crypto Radar</b><small>Decision support</small></div></div>
-      <nav>
-        <button class="nav active" data-target="overview">Panoramica</button>
-        <button class="nav" data-target="screener">Potenziali Crypto</button>
-        <button class="nav" data-target="portfolio">Il mio portafoglio</button>
-        <button class="nav" data-target="connections">Exchange & wallet</button>
-        <button class="nav" data-target="academy">Guide & Manuali</button>
-        <button class="nav" data-target="plan">Piano personale</button>
-        <button class="nav" data-target="copilot">Assistente Personale</button>
-        <button class="nav" data-target="decision">Laboratorio</button>
-        <button class="nav" data-target="operations">Centro operativo</button>
-        <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
-        <button class="nav advanced-only" data-target="intelligence">Intelligence Hub</button>
-        <button class="nav" data-target="community">Chat Community</button>
-        <button class="nav" data-target="news">News & trend</button>
-        <button class="nav" data-target="tax">730 & fiscalità crypto</button>
-        <button class="nav" data-target="method">Metodo & rischio</button>
+      <div class="sidebar-nav-head">
+        <div><span>MENU MODULARE</span><b>Le tue sezioni</b></div>
+        <button id="openSidebarLayout" type="button" aria-expanded="false">Personalizza</button>
+      </div>
+      <div id="sidebarLayoutManager" class="sidebar-layout-manager hidden">
+        <div class="sidebar-layout-manager-head"><div><span>PERSONALIZZA MENU</span><b>Scegli cosa vedere</b></div><button id="closeSidebarLayout" type="button" aria-label="Chiudi personalizzazione">×</button></div>
+        <div class="sidebar-density-control" role="group" aria-label="Densità del menu"><span>Densità</span><button type="button" data-sidebar-density="comfortable">Comoda</button><button type="button" data-sidebar-density="compact">Compatta</button></div>
+        <div id="sidebarModuleManagerList" class="sidebar-module-manager-list"></div>
+        <div class="sidebar-layout-manager-footer"><button id="resetSidebarLayout" type="button">Ripristina</button><span id="sidebarLayoutStatus">Salvato in questo browser</span></div>
+      </div>
+      <nav id="sidebarNav" aria-label="Navigazione principale">
+        <section class="sidebar-group" data-sidebar-group="market">
+          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="market" aria-expanded="true"><span class="sidebar-group-number">01</span><span><b>Mercato</b><small>Contesto e ricerca</small></span><i aria-hidden="true">⌄</i></button>
+          <div class="sidebar-group-items">
+            <button class="nav active" data-target="overview">Panoramica</button>
+            <button class="nav" data-target="screener">Potenziali Crypto</button>
+          </div>
+        </section>
+        <section class="sidebar-group" data-sidebar-group="portfolio">
+          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="portfolio" aria-expanded="true"><span class="sidebar-group-number">02</span><span><b>Portafoglio e piano</b><small>Gestione personale</small></span><i aria-hidden="true">⌄</i></button>
+          <div class="sidebar-group-items">
+            <button class="nav" data-target="portfolio">Il mio portafoglio</button>
+            <button class="nav" data-target="connections">Exchange & wallet</button>
+            <button class="nav" data-target="academy">Guide & Manuali</button>
+            <button class="nav" data-target="plan">Piano personale</button>
+            <button class="nav" data-target="copilot">Assistente Personale</button>
+            <button class="nav" data-target="decision">Laboratorio</button>
+          </div>
+        </section>
+        <section class="sidebar-group" data-sidebar-group="tools">
+          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="tools" aria-expanded="true"><span class="sidebar-group-number">03</span><span><b>Strumenti</b><small>Analisi e controllo</small></span><i aria-hidden="true">⌄</i></button>
+          <div class="sidebar-group-items">
+            <button class="nav" data-target="operations">Centro operativo</button>
+            <button class="nav advanced-only" data-target="advanced">Strumenti avanzati</button>
+            <button class="nav advanced-only" data-target="intelligence">Intelligence Hub</button>
+          </div>
+        </section>
+        <section class="sidebar-group" data-sidebar-group="community">
+          <button class="sidebar-group-toggle" type="button" data-sidebar-group-toggle="community" aria-expanded="true"><span class="sidebar-group-number">04</span><span><b>Community e fonti</b><small>Confronto e conoscenza</small></span><i aria-hidden="true">⌄</i></button>
+          <div class="sidebar-group-items">
+            <button class="nav" data-target="community">Chat Community</button>
+            <button class="nav" data-target="news">News & trend</button>
+            <button class="nav" data-target="tax">730 & fiscalità crypto</button>
+            <button class="nav" data-target="method">Metodo & rischio</button>
+          </div>
+        </section>
       </nav>
       <div class="sidebar-profile"><button id="openOnboarding" class="secondary">Configura profilo</button><button id="interfaceMode" class="mode-button">Modalità: Principiante</button></div>
       <div class="side-note">Dati pubblici CoinGecko<br><span id="lastUpdate">In attesa dei dati…</span></div>

@@ -430,6 +430,73 @@ function reorderHomeWidget(source,target){if(!source||source===target)return;con
 function toggleHomeLayout(open){$("homeLayoutManager").classList.toggle("hidden",!open);$("openHomeLayout").classList.toggle("active",open);if(open){renderHomeLayoutManager();$("homeLayoutManager").scrollIntoView({behavior:"smooth",block:"nearest"})}}
 function resetHomeLayout(){localStorage.removeItem(homeLayoutStore);applyHomeLayout();$("homeLayoutStatus").textContent="Impostazione iniziale ripristinata";window.CryptoRadarI18n?.translateDocument()}
 
+const sidebarLayoutStore="cryptoRadarSidebarLayoutV1";
+const sidebarTargets=()=>[...document.querySelectorAll("#sidebarNav .nav")].map(button=>button.dataset.target);
+function sidebarLayout(){
+  const saved=localData(sidebarLayoutStore,{}),knownTargets=new Set(sidebarTargets()),knownGroups=new Set([...document.querySelectorAll("[data-sidebar-group]")].map(group=>group.dataset.sidebarGroup));
+  return {
+    hidden:Array.isArray(saved.hidden)?[...new Set(saved.hidden.filter(target=>knownTargets.has(target)&&target!=="overview"))]:[],
+    collapsed:Array.isArray(saved.collapsed)?[...new Set(saved.collapsed.filter(group=>knownGroups.has(group)))]:[],
+    density:saved.density==="compact"?"compact":"comfortable"
+  };
+}
+function persistSidebarLayout(layout,status="Configurazione aggiornata"){saveLocalData(sidebarLayoutStore,layout);applySidebarLayout();if($("sidebarLayoutStatus"))$("sidebarLayoutStatus").textContent=status}
+function applySidebarLayout(refreshManager=true){
+  const layout=sidebarLayout(),sidebar=document.querySelector(".sidebar");if(!sidebar)return;
+  sidebar.classList.toggle("sidebar-density-compact",layout.density==="compact");
+  document.querySelectorAll("[data-sidebar-group]").forEach(group=>{
+    const collapsed=layout.collapsed.includes(group.dataset.sidebarGroup),toggle=group.querySelector(".sidebar-group-toggle");
+    group.classList.toggle("collapsed",collapsed);
+    toggle?.setAttribute("aria-expanded",String(!collapsed));
+  });
+  document.querySelectorAll("#sidebarNav .nav").forEach(button=>{
+    const hidden=layout.hidden.includes(button.dataset.target)&&button.dataset.target!==state.currentPage;
+    button.classList.toggle("sidebar-module-hidden",hidden);
+    button.title=button.textContent.trim();
+  });
+  document.querySelectorAll("[data-sidebar-group]").forEach(group=>{
+    const available=[...group.querySelectorAll(".nav")].some(button=>!button.classList.contains("sidebar-module-hidden")&&!(interfaceMode()==="beginner"&&button.classList.contains("advanced-only")));
+    group.classList.toggle("sidebar-group-empty",!available);
+  });
+  document.querySelectorAll("[data-sidebar-density]").forEach(button=>button.classList.toggle("active",button.dataset.sidebarDensity===layout.density));
+  if(refreshManager)renderSidebarLayoutManager();
+}
+function renderSidebarLayoutManager(){
+  const list=$("sidebarModuleManagerList");if(!list)return;const layout=sidebarLayout();
+  list.innerHTML=[...document.querySelectorAll("[data-sidebar-group]")].map(group=>{
+    const groupLabel=group.querySelector(".sidebar-group-toggle b")?.textContent.trim()||"Sezioni";
+    const rows=[...group.querySelectorAll(".nav")].map(button=>{
+      const target=button.dataset.target,pinned=target==="overview",advanced=button.classList.contains("advanced-only");
+      return `<label class="sidebar-module-manager-row"><span class="sidebar-manager-dot" data-sidebar-manager-color="${esc(group.dataset.sidebarGroup)}"></span><span><b>${esc(button.textContent.trim())}</b><small>${pinned?"Sempre visibile":advanced?"Modalità avanzata":esc(groupLabel)}</small></span><input type="checkbox" data-sidebar-visible="${esc(target)}" ${layout.hidden.includes(target)?"":"checked"} ${pinned?"disabled":""}></label>`;
+    }).join("");
+    return `<div class="sidebar-manager-group"><span>${esc(groupLabel)}</span>${rows}</div>`;
+  }).join("");
+  list.querySelectorAll("[data-sidebar-visible]").forEach(input=>input.onchange=()=>{
+    const next=sidebarLayout(),hidden=new Set(next.hidden);
+    input.checked?hidden.delete(input.dataset.sidebarVisible):hidden.add(input.dataset.sidebarVisible);
+    persistSidebarLayout({...next,hidden:[...hidden]});
+  });
+  window.CryptoRadarI18n?.translateDocument();
+}
+function toggleSidebarGroup(groupId){
+  const layout=sidebarLayout(),collapsed=new Set(layout.collapsed);
+  collapsed.has(groupId)?collapsed.delete(groupId):collapsed.add(groupId);
+  persistSidebarLayout({...layout,collapsed:[...collapsed]});
+}
+function revealSidebarTarget(target){
+  const button=document.querySelector(`#sidebarNav .nav[data-target="${target}"]`),group=button?.closest("[data-sidebar-group]");if(!group)return;
+  const layout=sidebarLayout();if(!layout.collapsed.includes(group.dataset.sidebarGroup))return;
+  persistSidebarLayout({...layout,collapsed:layout.collapsed.filter(id=>id!==group.dataset.sidebarGroup)});
+}
+function setSidebarDensity(density){const layout=sidebarLayout();persistSidebarLayout({...layout,density:density==="compact"?"compact":"comfortable"})}
+function toggleSidebarLayout(open){
+  $("sidebarLayoutManager").classList.toggle("hidden",!open);
+  $("openSidebarLayout").classList.toggle("active",open);
+  $("openSidebarLayout").setAttribute("aria-expanded",String(open));
+  if(open)renderSidebarLayoutManager();
+}
+function resetSidebarLayout(){localStorage.removeItem(sidebarLayoutStore);applySidebarLayout();$("sidebarLayoutStatus").textContent="Impostazione iniziale ripristinata"}
+
 function renderHomePortfolioPulse(holdings=state.portfolio?.holdings||[]){
   const positions=holdings.map(holding=>{const coin=coinById(holding.id),value=num(holding.amount)*num(coin?.current_price),cost=num(holding.amount)*num(holding.avgCost);return {...holding,coin,value,cost}}).filter(position=>position.value>0).sort((a,b)=>b.value-a.value),value=positions.reduce((sum,position)=>sum+position.value,0),cost=positions.reduce((sum,position)=>sum+position.cost,0),completeCost=positions.length>0&&positions.every(position=>position.cost>0),pnl=value-cost,pct=cost?pnl/cost*100:0,largest=positions[0],largestWeight=value&&largest?largest.value/value*100:0,limit=num(state.plan?.maxSingleCoin);
   $("homePortfolioValue").textContent=fmtEur(value);$("homePortfolioPositions").textContent=`${positions.length}/30`;
@@ -757,7 +824,7 @@ function ensureRestoreLocalControl(){const actions=document.querySelector(".priv
 function generateShareReport(){const include=key=>document.querySelector(`[data-share="${key}"]`)?.checked,hide=$("shareHideAmounts").checked,audience=$("shareAudience").value,profile=localProfile(),positions=activePositions(),behavior=behaviorCalculation(),fiscal=taxReadinessState(),passports=localData(copilotStore.passports,[]);const money=x=>hide?"[nascosto]":fmtEur(x),sections=[];if(include("overview"))sections.push(`<h2>Panoramica</h2><table><tr><th>Asset</th><th>Quantità</th><th>Valore</th><th>Peso</th></tr>${positions.map(p=>`<tr><td>${esc(p.symbol)}</td><td>${hide?'[nascosta]':num(p.amount)}</td><td>${money(p.value)}</td><td>${positions.reduce((s,x)=>s+x.value,0)?(p.value/positions.reduce((s,x)=>s+x.value,0)*100).toFixed(1):0}%</td></tr>`).join("")}</table>`);if(include("plan"))sections.push(`<h2>Piano</h2><p>Orizzonte: ${num(state.plan?.horizonYears)} anni · perdita tollerabile ${num(state.plan?.maxToleratedLoss)}% · singola crypto massimo ${num(state.plan?.maxSingleCoin)}% · crypto massimo ${num(state.plan?.maxCryptoAllocation)}%.</p>`);if(include("behavior"))sections.push(`<h2>Disciplina</h2><p>Punteggio di processo: ${behavior.score}/100. Non misura abilità o rendimento.</p>`);if(include("fiscal")){const calc=taxReadinessCalculation(fiscal);sections.push(`<h2>Preparazione fiscale</h2><p>${calc.score}% · ${calc.total} transazioni · ${calc.issues} anomalie dichiarate.</p>${include("notes")?`<p>Note: ${esc(fiscal.notes||"Nessuna")}</p>`:""}`)}if(include("passports"))sections.push(`<h2>Passaporti</h2>${passports.slice(0,20).map(p=>`<div class="box"><b>${esc(p.symbol)} · ${esc(p.action)} · processo ${num(p.processScore)}/100</b><p>${esc(p.thesis||"Tesi assente")}</p></div>`).join("")||"<p>Nessun passaporto.</p>"}`);const html=`<!doctype html><html lang="it"><meta charset="utf-8"><title>Report Crypto Radar</title><style>body{font:15px system-ui;max-width:900px;margin:40px auto;padding:0 20px;color:#17202a}h1{margin-bottom:4px}.meta{color:#667}table{border-collapse:collapse;width:100%}td,th{padding:9px;border:1px solid #ccd;text-align:left}.box{border:1px solid #ccd;padding:12px;margin:8px 0;border-radius:8px}.warning{background:#fff7dd;padding:12px;border-left:4px solid #d99b12}</style><h1>Crypto Radar · Report in sola lettura</h1><p class="meta">Destinatario: ${esc(audience)} · generato ${new Date().toLocaleString("it-IT")} · profilo ${esc(profile.name||"non indicato")}</p><p class="warning">Documento informativo generato dall’utente. Non è consulenza finanziaria o fiscale e non contiene accesso agli account.</p>${sections.join("")}<hr><small>Verificare dati, fonti e documenti originali prima di qualsiasi utilizzo.</small></html>`;downloadBlob(`crypto-radar-report-${audience}-${new Date().toISOString().slice(0,10)}.html`,html,"text/html;charset=utf-8")}
 let onboardingStep=0;
 function interfaceMode(){return localStorage.getItem("cryptoRadarInterfaceMode")||"beginner"}
-function applyInterfaceMode(mode=interfaceMode()){const normalized=mode==="advanced"?"advanced":"beginner";localStorage.setItem("cryptoRadarInterfaceMode",normalized);document.body.classList.toggle("mode-beginner",normalized==="beginner");document.body.classList.toggle("mode-advanced",normalized==="advanced");$("interfaceMode").textContent=`Modalità: ${normalized==="beginner"?"Principiante":"Avanzata"}`;$("interfaceMode").dataset.mode=normalized}
+function applyInterfaceMode(mode=interfaceMode()){const normalized=mode==="advanced"?"advanced":"beginner";localStorage.setItem("cryptoRadarInterfaceMode",normalized);document.body.classList.toggle("mode-beginner",normalized==="beginner");document.body.classList.toggle("mode-advanced",normalized==="advanced");$("interfaceMode").textContent=`Modalità: ${normalized==="beginner"?"Principiante":"Avanzata"}`;$("interfaceMode").dataset.mode=normalized;applySidebarLayout(false)}
 function setOnboardingStep(step){onboardingStep=clamp(step,0,3);document.querySelectorAll("[data-onboarding-step]").forEach(x=>x.classList.toggle("active",num(x.dataset.onboardingStep)===onboardingStep));$("onboardingStepLabel").textContent=`Passaggio ${onboardingStep+1} di 4`;$("onboardingBar").style.width=`${(onboardingStep+1)/4*100}%`;$("onboardingBack").disabled=onboardingStep===0;$("onboardingNext").textContent=onboardingStep===3?"Completa configurazione":"Continua";if(onboardingStep===3)renderOnboardingReview()}
 function onboardingSelectedCoins(){return [...document.querySelectorAll("[data-onboarding-coin]:checked")].map(x=>x.value).slice(0,5)}
 function ensureOnboardingUsernameAlert(){if($("onboardingUsernameAlert"))return;const input=$("onboardingName"),label=input.closest("label"),labelText=[...label.childNodes].find(node=>node.nodeType===Node.TEXT_NODE);labelText?.replaceWith(document.createTextNode("Username pubblico"));const notice=document.createElement("div");notice.id="onboardingUsernameAlert";notice.className="onboarding-username-alert";notice.setAttribute("role","note");notice.innerHTML="<b>Username pubblico</b><span>Il nome che scegli sarà visibile e utilizzato nella Chat Community. Non inserire cognome o dati personali.</span>";label.insertAdjacentElement("afterend",notice);input.setAttribute("aria-describedby",notice.id)}
@@ -974,7 +1041,7 @@ async function communityAction(action,targetId,active){if(!await requireCommunit
 function updateCommunityQualityHint(){const score=["communityPostThesis","communityPostInvalidation","communityPostSource"].filter(id=>$(id).value.trim()).length+($("communityPostRisk").value!=="not-assessed"?1:0),strategy=$("communityPostKind").value==="strategy";$("communityQualityHint").textContent=`Completezza metodologica: ${score}/4${strategy&&score<4?" · per una strategia rendi espliciti tesi, invalidazione, rischio e fonte.":" · misura la struttura, non la qualità dell'investimento."}`}
 function updateCommunityMessageCount(){$("communityMessageCount").textContent=$("communityMessageBody").value.length}
 
-function showPage(id,title){state.currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.target===id));$("pageTitle").textContent=title||({overview:'Panoramica',screener:'Potenziali Crypto',portfolio:'Il mio portafoglio',connections:'Exchange & wallet',academy:'Guide & Manuali',plan:'Piano personale',copilot:'Assistente Personale',decision:'Laboratorio',operations:'Centro operativo',advanced:'Strumenti avanzati',intelligence:'Intelligence Hub',news:'News & trend',tax:'730 & fiscalità crypto',method:'Metodo & rischio'}[id]||'Analisi');if(id==="advanced")renderAdvanced();if(id==="intelligence")renderIntelligence();renderTutor();window.CryptoRadarI18n?.translateDocument();window.scrollTo({top:0,behavior:'smooth'})}
+function showPage(id,title){state.currentPage=id;revealSidebarTarget(id);document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.target===id));applySidebarLayout(false);$("pageTitle").textContent=title||({overview:'Panoramica',screener:'Potenziali Crypto',portfolio:'Il mio portafoglio',connections:'Exchange & wallet',academy:'Guide & Manuali',plan:'Piano personale',copilot:'Assistente Personale',decision:'Laboratorio',operations:'Centro operativo',advanced:'Strumenti avanzati',intelligence:'Intelligence Hub',community:'Chat Community',news:'News & trend',tax:'730 & fiscalità crypto',method:'Metodo & rischio'}[id]||'Analisi');if(id==="advanced")renderAdvanced();if(id==="intelligence")renderIntelligence();renderTutor();window.CryptoRadarI18n?.translateDocument();window.scrollTo({top:0,behavior:'smooth'})}
 const showPageCore=showPage;
 showPage=function(id,title){showPageCore(id,title||(id==="community"?"Chat Community":undefined));if(id==="community")startCommunityPolling();else stopCommunityPolling()};
 const sectionGuideLinks={overview:"app-start",screener:"app-start",portfolio:"portfolio-manual",connections:"portfolio-manual",academy:"academy-manual",plan:"plan-manual",copilot:"copilot-manual",decision:"decision-manual",operations:"operations-manual",advanced:"advanced-manual",intelligence:"intelligence-manual",community:"community-manual",news:"news-manual",tax:"tax-method-manual",method:"tax-method-manual",detail:"research"};
@@ -1066,6 +1133,7 @@ async function loadImportHistory(){
 }
 async function undoImport(batchId){if(!confirm("Annullare questa importazione e rimuovere tutte le sue operazioni?"))return;try{await api(`/api/import?batchId=${encodeURIComponent(batchId)}`,{method:"DELETE"});await loadImportHistory()}catch(error){showError(error.message)}}
 document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>showPage(n.dataset.target));
+document.querySelectorAll("[data-sidebar-group-toggle]").forEach(button=>button.onclick=()=>toggleSidebarGroup(button.dataset.sidebarGroupToggle));
 document.querySelectorAll('[data-go]').forEach(n=>n.onclick=()=>showPage(n.dataset.go));
 document.querySelectorAll('[data-community-tab]').forEach(button=>button.onclick=()=>setCommunityTab(button.dataset.communityTab));
 $("communityMessageForm").onsubmit=sendCommunityMessage;$("communityPostForm").onsubmit=publishCommunityPost;$("communitySearch").oninput=renderCommunityPosts;$("communityKindFilter").onchange=renderCommunityPosts;$("communityMessageBody").oninput=updateCommunityMessageCount;$("communityMessageImage").onchange=event=>selectCommunityImage("message",event.target);$("communityPostImage").onchange=event=>selectCommunityImage("post",event.target);$("refreshCommunity").onclick=()=>loadCommunity();["communityPostKind","communityPostRisk","communityPostThesis","communityPostInvalidation","communityPostSource"].forEach(id=>$(id).addEventListener("input",updateCommunityQualityHint));
@@ -1081,6 +1149,7 @@ setupCatalogPickers();
 ensureRestoreLocalControl();
 $("refreshBtn").onclick=()=>loadAll(true);$("applyFilters").onclick=renderScreener;$("savePortfolio").onclick=savePortfolio;$("addPortfolioCoin").onclick=addPortfolioCoin;$("savePlan").onclick=savePlan;$("runDca").onclick=runDca;$("analyzeTrade").onclick=analyzeTrade;$("saveDecision").onclick=saveDecision;$("backBtn").onclick=()=>showPage('overview');
 $("openHomeLayout").onclick=()=>toggleHomeLayout($("homeLayoutManager").classList.contains("hidden"));$("closeHomeLayout").onclick=()=>toggleHomeLayout(false);$("resetHomeLayout").onclick=resetHomeLayout;
+$("openSidebarLayout").onclick=()=>toggleSidebarLayout($("sidebarLayoutManager").classList.contains("hidden"));$("closeSidebarLayout").onclick=()=>toggleSidebarLayout(false);$("resetSidebarLayout").onclick=resetSidebarLayout;document.querySelectorAll("[data-sidebar-density]").forEach(button=>button.onclick=()=>setSidebarDensity(button.dataset.sidebarDensity));
 $("managePinned").onclick=()=>{$("pinnedManager").classList.toggle("hidden");if(!$("pinnedManager").classList.contains("hidden")){$("pinnedCoinSearch").focus();renderPinnedOptions(true)}else closePinnedOptions()};$("closePinned").onclick=()=>{$("pinnedManager").classList.add("hidden");closePinnedOptions()};$("addPinned").onclick=addPinnedCoin;
 $("pinnedCoinSearch").onfocus=()=>state.marketCatalogLoaded?renderPinnedOptions(true):loadMarketCatalog($("pinnedCoinSearch").value,true);
 $("pinnedCoinSearch").oninput=()=>{$("pinnedCoinSelect").value="";$("addPinned").disabled=true;state.marketCatalogLoading=true;renderPinnedOptions(true);queuePinnedCatalogSearch(true)};
@@ -1092,6 +1161,7 @@ $("portfolioCoinSelect").onchange=updatePortfolioPickerState;$("saveAlertSetting
 $("openOnboarding").onclick=openOnboarding;$("closeOnboarding").onclick=closeOnboarding;$("onboardingBack").onclick=()=>setOnboardingStep(onboardingStep-1);$("onboardingNext").onclick=nextOnboarding;$("interfaceMode").onclick=()=>applyInterfaceMode(interfaceMode()==="beginner"?"advanced":"beginner");document.querySelectorAll("[data-cooldown-hours]").forEach(button=>button.onclick=()=>startCooldown(num(button.dataset.cooldownHours)));
 $("runExecution").onclick=runExecutionLab;$("refreshRiskEngine").onclick=renderAdvancedRisk;$("runMicaSearch").onclick=runMicaSearch;$("micaQuery").onkeydown=event=>{if(event.key==="Enter")runMicaSearch()};
 $("refreshIntelligence").onclick=()=>loadMarketIntelligence(true);$("addIntelEvent").onclick=addIntelligenceEvent;$("runIntelStress").onclick=renderIntelStress;$("runTaxIntegrity").onclick=()=>{renderTaxIntegrity();renderBrief()};$("regenerateIntelBrief").onclick=renderBrief;$("copyIntelBrief").onclick=async()=>{try{await navigator.clipboard.writeText(briefText());$("copyIntelBrief").textContent="Copiato ✓";setTimeout(()=>$("copyIntelBrief").textContent="Copia testo",1400)}catch{showError("Il browser non consente la copia automatica.")}};$("downloadIntelBrief").onclick=()=>downloadBlob(`crypto-radar-brief-${localIsoDate(new Date())}.txt`,briefText(),"text/plain;charset=utf-8");if(!$("intelEventDate").value){const next=new Date();next.setDate(next.getDate()+7);$("intelEventDate").value=localIsoDate(next)}
-document.addEventListener("crypto-radar-language",()=>{state.translations={};if(state.scored.length){renderOverview();renderScreener();renderPortfolio();renderPlan();renderDecisionLab();renderOperations();renderCopilot();renderAdvanced();renderIntelligence();renderTutor();renderNews()}loadTranslations()});
+document.addEventListener("crypto-radar-language",()=>{state.translations={};if(state.scored.length){renderOverview();renderScreener();renderPortfolio();renderPlan();renderDecisionLab();renderOperations();renderCopilot();renderAdvanced();renderIntelligence();renderTutor();renderNews()}renderSidebarLayoutManager();loadTranslations()});
 setupPwa();
+applySidebarLayout();
 loadAll();
