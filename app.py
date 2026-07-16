@@ -850,6 +850,50 @@ def add_journal_entry(payload: dict) -> dict:
     return entry
 
 
+def normalized_asset_text(value: object) -> str:
+    return "".join(character for character in str(value or "").casefold() if character.isalnum())
+
+
+def resolve_dca_coin_id(coin_id: str) -> tuple[str, str]:
+    if not coin_id.startswith("cmc-"):
+        return coin_id, "coingecko"
+
+    catalog = coinmarketcap_catalog("", "rank", {coin_id})
+    asset = next((item for item in catalog.get("data", []) if item.get("id") == coin_id), None)
+    if not asset:
+        raise RuntimeError("La crypto selezionata non è più disponibile nel catalogo CoinMarketCap.")
+
+    target_name = normalized_asset_text(asset.get("name"))
+    target_symbol = normalized_asset_text(asset.get("symbol"))
+    target_rank = int(asset.get("market_cap_rank") or 999999)
+    found: dict[str, dict] = {}
+    for query in (str(asset.get("name") or ""), str(asset.get("symbol") or "")):
+        if not query:
+            continue
+        payload = coingecko_get("/search", {"query": query}, ttl=86_400)
+        for candidate in payload.get("coins", []) if isinstance(payload, dict) else []:
+            if isinstance(candidate, dict) and candidate.get("id"):
+                found[str(candidate["id"])] = candidate
+
+    candidates = []
+    for candidate in found.values():
+        name_match = normalized_asset_text(candidate.get("name")) == target_name
+        symbol_match = normalized_asset_text(candidate.get("symbol")) == target_symbol
+        if not name_match and not symbol_match:
+            continue
+        try:
+            rank = int(candidate.get("market_cap_rank") or 999999)
+        except (TypeError, ValueError):
+            rank = 999999
+        match_class = 0 if name_match and symbol_match else 1 if name_match else 2
+        candidates.append((match_class, abs(rank - target_rank), rank, str(candidate["id"])))
+
+    if not candidates:
+        raise RuntimeError("Storico CoinGecko non disponibile per questa crypto. Prova un asset con storico supportato.")
+    candidates.sort()
+    return candidates[0][3], "coinmarketcap-to-coingecko"
+
+
 def simulate_dca(coin_id: str, months: int, monthly: float) -> dict:
     days = min(365, months * 31 + 7)
     history = coingecko_get(
@@ -1577,7 +1621,12 @@ class Handler(BaseHTTPRequestHandler):
                     monthly = min(1_000_000, max(1, float(query.get("monthly", ["100"])[0])))
                 except (TypeError, ValueError):
                     return self.send_json({"error": "Parametri DCA non validi."}, 400)
-                return self.send_json(simulate_dca(coin_id, months, monthly))
+                resolved_coin_id, resolution = resolve_dca_coin_id(coin_id)
+                result = simulate_dca(resolved_coin_id, months, monthly)
+                result["requestedCoinId"] = coin_id
+                result["resolvedCoinId"] = resolved_coin_id
+                result["resolution"] = resolution
+                return self.send_json(result)
             return self.serve_static(parsed.path)
         except RuntimeError as exc:
             self.send_json({"error": str(exc)}, 503)
